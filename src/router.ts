@@ -1,6 +1,7 @@
 import type { Env } from "./index.js";
 import { handleApiRoutes } from "./api/index.js";
 import { APP_NAME, APP_VERSION } from "./utils/constants.js";
+import { serveLandingPage } from "./landing/serve.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -90,14 +91,7 @@ export async function handleRequest(
     (request: Request, env: Env, ctx: ExecutionContext, params: RouteParams) => Promise<Response>
   >();
 
-  routes.set("GET /", async () =>
-    jsonResponse({
-      name: APP_NAME,
-      version: APP_VERSION,
-      status: "operational",
-      personas: ["REGULIS"],
-    })
-  );
+  routes.set("GET /", async () => serveLandingPage());
 
   routes.set("GET /api/health", async () =>
     jsonResponse({ status: "healthy", timestamp: new Date().toISOString() })

@@ -1,0 +1,397 @@
+/**
+ * Landing page server for Vernen Legal Compliance.
+ *
+ * Because Cloudflare Workers cannot read files at runtime,
+ * the full HTML (with CSS inlined) is embedded as a template literal.
+ * The separate index.html and styles.css files serve as source reference.
+ */
+
+const LANDING_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vernen Legal Compliance — Business compliance scanning for every state, every entity type. Coming soon.">
+  <title>Vernen Legal Compliance\u2122 — Business Compliance. Every State. Every Entity. Done Right.</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy: #1a2744;
+      --navy-light: #243558;
+      --navy-dark: #111b30;
+      --gold: #c8a951;
+      --gold-light: #d4bc74;
+      --white: #ffffff;
+      --off-white: #f7f8fa;
+      --gray-light: #e2e5eb;
+      --gray: #8892a4;
+      --text-primary: #1a2744;
+      --text-secondary: #4a5568;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-primary);
+      background-color: var(--white);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background-color: var(--navy);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-logo {
+      width: 2.25rem;
+      height: 2.25rem;
+      background: var(--gold);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--navy);
+    }
+
+    .header-name {
+      color: var(--white);
+      font-size: 1.125rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .header-name span { color: var(--gold); }
+
+    .header-badge {
+      background: rgba(200, 169, 81, 0.15);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.875rem;
+      border-radius: 100px;
+      border: 1px solid rgba(200, 169, 81, 0.3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero {
+      background: linear-gradient(160deg, var(--navy) 0%, var(--navy-dark) 100%);
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(200, 169, 81, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(200, 169, 81, 0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      color: var(--white);
+      font-size: 2.75rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero h1 .gold { color: var(--gold); }
+
+    .hero-tagline {
+      color: var(--gray);
+      font-size: 1.25rem;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+      line-height: 1.5;
+    }
+
+    .hero-divider {
+      width: 60px;
+      height: 3px;
+      background: var(--gold);
+      margin: 0 auto 2.5rem;
+      border-radius: 2px;
+    }
+
+    .value-props {
+      padding: 4.5rem 2rem;
+      background: var(--off-white);
+    }
+
+    .value-props-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .value-props h2 {
+      text-align: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--navy);
+    }
+
+    .value-props-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1.0625rem;
+      margin-bottom: 3rem;
+    }
+
+    .props-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .prop-card {
+      background: var(--white);
+      border-radius: 8px;
+      padding: 2rem;
+      border: 1px solid var(--gray-light);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .prop-card:hover {
+      box-shadow: 0 4px 20px rgba(26, 39, 68, 0.08);
+    }
+
+    .prop-icon {
+      width: 2.75rem;
+      height: 2.75rem;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      color: var(--gold);
+      font-size: 1.25rem;
+    }
+
+    .prop-card h3 {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--navy);
+    }
+
+    .prop-card p {
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    .email-section {
+      padding: 4.5rem 2rem;
+      background: var(--white);
+    }
+
+    .email-inner {
+      max-width: 560px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .email-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .email-section p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .email-form {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .email-form input[type="email"] {
+      flex: 1;
+      padding: 0.875rem 1.125rem;
+      font-size: 1rem;
+      font-family: inherit;
+      border: 1px solid var(--gray-light);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      color: var(--text-primary);
+      background: var(--white);
+    }
+
+    .email-form input[type="email"]::placeholder { color: var(--gray); }
+
+    .email-form input[type="email"]:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.12);
+    }
+
+    .email-form button {
+      padding: 0.875rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .email-form button:hover { background: var(--gold-light); }
+
+    .email-disclaimer {
+      margin-top: 1rem;
+      font-size: 0.8125rem;
+      color: var(--gray);
+    }
+
+    .footer {
+      background: var(--navy-dark);
+      padding: 2rem;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .footer p {
+      color: var(--gray);
+      font-size: 0.8125rem;
+      line-height: 1.8;
+    }
+
+    .footer .separator { margin: 0 0.5rem; opacity: 0.4; }
+    .footer .powered-by { color: var(--gold); font-weight: 500; }
+
+    @media (max-width: 768px) {
+      .header { padding: 1rem 1.25rem; }
+      .hero { padding: 3.5rem 1.25rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero-tagline { font-size: 1.0625rem; }
+      .props-grid { grid-template-columns: 1fr; }
+      .value-props { padding: 3rem 1.25rem; }
+      .email-section { padding: 3rem 1.25rem; }
+      .email-form { flex-direction: column; }
+      .email-form button { width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.625rem; }
+      .header-name { font-size: 0.9375rem; }
+      .header-badge { font-size: 0.6875rem; padding: 0.2rem 0.625rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-logo">V</div>
+      <div class="header-name">Vernen Legal <span>Compliance</span>\u2122</div>
+    </div>
+    <div class="header-badge">Coming Soon</div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Business Compliance.<br><span class="gold">Every State. Every Entity.</span><br>Done Right.</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-tagline">Automated compliance scanning and regulatory monitoring for businesses operating across all 50 states. Know exactly what you need, when you need it.</p>
+    </div>
+  </section>
+
+  <section class="value-props">
+    <div class="value-props-inner">
+      <h2>Compliance Without Complexity</h2>
+      <p class="value-props-subtitle">Everything your business needs to stay compliant, in one platform.</p>
+      <div class="props-grid">
+        <div class="prop-card">
+          <div class="prop-icon">&#9878;</div>
+          <h3>50-State Compliance Scanning</h3>
+          <p>Comprehensive regulatory scanning across every U.S. state and jurisdiction. Identify requirements before they become liabilities.</p>
+        </div>
+        <div class="prop-card">
+          <div class="prop-icon">&#9881;</div>
+          <h3>Entity-Specific Requirements</h3>
+          <p>Tailored compliance profiles for your specific entity type \u2014 LLC, corporation, nonprofit, partnership, and more.</p>
+        </div>
+        <div class="prop-card">
+          <div class="prop-icon">&#8635;</div>
+          <h3>Real-Time Regulatory Monitoring</h3>
+          <p>Continuous monitoring of regulatory changes that affect your business. Get alerts before deadlines, not after penalties.</p>
+        </div>
+        <div class="prop-card">
+          <div class="prop-icon">&#9733;</div>
+          <h3>Powered by Persona Citizens</h3>
+          <p>Our AI-driven Persona Citizens deliver specialized compliance intelligence, each with verified expertise in their regulatory domain.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="email-section">
+    <div class="email-inner">
+      <h2>Get Early Access</h2>
+      <p>Be the first to know when we launch. Join our early access list for priority onboarding and exclusive updates.</p>
+      <form class="email-form" action="#" method="POST">
+        <input type="email" name="email" placeholder="Enter your business email" required autocomplete="email" aria-label="Email address">
+        <button type="submit">Notify Me</button>
+      </form>
+      <p class="email-disclaimer">We respect your privacy. No spam, ever.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2026 Vernen Legal Compliance\u2122<span class="separator">|</span>All Rights Reserved<span class="separator">|</span>Powered by <span class="powered-by">REGULIS\u2122</span></p>
+  </footer>
+
+</body>
+</html>`;
+
+export function serveLandingPage(): Response {
+  return new Response(LANDING_HTML, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/html;charset=UTF-8",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
+}
