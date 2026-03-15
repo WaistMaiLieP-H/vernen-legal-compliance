@@ -1,0 +1,14 @@
+name = "vernen-legal-compliance"
+main = "src/index.ts"
+compatibility_date = "2026-03-15"
+
+# D1 Database binding — uncomment when account is configured
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "vernen-compliance"
+# database_id = "<your-database-id>"
+
+# KV Namespace for persona knowledge stores — uncomment when account is configured
+# [[kv_namespaces]]
+# binding = "KNOWLEDGE_STORE"
+# id = "<your-kv-namespace-id>"
