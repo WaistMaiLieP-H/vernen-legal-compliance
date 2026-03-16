@@ -2,6 +2,8 @@ import type { Env } from "./index.js";
 import { handleApiRoutes, handleSentinelRoutes } from "./api/index.js";
 import { APP_NAME, APP_VERSION } from "./utils/constants.js";
 import { serveLandingPage } from "./landing/serve.js";
+import { serveTermsOfService } from "./legal/terms.js";
+import { servePrivacyPolicy } from "./legal/privacy.js";
 import {
   handleRegulisStatus,
   handleRegulisCheck,
@@ -230,6 +232,10 @@ export async function handleRequest(
   >();
 
   routes.set("GET /", async () => serveLandingPage());
+
+  // Legal pages
+  routes.set("GET /legal/terms", async () => serveTermsOfService());
+  routes.set("GET /legal/privacy", async () => servePrivacyPolicy());
 
   routes.set("GET /api/health", async () =>
     jsonResponse({ status: "healthy", timestamp: new Date().toISOString() })

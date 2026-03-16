@@ -155,6 +155,16 @@ export {
   handleLoadForms,
 } from "./audit.js";
 
+// Legal pages — Terms of Service & Privacy Policy
+export { serveTermsOfService } from "../legal/terms.js";
+export { servePrivacyPolicy } from "../legal/privacy.js";
+export {
+  getReportDisclaimer,
+  getDocumentDisclaimer,
+  getAuditDisclaimer,
+  getFormDisclaimer,
+} from "../legal/disclaimers.js";
+
 // Citizen Deployment Engine
 export {
   handleEngineCatalog,

@@ -5,6 +5,7 @@ import type {
 } from "../types/compliance.js";
 import { ComplianceStatus } from "../types/compliance.js";
 import { generateId, formatDate, sanitizeInput } from "../utils/helpers.js";
+import { getReportDisclaimer } from "../legal/disclaimers.js";
 
 /**
  * ReportGenerator -- Produces compliance reports from check results.
@@ -435,6 +436,11 @@ export class ReportGenerator {
       <ol>
         ${remediationList}
       </ol>
+    </div>
+
+    <!-- Legal Disclaimer -->
+    <div style="padding: 0 2.5rem 1rem;">
+      ${getReportDisclaimer()}
     </div>
 
     <!-- Footer -->

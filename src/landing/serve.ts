@@ -364,10 +364,16 @@ const LANDING_HTML = `<!DOCTYPE html>
     </div>
   </section>
 
+  <div style="background:var(--light-gray);padding:1rem 2rem;text-align:center;font-size:0.85rem;color:var(--text-light);border-top:1px solid var(--mid-gray);">
+    Vernen Legal Compliance provides legal information, not legal advice. We are not a law firm. Consult a licensed attorney for advice specific to your situation.
+  </div>
+
   <footer class="footer">
     <div class="footer-links">
       <a href="/api/regulis/products">API</a>
       <a href="/api/regulis/states">Coverage</a>
+      <a href="/legal/terms">Terms of Service</a>
+      <a href="/legal/privacy">Privacy Policy</a>
     </div>
     <p>&copy; 2026 Vernen Legal Compliance&trade; &mdash; All Rights Reserved</p>
     <p style="margin-top:0.5rem;font-size:0.8rem;opacity:0.6">Powered by REGULIS&trade; &mdash; A Vernen Persona Citizen&trade;</p>
