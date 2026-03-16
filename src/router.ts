@@ -10,6 +10,13 @@ import {
   handleRegulisStats,
   handleRegulisStates,
 } from "./api/regulis.js";
+import {
+  handlePaymentCheckout,
+  handlePaymentWebhook,
+  handlePaymentVerify,
+  handlePaymentSuccess,
+  handlePaymentCancel,
+} from "./api/payments.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -122,6 +129,13 @@ export async function handleRequest(
   routes.set("GET /api/regulis/products", handleRegulisProducts);
   routes.set("GET /api/regulis/stats", handleRegulisStats);
   routes.set("GET /api/regulis/states", handleRegulisStates);
+
+  // Payment routes — Stripe integration
+  routes.set("POST /api/payments/checkout", handlePaymentCheckout);
+  routes.set("POST /api/payments/webhook", handlePaymentWebhook);
+  routes.set("GET /api/payments/verify/:sessionId", handlePaymentVerify);
+  routes.set("GET /payment/success", handlePaymentSuccess);
+  routes.set("GET /payment/cancel", handlePaymentCancel);
 
   // SENTINEL-0 audit system routes — the independent auditor
   routes.set("GET /api/sentinel/status", handleSentinelRoutes.status);

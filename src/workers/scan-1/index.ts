@@ -24,7 +24,7 @@ interface RuleRow {
   entity_types: string;
   effective_date: string;
   source: string;
-  url: string;
+  source_url: string | null;
 }
 
 /**
@@ -49,7 +49,7 @@ function rowToRule(row: RuleRow): ComplianceRule {
     entityTypes,
     effectiveDate: row.effective_date,
     source: row.source,
-    url: row.url,
+    url: row.source_url ?? "",
   };
 }
 

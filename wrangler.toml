@@ -17,3 +17,11 @@ database_id = "e120c52d-fac5-432a-93d1-d737046f19ea"
 [[kv_namespaces]]
 binding = "KNOWLEDGE_STORE"
 id = "b5185e79eb634dff9fab6ae2027d3801"
+
+# ── Stripe Secrets ─────────────────────────────────────────────────
+# Run these commands to set Stripe secrets:
+# npx wrangler secret put STRIPE_SECRET_KEY
+# npx wrangler secret put STRIPE_WEBHOOK_SECRET
+#
+# The platform gracefully handles missing keys — payment endpoints
+# return a "being configured" message until secrets are set.

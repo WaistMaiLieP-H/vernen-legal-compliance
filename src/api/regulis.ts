@@ -201,6 +201,17 @@ export async function handleRegulisCheck(
           "Full compliance report with all findings, remediation guidance, and downloadable HTML.",
       },
     },
+    checkout: hasMore
+      ? {
+          url: "/api/payments/checkout",
+          method: "POST",
+          body: {
+            reportId: report.id,
+            productId: recommended.id,
+          },
+          note: "POST this payload to create a Stripe checkout session. The response contains a redirect URL.",
+        }
+      : null,
     checkedAt: report.generatedAt,
     checkedBy: "REGULIS",
   });
@@ -274,6 +285,15 @@ export async function handleRegulisGetReport(
         price: "$29",
         url: `/api/regulis/purchase?reportId=${reportId}&product=single_state`,
       },
+    },
+    checkout: {
+      url: "/api/payments/checkout",
+      method: "POST",
+      body: {
+        reportId: reportId,
+        productId: "single_state",
+      },
+      note: "POST this payload to create a Stripe checkout session. The response contains a redirect URL.",
     },
   });
 }

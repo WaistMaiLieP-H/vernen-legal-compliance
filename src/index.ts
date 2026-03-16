@@ -4,6 +4,10 @@ export interface Env {
   DB: D1Database;
   KNOWLEDGE_STORE: KVNamespace;
   API_KEY: string;
+  /** Stripe secret key — set via `wrangler secret put STRIPE_SECRET_KEY` */
+  STRIPE_SECRET_KEY?: string;
+  /** Stripe webhook signing secret — set via `wrangler secret put STRIPE_WEBHOOK_SECRET` */
+  STRIPE_WEBHOOK_SECRET?: string;
 }
 
 export default {

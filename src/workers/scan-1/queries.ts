@@ -18,7 +18,7 @@ export function getStateRules(state: string, entityType: string): PreparedQuery 
   return {
     sql: `
       SELECT id, code, title, description, category, level, state,
-             entity_types, effective_date, source, url
+             entity_types, effective_date, source, source_url
       FROM compliance_rules
       WHERE level = 'STATE'
         AND state = ?1
@@ -40,7 +40,7 @@ export function getFederalRules(entityType: string): PreparedQuery {
   return {
     sql: `
       SELECT id, code, title, description, category, level, state,
-             entity_types, effective_date, source, url
+             entity_types, effective_date, source, source_url
       FROM compliance_rules
       WHERE level = 'FEDERAL'
         AND json_array_length(entity_types) > 0
@@ -61,7 +61,7 @@ export function getRuleById(id: string): PreparedQuery {
   return {
     sql: `
       SELECT id, code, title, description, category, level, state,
-             entity_types, effective_date, source, url
+             entity_types, effective_date, source, source_url
       FROM compliance_rules
       WHERE id = ?1
     `,
@@ -95,7 +95,7 @@ export function getRulesByCategory(
   return {
     sql: `
       SELECT id, code, title, description, category, level, state,
-             entity_types, effective_date, source, url
+             entity_types, effective_date, source, source_url
       FROM compliance_rules
       WHERE ${conditions.join(" AND ")}
       ORDER BY level, state, code
