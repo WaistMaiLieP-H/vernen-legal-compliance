@@ -374,6 +374,7 @@ const LANDING_HTML = `<!DOCTYPE html>
       <a href="/api/regulis/states">Coverage</a>
       <a href="/legal/terms">Terms of Service</a>
       <a href="/legal/privacy">Privacy Policy</a>
+      <a href="/dashboard">Dashboard</a>
     </div>
     <p>&copy; 2026 Vernen Legal Compliance&trade; &mdash; All Rights Reserved</p>
     <p style="margin-top:0.5rem;font-size:0.8rem;opacity:0.6">Powered by REGULIS&trade; &mdash; A Vernen Persona Citizen&trade;</p>
