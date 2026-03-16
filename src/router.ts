@@ -1,7 +1,15 @@
 import type { Env } from "./index.js";
-import { handleApiRoutes } from "./api/index.js";
+import { handleApiRoutes, handleSentinelRoutes } from "./api/index.js";
 import { APP_NAME, APP_VERSION } from "./utils/constants.js";
 import { serveLandingPage } from "./landing/serve.js";
+import {
+  handleRegulisStatus,
+  handleRegulisCheck,
+  handleRegulisGetReport,
+  handleRegulisProducts,
+  handleRegulisStats,
+  handleRegulisStates,
+} from "./api/regulis.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -100,6 +108,28 @@ export async function handleRequest(
   // API routes are handled by the api module
   routes.set("POST /api/compliance/check", handleApiRoutes.complianceCheck);
   routes.set("GET /api/compliance/report/:id", handleApiRoutes.getReport);
+
+  // FORGE-0 build system routes
+  routes.set("GET /api/forge/status", handleApiRoutes.forgeStatus);
+  routes.set("GET /api/forge/log", handleApiRoutes.forgeLog);
+  routes.set("GET /api/forge/milestone/:id", handleApiRoutes.forgeMilestone);
+  routes.set("POST /api/forge/task", handleApiRoutes.forgeSubmitTask);
+
+  // REGULIS Persona Citizen routes — the revenue engine
+  routes.set("GET /api/regulis/status", handleRegulisStatus);
+  routes.set("POST /api/regulis/check", handleRegulisCheck);
+  routes.set("GET /api/regulis/report/:id", handleRegulisGetReport);
+  routes.set("GET /api/regulis/products", handleRegulisProducts);
+  routes.set("GET /api/regulis/stats", handleRegulisStats);
+  routes.set("GET /api/regulis/states", handleRegulisStates);
+
+  // SENTINEL-0 audit system routes — the independent auditor
+  routes.set("GET /api/sentinel/status", handleSentinelRoutes.status);
+  routes.set("GET /api/sentinel/issues", handleSentinelRoutes.issues);
+  routes.set("GET /api/sentinel/gate/:id", handleSentinelRoutes.gate);
+  routes.set("GET /api/sentinel/citizens", handleSentinelRoutes.citizens);
+  routes.set("GET /api/sentinel/report/:phase", handleSentinelRoutes.report);
+  routes.set("POST /api/sentinel/audit/:taskId", handleSentinelRoutes.auditTask);
 
   const match = matchRoute(method, pathname, routes);
 

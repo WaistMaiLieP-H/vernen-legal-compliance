@@ -1,8 +1,24 @@
 import type { Env } from "../index.js";
 import { handleComplianceCheck } from "./compliance.js";
 import { handleGetReport } from "./reports.js";
+import {
+  handleForgeStatus,
+  handleForgeLog,
+  handleForgeMilestone,
+  handleForgeSubmitTask,
+} from "./forge.js";
 import { authenticate } from "./middleware/auth.js";
 import { rateLimit } from "./middleware/rate-limit.js";
+
+export { handleSentinelRoutes } from "./sentinel.js";
+export {
+  handleRegulisStatus,
+  handleRegulisCheck,
+  handleRegulisGetReport,
+  handleRegulisProducts,
+  handleRegulisStats,
+  handleRegulisStates,
+} from "./regulis.js";
 
 type RouteParams = Record<string, string>;
 
@@ -14,6 +30,7 @@ function jsonResponse(data: unknown, status = 200): Response {
 }
 
 export const handleApiRoutes = {
+  // ── Compliance ────────────────────────────────────────────
   complianceCheck: async (
     request: Request,
     env: Env,
@@ -60,4 +77,10 @@ export const handleApiRoutes = {
       return jsonResponse({ error: message }, 500);
     }
   },
+
+  // ── FORGE-0 ───────────────────────────────────────────────
+  forgeStatus: handleForgeStatus,
+  forgeLog: handleForgeLog,
+  forgeMilestone: handleForgeMilestone,
+  forgeSubmitTask: handleForgeSubmitTask,
 };

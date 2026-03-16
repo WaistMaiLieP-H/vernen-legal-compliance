@@ -2,13 +2,18 @@ name = "vernen-legal-compliance"
 main = "src/index.ts"
 compatibility_date = "2026-03-15"
 
-# D1 Database binding — uncomment when account is configured
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "vernen-compliance"
-# database_id = "<your-database-id>"
+# Custom domain route
+routes = [
+  { pattern = "compliance.vernenlegal.com/*", zone_name = "vernenlegal.com" }
+]
 
-# KV Namespace for persona knowledge stores — uncomment when account is configured
-# [[kv_namespaces]]
-# binding = "KNOWLEDGE_STORE"
-# id = "<your-kv-namespace-id>"
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "vernen-legal-compliance"
+database_id = "e120c52d-fac5-432a-93d1-d737046f19ea"
+
+# KV Namespace for Citizen knowledge stores
+[[kv_namespaces]]
+binding = "KNOWLEDGE_STORE"
+id = "b5185e79eb634dff9fab6ae2027d3801"

@@ -38,18 +38,21 @@ export abstract class PersonaCitizenBase {
 
   /**
    * Initialize the Persona Citizen — called once when first deployed.
+   * Accepts an optional environment binding for accessing D1/KV resources.
    */
-  abstract initialize(): Promise<void>;
+  abstract initialize(env?: unknown): Promise<void>;
 
   /**
    * Receive and process an event from the system or other Persona Citizens.
+   * Accepts an optional environment binding for accessing D1/KV resources.
    */
-  abstract receiveEvent(event: string, payload: unknown): Promise<void>;
+  abstract receiveEvent(event: string, payload: unknown, env?: unknown): Promise<void>;
 
   /**
    * Query the Persona Citizen's knowledge store.
+   * Accepts an optional environment binding for accessing D1/KV resources.
    */
-  abstract queryKnowledge(query: string): Promise<unknown>;
+  abstract queryKnowledge(query: string, env?: unknown): Promise<unknown>;
 
   /**
    * Transition to a new lifecycle status.
