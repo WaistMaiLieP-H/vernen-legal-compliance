@@ -107,6 +107,18 @@ import {
   handleNexarisEvaluate,
   handleNexarisReputation,
 } from "./api/nexaris.js";
+import {
+  handleEngineCatalog,
+  handleEngineCatalogStats,
+  handleEngineCatalogById,
+  handleEngineRegisterSpec,
+  handleEngineImportSpecs,
+  handleEngineDeploy,
+  handleEngineUndeploy,
+  handleEngineDeployed,
+  handleEngineDeployedById,
+  handleDynamicCitizenRoute,
+} from "./api/engine.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -335,6 +347,27 @@ export async function handleRequest(
   routes.set("GET /api/sentinel/citizens", handleSentinelRoutes.citizens);
   routes.set("GET /api/sentinel/report/:phase", handleSentinelRoutes.report);
   routes.set("POST /api/sentinel/audit/:taskId", handleSentinelRoutes.auditTask);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CITIZEN DEPLOYMENT ENGINE — the factory that mass-produces Citizens
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Engine catalog management
+  routes.set("GET /api/engine/catalog", handleEngineCatalog);
+  routes.set("GET /api/engine/catalog/stats", handleEngineCatalogStats);
+  routes.set("GET /api/engine/catalog/:id", handleEngineCatalogById);
+  routes.set("POST /api/engine/catalog", handleEngineRegisterSpec);
+  routes.set("POST /api/engine/catalog/import", handleEngineImportSpecs);
+
+  // Engine deployment operations
+  routes.set("POST /api/engine/deploy", handleEngineDeploy);
+  routes.set("POST /api/engine/undeploy", handleEngineUndeploy);
+  routes.set("GET /api/engine/deployed", handleEngineDeployed);
+  routes.set("GET /api/engine/deployed/:id", handleEngineDeployedById);
+
+  // Dynamic Citizen routes — MUST be LAST so they don't override core Citizen routes
+  routes.set("GET /api/citizens/:name/:action", handleDynamicCitizenRoute);
+  routes.set("POST /api/citizens/:name/:action", handleDynamicCitizenRoute);
 
   const match = matchRoute(method, pathname, routes);
 

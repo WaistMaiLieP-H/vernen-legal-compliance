@@ -130,6 +130,20 @@ export {
   handleNexarisReputation,
 } from "./nexaris.js";
 
+// Citizen Deployment Engine
+export {
+  handleEngineCatalog,
+  handleEngineCatalogStats,
+  handleEngineCatalogById,
+  handleEngineRegisterSpec,
+  handleEngineImportSpecs,
+  handleEngineDeploy,
+  handleEngineUndeploy,
+  handleEngineDeployed,
+  handleEngineDeployedById,
+  handleDynamicCitizenRoute,
+} from "./engine.js";
+
 type RouteParams = Record<string, string>;
 
 function jsonResponse(data: unknown, status = 200): Response {
