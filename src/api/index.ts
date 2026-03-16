@@ -44,6 +44,26 @@ export {
   handleAdvocisInquiry,
 } from "./advocis.js";
 
+export {
+  handleFiscaraStatus,
+  handleFiscaraSummary,
+  handleFiscaraRevenueByProduct,
+  handleFiscaraRevenueByState,
+  handleFiscaraDailyRevenue,
+  handleFiscaraTransactions,
+  handleFiscaraRecordTransaction,
+  handleFiscaraCashFlow,
+  handleFiscaraGrowth,
+} from "./fiscara.js";
+
+export {
+  handleLexarcStatus,
+  handleLexarcDocuments,
+  handleLexarcGenerate,
+  handleLexarcGetDocument,
+  handleLexarcProducts,
+} from "./lexarc.js";
+
 type RouteParams = Record<string, string>;
 
 function jsonResponse(data: unknown, status = 200): Response {

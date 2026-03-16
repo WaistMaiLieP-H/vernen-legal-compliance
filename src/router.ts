@@ -32,6 +32,24 @@ import {
   handleAdvocisChurnRisk,
   handleAdvocisInquiry,
 } from "./api/advocis.js";
+import {
+  handleFiscaraStatus,
+  handleFiscaraSummary,
+  handleFiscaraRevenueByProduct,
+  handleFiscaraRevenueByState,
+  handleFiscaraDailyRevenue,
+  handleFiscaraTransactions,
+  handleFiscaraRecordTransaction,
+  handleFiscaraCashFlow,
+  handleFiscaraGrowth,
+} from "./api/fiscara.js";
+import {
+  handleLexarcStatus,
+  handleLexarcDocuments,
+  handleLexarcGenerate,
+  handleLexarcGetDocument,
+  handleLexarcProducts,
+} from "./api/lexarc.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -170,6 +188,24 @@ export async function handleRequest(
   routes.set("GET /api/advocis/stats", handleAdvocisStats);
   routes.set("GET /api/advocis/churn-risk", handleAdvocisChurnRisk);
   routes.set("POST /api/advocis/inquiry", handleAdvocisInquiry);
+
+  // FISCARA Persona Citizen routes — the financial brain (founder-only)
+  routes.set("GET /api/fiscara/status", handleFiscaraStatus);
+  routes.set("GET /api/fiscara/summary", handleFiscaraSummary);
+  routes.set("GET /api/fiscara/revenue/products", handleFiscaraRevenueByProduct);
+  routes.set("GET /api/fiscara/revenue/states", handleFiscaraRevenueByState);
+  routes.set("GET /api/fiscara/revenue/daily", handleFiscaraDailyRevenue);
+  routes.set("GET /api/fiscara/transactions", handleFiscaraTransactions);
+  routes.set("POST /api/fiscara/transaction", handleFiscaraRecordTransaction);
+  routes.set("GET /api/fiscara/cashflow", handleFiscaraCashFlow);
+  routes.set("GET /api/fiscara/growth", handleFiscaraGrowth);
+
+  // LEXARC Persona Citizen routes — corporate strategy & legal architecture
+  routes.set("GET /api/lexarc/status", handleLexarcStatus);
+  routes.set("GET /api/lexarc/documents", handleLexarcDocuments);
+  routes.set("POST /api/lexarc/generate", handleLexarcGenerate);
+  routes.set("GET /api/lexarc/document/:id", handleLexarcGetDocument);
+  routes.set("GET /api/lexarc/products", handleLexarcProducts);
 
   // SENTINEL-0 audit system routes — the independent auditor
   routes.set("GET /api/sentinel/status", handleSentinelRoutes.status);

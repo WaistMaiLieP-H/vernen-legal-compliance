@@ -13,6 +13,11 @@ import {
   verifyWebhook,
 } from "../services/stripe.js";
 import { parseJsonBody } from "../utils/helpers.js";
+import { Fiscara } from "../personas/fiscara/index.js";
+import {
+  TransactionType,
+  TransactionCategory,
+} from "../workers/ledger-1/types.js";
 
 type RouteParams = Record<string, string>;
 
@@ -205,6 +210,42 @@ export async function handlePaymentWebhook(
         );
       } catch (err) {
         console.error("Failed to store payment in KV:", err);
+      }
+
+      // Record the transaction in FISCARA for financial tracking
+      try {
+        const fiscara = new Fiscara();
+        await fiscara.initialize(env);
+
+        // Determine category from product metadata
+        const productId = session.metadata?.product ?? "unknown";
+        let category = TransactionCategory.COMPLIANCE_REPORT;
+        if (productId.includes("subscription") || productId.includes("sub_")) {
+          category = TransactionCategory.SUBSCRIPTION;
+        } else if (productId.includes("doc_")) {
+          category = TransactionCategory.DOCUMENT_GENERATION;
+        }
+
+        await fiscara.recordRevenue(
+          {
+            type: TransactionType.REVENUE,
+            category,
+            amount: session.amount_total ?? 0,
+            description: `Payment for ${productId} — report ${reportId}`,
+            stripePaymentId,
+            productId,
+            state: session.metadata?.state ?? undefined,
+            metadata: {
+              reportId,
+              email: session.customer_email,
+              entityType: session.metadata?.entityType,
+              currency: session.currency,
+            },
+          },
+          env
+        );
+      } catch (err) {
+        console.error("Failed to record transaction in FISCARA:", err);
       }
     }
   }
