@@ -64,6 +64,18 @@ export {
   handleLexarcProducts,
 } from "./lexarc.js";
 
+export { handleIntegraRoutes } from "./integra.js";
+
+export {
+  handlePrivaxisStatus,
+  handlePrivaxisAudit,
+  handlePrivaxisDataflows,
+  handlePrivaxisClassification,
+  handlePrivaxisDSAR,
+  handlePrivaxisSecurity,
+  handlePrivaxisSecurityEvents,
+} from "./privaxis.js";
+
 type RouteParams = Record<string, string>;
 
 function jsonResponse(data: unknown, status = 200): Response {

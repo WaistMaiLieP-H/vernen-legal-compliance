@@ -50,6 +50,16 @@ import {
   handleLexarcGetDocument,
   handleLexarcProducts,
 } from "./api/lexarc.js";
+import { handleIntegraRoutes } from "./api/integra.js";
+import {
+  handlePrivaxisStatus,
+  handlePrivaxisAudit,
+  handlePrivaxisDataflows,
+  handlePrivaxisClassification,
+  handlePrivaxisDSAR,
+  handlePrivaxisSecurity,
+  handlePrivaxisSecurityEvents,
+} from "./api/privaxis.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -206,6 +216,23 @@ export async function handleRequest(
   routes.set("POST /api/lexarc/generate", handleLexarcGenerate);
   routes.set("GET /api/lexarc/document/:id", handleLexarcGetDocument);
   routes.set("GET /api/lexarc/products", handleLexarcProducts);
+
+  // INTEGRA Persona Citizen routes — internal compliance & operational integrity (founder-only)
+  routes.set("GET /api/integra/status", handleIntegraRoutes.status);
+  routes.set("GET /api/integra/audit", handleIntegraRoutes.audit);
+  routes.set("GET /api/integra/audit/database", handleIntegraRoutes.auditDatabase);
+  routes.set("GET /api/integra/audit/citizens", handleIntegraRoutes.auditCitizens);
+  routes.set("GET /api/integra/audit/history", handleIntegraRoutes.auditHistory);
+  routes.set("GET /api/integra/metrics", handleIntegraRoutes.metrics);
+
+  // PRIVAXIS Persona Citizen routes — data protection & privacy (founder-only)
+  routes.set("GET /api/privaxis/status", handlePrivaxisStatus);
+  routes.set("GET /api/privaxis/audit", handlePrivaxisAudit);
+  routes.set("GET /api/privaxis/dataflows", handlePrivaxisDataflows);
+  routes.set("GET /api/privaxis/classification", handlePrivaxisClassification);
+  routes.set("POST /api/privaxis/dsar", handlePrivaxisDSAR);
+  routes.set("GET /api/privaxis/security", handlePrivaxisSecurity);
+  routes.set("GET /api/privaxis/security/events", handlePrivaxisSecurityEvents);
 
   // SENTINEL-0 audit system routes — the independent auditor
   routes.set("GET /api/sentinel/status", handleSentinelRoutes.status);
