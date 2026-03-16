@@ -16,5 +16,5 @@
     "types": ["@cloudflare/workers-types"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "exclude": ["node_modules", "dist", "tests", "src/db/load-forms.ts", "src/db/gen_seed_catalog.py"]
 }

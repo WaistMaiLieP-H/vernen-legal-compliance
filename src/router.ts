@@ -119,6 +119,27 @@ import {
   handleEngineDeployedById,
   handleDynamicCitizenRoute,
 } from "./api/engine.js";
+import {
+  handleLegalStatus,
+  handleLegalPracticeAreas,
+  handleLegalJurisdictions,
+  handleLegalAuthority,
+  handleLegalDeadlines,
+  handleLegalRules,
+  handleLegalMotion,
+  handleLegalConflicts,
+} from "./api/legal.js";
+import {
+  handleAuditDocument,
+  handleGetAudit,
+  handleGetAuditFindings,
+  handleListForms,
+  handleGetFormGuidance,
+  handleValidateFormField,
+  handleListScenarios,
+  handleGetScenario,
+  handleLoadForms,
+} from "./api/audit.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -364,6 +385,39 @@ export async function handleRequest(
   routes.set("POST /api/engine/undeploy", handleEngineUndeploy);
   routes.set("GET /api/engine/deployed", handleEngineDeployed);
   routes.set("GET /api/engine/deployed/:id", handleEngineDeployedById);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LEGAL INTELLIGENCE — ported from MCP Intelligence Platform
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Public endpoints
+  routes.set("GET /api/legal/status", handleLegalStatus);
+  routes.set("GET /api/legal/practice-areas", handleLegalPracticeAreas);
+  routes.set("GET /api/legal/jurisdictions", handleLegalJurisdictions);
+  routes.set("GET /api/legal/authority/:practiceArea", handleLegalAuthority);
+  routes.set("GET /api/legal/rules/:county", handleLegalRules);
+
+  // Authenticated endpoints (premium features)
+  routes.set("POST /api/legal/deadlines", handleLegalDeadlines);
+  routes.set("POST /api/legal/motion", handleLegalMotion);
+  routes.set("POST /api/legal/conflicts", handleLegalConflicts);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // AUDIT ENGINE & GUIDED DOCUMENT NAVIGATOR — the revenue product
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Audit endpoints
+  routes.set("POST /api/audit/document", handleAuditDocument);
+  routes.set("GET /api/audit/:id", handleGetAudit);
+  routes.set("GET /api/audit/:id/findings", handleGetAuditFindings);
+
+  // Forms / GDN endpoints
+  routes.set("GET /api/forms", handleListForms);
+  routes.set("GET /api/forms/scenarios", handleListScenarios);
+  routes.set("GET /api/forms/scenario/:id", handleGetScenario);
+  routes.set("GET /api/forms/:code", handleGetFormGuidance);
+  routes.set("GET /api/forms/:code/validate", handleValidateFormField);
+  routes.set("POST /api/forms/load", handleLoadForms);
 
   // Dynamic Citizen routes — MUST be LAST so they don't override core Citizen routes
   routes.set("GET /api/citizens/:name/:action", handleDynamicCitizenRoute);

@@ -130,6 +130,31 @@ export {
   handleNexarisReputation,
 } from "./nexaris.js";
 
+// Legal Intelligence — ported from MCP Intelligence Platform
+export {
+  handleLegalStatus,
+  handleLegalPracticeAreas,
+  handleLegalJurisdictions,
+  handleLegalAuthority,
+  handleLegalDeadlines,
+  handleLegalRules,
+  handleLegalMotion,
+  handleLegalConflicts,
+} from "./legal.js";
+
+// Audit Engine & Guided Document Navigator
+export {
+  handleAuditDocument,
+  handleGetAudit,
+  handleGetAuditFindings,
+  handleListForms,
+  handleGetFormGuidance,
+  handleValidateFormField,
+  handleListScenarios,
+  handleGetScenario,
+  handleLoadForms,
+} from "./audit.js";
+
 // Citizen Deployment Engine
 export {
   handleEngineCatalog,
