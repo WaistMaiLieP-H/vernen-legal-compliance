@@ -60,6 +60,22 @@ import {
   handlePrivaxisSecurity,
   handlePrivaxisSecurityEvents,
 } from "./api/privaxis.js";
+import {
+  handleVigilusStatus,
+  handleVigilusRisks,
+  handleVigilusHeatmap,
+  handleVigilusAddRisk,
+  handleVigilusThreats,
+  handleVigilusVendor,
+} from "./api/vigilus.js";
+import {
+  handleEthicaraStatus,
+  handleEthicaraCode,
+  handleEthicaraReview,
+  handleEthicaraReviews,
+  handleEthicaraReport,
+  handleEthicaraFairness,
+} from "./api/ethicara.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -233,6 +249,22 @@ export async function handleRequest(
   routes.set("POST /api/privaxis/dsar", handlePrivaxisDSAR);
   routes.set("GET /api/privaxis/security", handlePrivaxisSecurity);
   routes.set("GET /api/privaxis/security/events", handlePrivaxisSecurityEvents);
+
+  // VIGILUS Persona Citizen routes — threat assessment & operational risk (founder-only)
+  routes.set("GET /api/vigilus/status", handleVigilusStatus);
+  routes.set("GET /api/vigilus/risks", handleVigilusRisks);
+  routes.set("GET /api/vigilus/risks/heatmap", handleVigilusHeatmap);
+  routes.set("POST /api/vigilus/risks", handleVigilusAddRisk);
+  routes.set("GET /api/vigilus/threats", handleVigilusThreats);
+  routes.set("GET /api/vigilus/vendor/:name", handleVigilusVendor);
+
+  // ETHICARA Persona Citizen routes — ethical governance & professional standards (founder-only)
+  routes.set("GET /api/ethicara/status", handleEthicaraStatus);
+  routes.set("GET /api/ethicara/code", handleEthicaraCode);
+  routes.set("POST /api/ethicara/review", handleEthicaraReview);
+  routes.set("GET /api/ethicara/reviews", handleEthicaraReviews);
+  routes.set("POST /api/ethicara/report", handleEthicaraReport);
+  routes.set("GET /api/ethicara/fairness", handleEthicaraFairness);
 
   // SENTINEL-0 audit system routes — the independent auditor
   routes.set("GET /api/sentinel/status", handleSentinelRoutes.status);

@@ -76,6 +76,24 @@ export {
   handlePrivaxisSecurityEvents,
 } from "./privaxis.js";
 
+export {
+  handleVigilusStatus,
+  handleVigilusRisks,
+  handleVigilusHeatmap,
+  handleVigilusAddRisk,
+  handleVigilusThreats,
+  handleVigilusVendor,
+} from "./vigilus.js";
+
+export {
+  handleEthicaraStatus,
+  handleEthicaraCode,
+  handleEthicaraReview,
+  handleEthicaraReviews,
+  handleEthicaraReport,
+  handleEthicaraFairness,
+} from "./ethicara.js";
+
 type RouteParams = Record<string, string>;
 
 function jsonResponse(data: unknown, status = 200): Response {
