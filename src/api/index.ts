@@ -18,6 +18,11 @@ export {
   handleRegulisProducts,
   handleRegulisStats,
   handleRegulisStates,
+  handleRegulisMap,
+  handleRegulisMapState,
+  handleRegulisCompare,
+  handleRegulisAlerts,
+  handleRegulisAlertsForState,
 } from "./regulis.js";
 
 export {
@@ -27,6 +32,17 @@ export {
   handlePaymentSuccess,
   handlePaymentCancel,
 } from "./payments.js";
+
+export {
+  handleAdvocisStatus,
+  handleAdvocisOnboard,
+  handleAdvocisGetClient,
+  handleAdvocisOnboarding,
+  handleAdvocisFeedback,
+  handleAdvocisStats,
+  handleAdvocisChurnRisk,
+  handleAdvocisInquiry,
+} from "./advocis.js";
 
 type RouteParams = Record<string, string>;
 

@@ -9,6 +9,11 @@ import {
   handleRegulisProducts,
   handleRegulisStats,
   handleRegulisStates,
+  handleRegulisMap,
+  handleRegulisMapState,
+  handleRegulisCompare,
+  handleRegulisAlerts,
+  handleRegulisAlertsForState,
 } from "./api/regulis.js";
 import {
   handlePaymentCheckout,
@@ -17,6 +22,16 @@ import {
   handlePaymentSuccess,
   handlePaymentCancel,
 } from "./api/payments.js";
+import {
+  handleAdvocisStatus,
+  handleAdvocisOnboard,
+  handleAdvocisGetClient,
+  handleAdvocisOnboarding,
+  handleAdvocisFeedback,
+  handleAdvocisStats,
+  handleAdvocisChurnRisk,
+  handleAdvocisInquiry,
+} from "./api/advocis.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -130,12 +145,31 @@ export async function handleRequest(
   routes.set("GET /api/regulis/stats", handleRegulisStats);
   routes.set("GET /api/regulis/states", handleRegulisStates);
 
+  // REGULIS Phase 2 — MAP-1 jurisdictional intelligence
+  routes.set("GET /api/regulis/map", handleRegulisMap);
+  routes.set("GET /api/regulis/map/:state", handleRegulisMapState);
+  routes.set("GET /api/regulis/compare", handleRegulisCompare);
+
+  // REGULIS Phase 2 — ALERT-1 compliance alerts
+  routes.set("GET /api/regulis/alerts", handleRegulisAlerts);
+  routes.set("GET /api/regulis/alerts/:state", handleRegulisAlertsForState);
+
   // Payment routes — Stripe integration
   routes.set("POST /api/payments/checkout", handlePaymentCheckout);
   routes.set("POST /api/payments/webhook", handlePaymentWebhook);
   routes.set("GET /api/payments/verify/:sessionId", handlePaymentVerify);
   routes.set("GET /payment/success", handlePaymentSuccess);
   routes.set("GET /payment/cancel", handlePaymentCancel);
+
+  // ADVOCIS Persona Citizen routes — the retention engine
+  routes.set("GET /api/advocis/status", handleAdvocisStatus);
+  routes.set("POST /api/advocis/onboard", handleAdvocisOnboard);
+  routes.set("GET /api/advocis/client/:id", handleAdvocisGetClient);
+  routes.set("GET /api/advocis/client/:id/onboarding", handleAdvocisOnboarding);
+  routes.set("POST /api/advocis/client/:id/feedback", handleAdvocisFeedback);
+  routes.set("GET /api/advocis/stats", handleAdvocisStats);
+  routes.set("GET /api/advocis/churn-risk", handleAdvocisChurnRisk);
+  routes.set("POST /api/advocis/inquiry", handleAdvocisInquiry);
 
   // SENTINEL-0 audit system routes — the independent auditor
   routes.set("GET /api/sentinel/status", handleSentinelRoutes.status);

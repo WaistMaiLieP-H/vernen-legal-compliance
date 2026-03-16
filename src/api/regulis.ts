@@ -4,6 +4,8 @@ import { Regulis } from "../personas/regulis/index.js";
 import { PRODUCTS, getProductForRequest } from "../personas/regulis/products.js";
 import { ReportGenerator } from "../services/report-generator.js";
 import { parseJsonBody } from "../utils/helpers.js";
+import { Map1Worker } from "../workers/map-1/index.js";
+import { Alert1Worker } from "../workers/alert-1/index.js";
 
 const FREE_PREVIEW_LIMIT = 5;
 
@@ -386,4 +388,223 @@ export async function handleRegulisStates(
     states: stateCounts,
     stateCount: stateCounts.length,
   });
+}
+
+// =============================================================================
+// Phase 2: MAP-1 Endpoints — Jurisdictional Intelligence
+// =============================================================================
+
+/**
+ * GET /api/regulis/map
+ * Full 50-state compliance map with rule counts per state and category.
+ */
+export async function handleRegulisMap(
+  _request: Request,
+  env: Env,
+  _ctx: ExecutionContext,
+  _params: RouteParams
+): Promise<Response> {
+  const mapper = new Map1Worker();
+
+  try {
+    const complianceMap = await mapper.getComplianceMap(env);
+    return jsonResponse({
+      citizen: "REGULIS",
+      worker: "MAP-1",
+      map: complianceMap,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to generate compliance map";
+    return jsonResponse({ error: message }, 500);
+  }
+}
+
+/**
+ * GET /api/regulis/map/:state
+ * Jurisdiction profile for a single state.
+ */
+export async function handleRegulisMapState(
+  _request: Request,
+  env: Env,
+  _ctx: ExecutionContext,
+  params: RouteParams
+): Promise<Response> {
+  const stateParam = params["state"];
+  if (!stateParam) {
+    return jsonResponse({ error: "State parameter is required" }, 400);
+  }
+
+  const stateUpper = stateParam.toUpperCase();
+  if (!isValidState(stateUpper)) {
+    return jsonResponse(
+      {
+        error: `Invalid state: '${stateParam}'. Must be a valid two-letter US state code.`,
+        validStates: Object.values(USState),
+      },
+      400
+    );
+  }
+
+  const mapper = new Map1Worker();
+
+  try {
+    const profile = await mapper.mapJurisdiction(stateUpper as USState, env);
+    return jsonResponse({
+      citizen: "REGULIS",
+      worker: "MAP-1",
+      jurisdiction: profile,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to map jurisdiction";
+    return jsonResponse({ error: message }, 500);
+  }
+}
+
+/**
+ * GET /api/regulis/compare?state1=CA&state2=TX&entityType=LLC
+ * Compare compliance requirements between two states for a given entity type.
+ */
+export async function handleRegulisCompare(
+  request: Request,
+  env: Env,
+  _ctx: ExecutionContext,
+  _params: RouteParams
+): Promise<Response> {
+  const url = new URL(request.url);
+  const state1Param = url.searchParams.get("state1");
+  const state2Param = url.searchParams.get("state2");
+  const entityTypeParam = url.searchParams.get("entityType");
+
+  if (!state1Param || !state2Param || !entityTypeParam) {
+    return jsonResponse(
+      {
+        error:
+          "Query parameters 'state1', 'state2', and 'entityType' are all required.",
+        example: "/api/regulis/compare?state1=CA&state2=TX&entityType=LLC",
+      },
+      400
+    );
+  }
+
+  const s1 = state1Param.toUpperCase();
+  const s2 = state2Param.toUpperCase();
+
+  if (!isValidState(s1)) {
+    return jsonResponse(
+      { error: `Invalid state1: '${state1Param}'.`, validStates: Object.values(USState) },
+      400
+    );
+  }
+  if (!isValidState(s2)) {
+    return jsonResponse(
+      { error: `Invalid state2: '${state2Param}'.`, validStates: Object.values(USState) },
+      400
+    );
+  }
+  if (!isValidEntityType(entityTypeParam)) {
+    return jsonResponse(
+      {
+        error: `Invalid entityType: '${entityTypeParam}'.`,
+        validTypes: Object.values(BusinessEntityType),
+      },
+      400
+    );
+  }
+
+  const mapper = new Map1Worker();
+
+  try {
+    const comparison = await mapper.compareStates(
+      s1 as USState,
+      s2 as USState,
+      entityTypeParam as BusinessEntityType,
+      env
+    );
+    return jsonResponse({
+      citizen: "REGULIS",
+      worker: "MAP-1",
+      comparison,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to compare states";
+    return jsonResponse({ error: message }, 500);
+  }
+}
+
+// =============================================================================
+// Phase 2: ALERT-1 Endpoints — Compliance Alert Engine
+// =============================================================================
+
+/**
+ * GET /api/regulis/alerts
+ * Return all active compliance alerts sorted by urgency.
+ */
+export async function handleRegulisAlerts(
+  _request: Request,
+  env: Env,
+  _ctx: ExecutionContext,
+  _params: RouteParams
+): Promise<Response> {
+  const alertEngine = new Alert1Worker();
+
+  try {
+    const alerts = await alertEngine.getActiveAlerts(env);
+    return jsonResponse({
+      citizen: "REGULIS",
+      worker: "ALERT-1",
+      totalActive: alerts.length,
+      alerts,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to retrieve alerts";
+    return jsonResponse({ error: message }, 500);
+  }
+}
+
+/**
+ * GET /api/regulis/alerts/:state
+ * Return active alerts for a specific state.
+ */
+export async function handleRegulisAlertsForState(
+  _request: Request,
+  env: Env,
+  _ctx: ExecutionContext,
+  params: RouteParams
+): Promise<Response> {
+  const stateParam = params["state"];
+  if (!stateParam) {
+    return jsonResponse({ error: "State parameter is required" }, 400);
+  }
+
+  const stateUpper = stateParam.toUpperCase();
+  if (!isValidState(stateUpper)) {
+    return jsonResponse(
+      {
+        error: `Invalid state: '${stateParam}'. Must be a valid two-letter US state code.`,
+        validStates: Object.values(USState),
+      },
+      400
+    );
+  }
+
+  const alertEngine = new Alert1Worker();
+
+  try {
+    const alerts = await alertEngine.getAlertsForState(stateUpper, env);
+    return jsonResponse({
+      citizen: "REGULIS",
+      worker: "ALERT-1",
+      state: stateUpper,
+      totalActive: alerts.length,
+      alerts,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to retrieve alerts";
+    return jsonResponse({ error: message }, 500);
+  }
 }
