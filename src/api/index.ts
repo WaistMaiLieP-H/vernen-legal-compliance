@@ -94,6 +94,42 @@ export {
   handleEthicaraFairness,
 } from "./ethicara.js";
 
+export {
+  handleSyntaraStatus,
+  handleSyntaraHealth,
+  handleSyntaraAutomation,
+  handleSyntaraQuality,
+  handleSyntaraDeployments,
+} from "./syntara.js";
+
+export {
+  handleVestaraStatus,
+  handleVestaraReadiness,
+  handleVestaraMetrics,
+  handleVestaraNarrative,
+} from "./vestara.js";
+
+export {
+  handleMetriqaStatus,
+  handleMetriqaDashboard,
+  handleMetriqaGrowth,
+  handleMetriqaEconomics,
+} from "./metriqa.js";
+
+export {
+  handleClaridexStatus,
+  handleClaridexFinancials,
+  handleClaridexDisclosure,
+  handleClaridexAuditReadiness,
+} from "./claridex.js";
+
+export {
+  handleNexarisStatus,
+  handleNexarisPartnerships,
+  handleNexarisEvaluate,
+  handleNexarisReputation,
+} from "./nexaris.js";
+
 type RouteParams = Record<string, string>;
 
 function jsonResponse(data: unknown, status = 200): Response {

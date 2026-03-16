@@ -76,6 +76,37 @@ import {
   handleEthicaraReport,
   handleEthicaraFairness,
 } from "./api/ethicara.js";
+import {
+  handleSyntaraStatus,
+  handleSyntaraHealth,
+  handleSyntaraAutomation,
+  handleSyntaraQuality,
+  handleSyntaraDeployments,
+} from "./api/syntara.js";
+import {
+  handleVestaraStatus,
+  handleVestaraReadiness,
+  handleVestaraMetrics,
+  handleVestaraNarrative,
+} from "./api/vestara.js";
+import {
+  handleMetriqaStatus,
+  handleMetriqaDashboard,
+  handleMetriqaGrowth,
+  handleMetriqaEconomics,
+} from "./api/metriqa.js";
+import {
+  handleClaridexStatus,
+  handleClaridexFinancials,
+  handleClaridexDisclosure,
+  handleClaridexAuditReadiness,
+} from "./api/claridex.js";
+import {
+  handleNexarisStatus,
+  handleNexarisPartnerships,
+  handleNexarisEvaluate,
+  handleNexarisReputation,
+} from "./api/nexaris.js";
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -265,6 +296,37 @@ export async function handleRequest(
   routes.set("GET /api/ethicara/reviews", handleEthicaraReviews);
   routes.set("POST /api/ethicara/report", handleEthicaraReport);
   routes.set("GET /api/ethicara/fairness", handleEthicaraFairness);
+
+  // SYNTARA Persona Citizen routes — legal technology & compliance automation (founder-only)
+  routes.set("GET /api/syntara/status", handleSyntaraStatus);
+  routes.set("GET /api/syntara/health", handleSyntaraHealth);
+  routes.set("GET /api/syntara/automation", handleSyntaraAutomation);
+  routes.set("GET /api/syntara/quality", handleSyntaraQuality);
+  routes.set("GET /api/syntara/deployments", handleSyntaraDeployments);
+
+  // VESTARA Persona Citizen routes — stakeholder communication & capital strategy (founder-only)
+  routes.set("GET /api/vestara/status", handleVestaraStatus);
+  routes.set("GET /api/vestara/readiness", handleVestaraReadiness);
+  routes.set("GET /api/vestara/metrics", handleVestaraMetrics);
+  routes.set("GET /api/vestara/narrative", handleVestaraNarrative);
+
+  // METRIQA Persona Citizen routes — performance analytics & growth validation (founder-only)
+  routes.set("GET /api/metriqa/status", handleMetriqaStatus);
+  routes.set("GET /api/metriqa/dashboard", handleMetriqaDashboard);
+  routes.set("GET /api/metriqa/growth", handleMetriqaGrowth);
+  routes.set("GET /api/metriqa/economics", handleMetriqaEconomics);
+
+  // CLARIDEX Persona Citizen routes — financial disclosure & reporting standards (founder-only)
+  routes.set("GET /api/claridex/status", handleClaridexStatus);
+  routes.set("GET /api/claridex/financials", handleClaridexFinancials);
+  routes.set("GET /api/claridex/disclosure", handleClaridexDisclosure);
+  routes.set("GET /api/claridex/audit-readiness", handleClaridexAuditReadiness);
+
+  // NEXARIS Persona Citizen routes — strategic partnerships & reputation (founder-only)
+  routes.set("GET /api/nexaris/status", handleNexarisStatus);
+  routes.set("GET /api/nexaris/partnerships", handleNexarisPartnerships);
+  routes.set("POST /api/nexaris/evaluate", handleNexarisEvaluate);
+  routes.set("GET /api/nexaris/reputation", handleNexarisReputation);
 
   // SENTINEL-0 audit system routes — the independent auditor
   routes.set("GET /api/sentinel/status", handleSentinelRoutes.status);
