@@ -18,6 +18,8 @@ import {
   TransactionType,
   TransactionCategory,
 } from "../workers/ledger-1/types.js";
+import { Regulis } from "../personas/regulis/index.js";
+import { ReportGenerator } from "../services/report-generator.js";
 
 type RouteParams = Record<string, string>;
 
@@ -296,12 +298,30 @@ export async function handlePaymentVerify(
 
 export async function handlePaymentSuccess(
   request: Request,
-  _env: Env,
+  env: Env,
   _ctx: ExecutionContext,
   _params: RouteParams
 ): Promise<Response> {
   const url = new URL(request.url);
   const sessionId = url.searchParams.get("session_id") ?? "";
+
+  // Try to look up the session, find the report, and redirect to it
+  let reportId = "";
+  if (sessionId && env.STRIPE_SECRET_KEY) {
+    try {
+      const session = await getSession(env.STRIPE_SECRET_KEY, sessionId);
+      if (session.metadata?.reportId) {
+        reportId = session.metadata.reportId;
+      }
+    } catch {
+      // Session lookup failed — show generic success
+    }
+  }
+
+  const reportLink = reportId
+    ? `/report/${encodeURIComponent(reportId)}`
+    : "/";
+  const reportLabel = reportId ? "View Full Report" : "Return Home";
 
   return htmlResponse(`<!DOCTYPE html>
 <html lang="en">
@@ -344,15 +364,16 @@ export async function handlePaymentSuccess(
     p { font-size: 16px; line-height: 1.6; color: #8899b0; margin-bottom: 24px; }
     a.btn {
       display: inline-block;
-      background: #3b82f6;
-      color: white;
+      background: #c8a951;
+      color: #1a2744;
       text-decoration: none;
-      padding: 12px 32px;
+      padding: 14px 36px;
       border-radius: 8px;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 1.1rem;
       transition: background 0.2s;
     }
-    a.btn:hover { background: #2563eb; }
+    a.btn:hover { background: #d4bc74; }
     .brand { margin-top: 32px; font-size: 13px; color: #4a5568; }
   </style>
 </head>
@@ -360,12 +381,58 @@ export async function handlePaymentSuccess(
   <div class="card">
     <div class="check">&#10003;</div>
     <h1>Payment Successful!</h1>
-    <p>Your full compliance report is ready. All findings, remediation guidance, and your downloadable report are now unlocked.</p>
-    ${sessionId ? `<a class="btn" href="/api/payments/verify/${encodeURIComponent(sessionId)}">View Report Status</a>` : `<a class="btn" href="/">Return Home</a>`}
+    <p>Your full compliance report is ready. All findings, remediation guidance, and action items are now unlocked.</p>
+    <a class="btn" href="${reportLink}">${reportLabel}</a>
     <div class="brand">Vernen Legal Compliance&trade; &mdash; Powered by REGULIS&trade;</div>
   </div>
 </body>
 </html>`);
+}
+
+// =============================================================================
+// GET /report/:id — Full HTML report for paid reports
+// =============================================================================
+
+export async function handleViewReport(
+  _request: Request,
+  env: Env,
+  _ctx: ExecutionContext,
+  params: RouteParams
+): Promise<Response> {
+  const reportId = params["id"];
+  if (!reportId) {
+    return htmlResponse("<h1>Report ID required</h1>", 400);
+  }
+
+  const regulis = new Regulis();
+  await regulis.initialize(env);
+
+  const report = await regulis.getReportById(reportId, env);
+  if (!report) {
+    return htmlResponse(`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Report Not Found</title>
+<style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f8f9fa;color:#1a2744;}
+.card{text-align:center;padding:3rem;}h1{margin-bottom:1rem;}a{color:#c8a951;}</style></head>
+<body><div class="card"><h1>Report Not Found</h1><p>This report may have expired or the ID is invalid.</p><a href="/">Run a new compliance check</a></div></body></html>`, 404);
+  }
+
+  const paid = await regulis.isReportPaid(reportId, env);
+  if (!paid) {
+    return htmlResponse(`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Report Locked</title>
+<style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f8f9fa;color:#1a2744;}
+.card{text-align:center;padding:3rem;max-width:500px;}h1{margin-bottom:1rem;}p{color:#666;margin-bottom:1.5rem;}
+a.btn{display:inline-block;background:#c8a951;color:#1a2744;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;}
+a.btn:hover{background:#d4bc74;}</style></head>
+<body><div class="card"><h1>Report Locked</h1>
+<p>This report requires payment to view the full findings. Purchase a report to unlock all compliance details and remediation guidance.</p>
+<a class="btn" href="/#check">Run a Compliance Check</a></div></body></html>`, 402);
+  }
+
+  // Paid — render the full HTML report
+  const generator = new ReportGenerator();
+  const html = generator.formatAsHTML(report);
+  return htmlResponse(html);
 }
 
 // =============================================================================

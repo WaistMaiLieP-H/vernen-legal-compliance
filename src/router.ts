@@ -24,6 +24,7 @@ import {
   handlePaymentVerify,
   handlePaymentSuccess,
   handlePaymentCancel,
+  handleViewReport,
 } from "./api/payments.js";
 import {
   handleAdvocisStatus,
@@ -295,6 +296,7 @@ export async function handleRequest(
   routes.set("GET /api/payments/verify/:sessionId", handlePaymentVerify);
   routes.set("GET /payment/success", handlePaymentSuccess);
   routes.set("GET /payment/cancel", handlePaymentCancel);
+  routes.set("GET /report/:id", handleViewReport);
 
   // ADVOCIS Persona Citizen routes — the retention engine
   routes.set("GET /api/advocis/status", handleAdvocisStatus);
