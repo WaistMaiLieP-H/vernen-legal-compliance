@@ -235,6 +235,25 @@ export async function handleRequest(
   routes.set("GET /", async () => serveLandingPage());
   routes.set("GET /dashboard", async () => serveDashboard());
 
+  // SEO
+  routes.set("GET /robots.txt", async () =>
+    new Response(
+      `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /dashboard\nSitemap: https://compliance.vernenlegal.com/sitemap.xml`,
+      { headers: { "Content-Type": "text/plain", "Cache-Control": "public, max-age=86400" } }
+    )
+  );
+  routes.set("GET /sitemap.xml", async () =>
+    new Response(
+      `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://compliance.vernenlegal.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://compliance.vernenlegal.com/legal/terms</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://compliance.vernenlegal.com/legal/privacy</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+</urlset>`,
+      { headers: { "Content-Type": "application/xml", "Cache-Control": "public, max-age=86400" } }
+    )
+  );
+
   // Legal pages
   routes.set("GET /legal/terms", async () => serveTermsOfService());
   routes.set("GET /legal/privacy", async () => servePrivacyPolicy());

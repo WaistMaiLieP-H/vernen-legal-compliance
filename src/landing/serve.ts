@@ -25,8 +25,48 @@ const LANDING_HTML = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Instant federal and state compliance scanning for LLCs, corporations, sole proprietors, partnerships, and nonprofits. 336 rules across all 50 states.">
-  <title>Vernen Legal Compliance - Business Compliance Scanning</title>
+  <meta name="description" content="Instant business compliance scanning across all 50 states. Check federal and state requirements for LLCs, corporations, sole proprietors, partnerships, and nonprofits. 336 rules. Free preview.">
+  <meta name="keywords" content="business compliance, state compliance check, LLC compliance, corporation compliance, regulatory compliance, 50 state compliance, federal compliance, business license, compliance audit, compliance scanning">
+  <link rel="canonical" href="https://compliance.vernenlegal.com/">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://compliance.vernenlegal.com/">
+  <meta property="og:title" content="Business Compliance Scanning — All 50 States | Vernen Legal Compliance">
+  <meta property="og:description" content="Instant federal and state compliance scanning for LLCs, corporations, sole proprietors, partnerships, and nonprofits. 336 rules. Free preview available.">
+  <meta property="og:site_name" content="Vernen Legal Compliance">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Business Compliance Scanning — All 50 States">
+  <meta name="twitter:description" content="Instant compliance scanning for any business entity type across all 50 states + DC. Free preview.">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Vernen Legal Compliance",
+    "url": "https://compliance.vernenlegal.com",
+    "description": "Instant business compliance scanning across all 50 states for LLCs, corporations, sole proprietors, partnerships, and nonprofits.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": [
+      { "@type": "Offer", "name": "Free Preview", "price": "0", "priceCurrency": "USD" },
+      { "@type": "Offer", "name": "Single State Report", "price": "29", "priceCurrency": "USD" },
+      { "@type": "Offer", "name": "Multi-State Package", "price": "149", "priceCurrency": "USD" },
+      { "@type": "Offer", "name": "Full 50-State Scan", "price": "499", "priceCurrency": "USD" }
+    ],
+    "provider": {
+      "@type": "Organization",
+      "name": "Vernen Legal Compliance",
+      "url": "https://compliance.vernenlegal.com"
+    }
+  }
+  </script>
+
+  <title>Business Compliance Scanning — All 50 States | Vernen Legal Compliance</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
