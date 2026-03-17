@@ -234,7 +234,26 @@ export async function handleRequest(
   >();
 
   routes.set("GET /", async () => serveLandingPage());
-  routes.set("GET /dashboard", async () => serveDashboard());
+  routes.set("GET /dashboard", async (request, env) => {
+    // Dashboard requires API key — check query param or Authorization header
+    const url = new URL(request.url);
+    const queryToken = url.searchParams.get("key");
+    const authHeader = request.headers.get("Authorization");
+    const headerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+    const token = queryToken || headerToken;
+
+    if (!env.API_KEY || !token || token !== env.API_KEY) {
+      return new Response(
+        `<!DOCTYPE html><html><head><title>Access Denied</title>
+        <style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0e17;color:#e0e6f0;}
+        .card{text-align:center;padding:3rem;}h1{margin-bottom:1rem;color:#ef4444;}a{color:#c8a951;}</style></head>
+        <body><div class="card"><h1>Access Denied</h1><p>Founder Dashboard requires authentication.</p><a href="/">Return Home</a></div></body></html>`,
+        { status: 403, headers: { "Content-Type": "text/html; charset=utf-8" } }
+      );
+    }
+
+    return serveDashboard();
+  });
 
   // SEO
   routes.set("GET /robots.txt", async () =>

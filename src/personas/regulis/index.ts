@@ -39,13 +39,17 @@ interface PersonaRow {
 interface ReportRow {
   id: string;
   client_id: string;
-  state: string;
   entity_type: string;
-  results_json: string;
-  score: number;
-  generated_at: string;
+  states: string;
+  summary: string | null;
+  total_rules: number;
+  compliant_count: number;
+  non_compliant_count: number;
+  needs_review_count: number;
   generated_by: string;
-  paid: number;
+  is_paid: number;
+  stripe_payment_id: string | null;
+  created_at: string;
 }
 
 /**
@@ -281,27 +285,77 @@ export class Regulis extends PersonaCitizenBase {
 
     const score = this.reportGenerator.calculateScore(checkResults);
 
+    // Count results by status
+    const compliantCount = checkResults.filter(
+      (r) => r.status === ComplianceStatus.COMPLIANT
+    ).length;
+    const nonCompliantCount = checkResults.filter(
+      (r) => r.status === ComplianceStatus.NON_COMPLIANT
+    ).length;
+    const needsReviewCount = checkResults.filter(
+      (r) => r.status === ComplianceStatus.NEEDS_REVIEW
+    ).length;
+
     // 4. Persist report to D1
     try {
+      // Ensure the client record exists (FK constraint)
+      await env.DB.prepare(
+        `INSERT OR IGNORE INTO clients (id, name, email, entity_type, industry, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6)`
+      )
+        .bind(
+          client.id,
+          client.name,
+          `${client.id}@anonymous.vernen`,
+          entityType,
+          client.industry,
+          report.generatedAt
+        )
+        .run();
+
       await env.DB.prepare(
         `INSERT INTO ${REPORTS_TABLE}
-         (id, client_id, state, entity_type, results_json, score, generated_at, generated_by, paid)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)`
+         (id, client_id, entity_type, states, summary, total_rules,
+          compliant_count, non_compliant_count, needs_review_count,
+          generated_by, is_paid, created_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, 0, ?11)`
       )
         .bind(
           report.id,
           client.id,
-          state,
           entityType,
-          JSON.stringify(checkResults),
-          score,
-          report.generatedAt,
+          JSON.stringify([state]),
+          `Compliance check for ${entityType} in ${state}`,
+          checkResults.length,
+          compliantCount,
+          nonCompliantCount,
+          needsReviewCount,
           this.name,
-          0
+          report.generatedAt
         )
         .run();
-    } catch {
-      // If table doesn't exist yet, store in KV as fallback
+
+      // Persist individual results to compliance_results table
+      for (const result of checkResults) {
+        await env.DB.prepare(
+          `INSERT INTO compliance_results
+           (id, report_id, rule_id, status, details, remediation, checked_at)
+           VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`
+        )
+          .bind(
+            generateId("cr"),
+            report.id,
+            result.ruleId,
+            result.status,
+            result.details ?? null,
+            result.remediation ?? null,
+            report.generatedAt
+          )
+          .run();
+      }
+    } catch (err) {
+      console.error("Failed to persist report to D1:", err);
+      // Store in KV as fallback
       await env.KNOWLEDGE_STORE.put(
         `${KV_PREFIX}report:${report.id}`,
         JSON.stringify(report)
@@ -410,11 +464,12 @@ export class Regulis extends PersonaCitizenBase {
   ): Promise<ComplianceReport[]> {
     try {
       const result = await env.DB.prepare(
-        `SELECT id, client_id, state, entity_type, results_json, score,
-                generated_at, generated_by, paid
+        `SELECT id, client_id, entity_type, states, summary,
+                total_rules, compliant_count, non_compliant_count,
+                needs_review_count, generated_by, is_paid, created_at
          FROM ${REPORTS_TABLE}
          WHERE generated_by = ?1
-         ORDER BY generated_at DESC
+         ORDER BY created_at DESC
          LIMIT ?2`
       )
         .bind("REGULIS", limit)
@@ -424,17 +479,43 @@ export class Regulis extends PersonaCitizenBase {
         return [];
       }
 
-      return result.results.map((row) => ({
-        id: row.id,
-        clientId: row.client_id,
-        states: [row.state] as USState[],
-        entityType: row.entity_type as BusinessEntityType,
-        results: JSON.parse(row.results_json) as ComplianceCheckResult[],
-        generatedAt: row.generated_at,
-        generatedBy: row.generated_by,
-      }));
+      const reports: ComplianceReport[] = [];
+      for (const row of result.results) {
+        // Load individual results from compliance_results table
+        const resultsData = await env.DB.prepare(
+          `SELECT rule_id, status, details, remediation, checked_at
+           FROM compliance_results WHERE report_id = ?1`
+        )
+          .bind(row.id)
+          .all<{
+            rule_id: string;
+            status: string;
+            details: string | null;
+            remediation: string | null;
+            checked_at: string;
+          }>();
+
+        const checkResults: ComplianceCheckResult[] =
+          resultsData.results?.map((r) => ({
+            ruleId: r.rule_id,
+            status: r.status as ComplianceStatus,
+            details: r.details ?? "",
+            remediation: r.remediation ?? "",
+          })) ?? [];
+
+        reports.push({
+          id: row.id,
+          clientId: row.client_id,
+          states: JSON.parse(row.states) as USState[],
+          entityType: row.entity_type as BusinessEntityType,
+          results: checkResults,
+          generatedAt: row.created_at,
+          generatedBy: row.generated_by,
+        });
+      }
+
+      return reports;
     } catch {
-      // If the table doesn't exist, return empty
       return [];
     }
   }
@@ -449,8 +530,9 @@ export class Regulis extends PersonaCitizenBase {
     // Try D1
     try {
       const row = await env.DB.prepare(
-        `SELECT id, client_id, state, entity_type, results_json, score,
-                generated_at, generated_by, paid
+        `SELECT id, client_id, entity_type, states, summary,
+                total_rules, compliant_count, non_compliant_count,
+                needs_review_count, generated_by, is_paid, created_at
          FROM ${REPORTS_TABLE}
          WHERE id = ?1
          LIMIT 1`
@@ -459,18 +541,40 @@ export class Regulis extends PersonaCitizenBase {
         .first<ReportRow>();
 
       if (row) {
+        // Load individual results from compliance_results table
+        const resultsData = await env.DB.prepare(
+          `SELECT rule_id, status, details, remediation, checked_at
+           FROM compliance_results WHERE report_id = ?1`
+        )
+          .bind(row.id)
+          .all<{
+            rule_id: string;
+            status: string;
+            details: string | null;
+            remediation: string | null;
+            checked_at: string;
+          }>();
+
+        const checkResults: ComplianceCheckResult[] =
+          resultsData.results?.map((r) => ({
+            ruleId: r.rule_id,
+            status: r.status as ComplianceStatus,
+            details: r.details ?? "",
+            remediation: r.remediation ?? "",
+          })) ?? [];
+
         return {
           id: row.id,
           clientId: row.client_id,
-          states: [row.state] as USState[],
+          states: JSON.parse(row.states) as USState[],
           entityType: row.entity_type as BusinessEntityType,
-          results: JSON.parse(row.results_json) as ComplianceCheckResult[],
-          generatedAt: row.generated_at,
+          results: checkResults,
+          generatedAt: row.created_at,
           generatedBy: row.generated_by,
         };
       }
-    } catch {
-      // Table may not exist, fall through to KV
+    } catch (err) {
+      console.error("Failed to load report from D1:", err);
     }
 
     // Fall back to KV
@@ -485,17 +589,28 @@ export class Regulis extends PersonaCitizenBase {
    * Check whether a report has been paid for.
    */
   async isReportPaid(reportId: string, env: Env): Promise<boolean> {
+    // Check D1
     try {
       const row = await env.DB.prepare(
-        `SELECT paid FROM ${REPORTS_TABLE} WHERE id = ?1 LIMIT 1`
+        `SELECT is_paid FROM ${REPORTS_TABLE} WHERE id = ?1 LIMIT 1`
       )
         .bind(reportId)
-        .first<{ paid: number }>();
+        .first<{ is_paid: number }>();
 
-      return row?.paid === 1;
-    } catch {
-      return false;
+      if (row) return row.is_paid === 1;
+    } catch (err) {
+      console.error("Failed to check payment status in D1:", err);
     }
+
+    // Fallback: check KV payment record
+    try {
+      const kvPayment = await env.KNOWLEDGE_STORE.get(`payment:${reportId}`);
+      if (kvPayment) return true;
+    } catch {
+      // KV lookup failed
+    }
+
+    return false;
   }
 
   /**
