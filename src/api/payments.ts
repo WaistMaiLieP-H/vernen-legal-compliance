@@ -13,6 +13,7 @@ import {
   verifyWebhook,
 } from "../services/stripe.js";
 import { parseJsonBody } from "../utils/helpers.js";
+import { EventBus } from "../services/event-bus.js";
 import { Fiscara } from "../personas/fiscara/index.js";
 import {
   TransactionType,
@@ -248,6 +249,23 @@ export async function handlePaymentWebhook(
         );
       } catch (err) {
         console.error("Failed to record transaction in FISCARA:", err);
+      }
+
+      // Publish payment event to all interested Citizens
+      try {
+        await EventBus.publish("SYSTEM", "payment_received", {
+          reportId,
+          sessionId: stripePaymentId,
+          product: session.metadata?.product ?? "unknown",
+          amount: session.amount_total,
+          currency: session.currency,
+          email: session.customer_email,
+          state: session.metadata?.state,
+          entityType: session.metadata?.entityType,
+          paidAt: new Date().toISOString(),
+        }, env);
+      } catch (err) {
+        console.error("Failed to publish payment event:", err);
       }
     }
   }

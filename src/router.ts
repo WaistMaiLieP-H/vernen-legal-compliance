@@ -5,6 +5,8 @@ import { serveLandingPage } from "./landing/serve.js";
 import { serveDashboard } from "./landing/dashboard.js";
 import { serveTermsOfService } from "./legal/terms.js";
 import { servePrivacyPolicy } from "./legal/privacy.js";
+import { EventBus } from "./services/event-bus.js";
+import { authenticate } from "./api/middleware/auth.js";
 import {
   handleRegulisStatus,
   handleRegulisCheck,
@@ -428,6 +430,69 @@ export async function handleRequest(
   routes.set("GET /api/sentinel/citizens", handleSentinelRoutes.citizens);
   routes.set("GET /api/sentinel/report/:phase", handleSentinelRoutes.report);
   routes.set("POST /api/sentinel/audit/:taskId", handleSentinelRoutes.auditTask);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EVENTBUS — Inter-Citizen Communication Layer
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Publish an event (authenticated)
+  routes.set("POST /api/events/publish", async (request, env) => {
+    const authErr = authenticate(request, env);
+    if (authErr) return authErr;
+
+    const body = await request.json() as {
+      source: string;
+      eventType: string;
+      payload: unknown;
+      target?: string;
+    };
+
+    if (!body.source || !body.eventType) {
+      return jsonResponse({ error: "source and eventType are required" }, 400);
+    }
+
+    const result = await EventBus.publish(
+      body.source, body.eventType, body.payload ?? {}, env, body.target
+    );
+    return jsonResponse(result);
+  });
+
+  // Get recent events (authenticated)
+  routes.set("GET /api/events", async (request, env) => {
+    const authErr = authenticate(request, env);
+    if (authErr) return authErr;
+
+    const url = new URL(request.url);
+    const events = await EventBus.getRecentEvents(env, {
+      source: url.searchParams.get("source") ?? undefined,
+      target: url.searchParams.get("target") ?? undefined,
+      eventType: url.searchParams.get("type") ?? undefined,
+      limit: parseInt(url.searchParams.get("limit") ?? "50"),
+    });
+    return jsonResponse({ events, count: events.length });
+  });
+
+  // Get event stats (authenticated)
+  routes.set("GET /api/events/stats", async (request, env) => {
+    const authErr = authenticate(request, env);
+    if (authErr) return authErr;
+
+    const stats = await EventBus.getEventStats(env);
+    return jsonResponse({ stats });
+  });
+
+  // Get subscription map
+  routes.set("GET /api/events/subscriptions", async () => {
+    const subs = EventBus.getSubscriptions();
+    return jsonResponse({ subscriptions: subs });
+  });
+
+  // Get subscriptions for a specific Citizen
+  routes.set("GET /api/events/subscriptions/:citizen", async (_req, _env, _ctx, params) => {
+    const citizen = params["citizen"]?.toUpperCase() ?? "";
+    const events = EventBus.getSubscriptionsForCitizen(citizen);
+    return jsonResponse({ citizen, subscribedTo: events });
+  });
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CITIZEN DEPLOYMENT ENGINE — the factory that mass-produces Citizens

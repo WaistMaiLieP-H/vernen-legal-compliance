@@ -3,6 +3,7 @@ import { USState, BusinessEntityType } from "../types/client.js";
 import { Regulis } from "../personas/regulis/index.js";
 import { PRODUCTS, getProductForRequest } from "../personas/regulis/products.js";
 import { ReportGenerator } from "../services/report-generator.js";
+import { EventBus } from "../services/event-bus.js";
 import { parseJsonBody } from "../utils/helpers.js";
 import { Map1Worker } from "../workers/map-1/index.js";
 import { Alert1Worker } from "../workers/alert-1/index.js";
@@ -99,7 +100,7 @@ export async function handleRegulisStatus(
 export async function handleRegulisCheck(
   request: Request,
   env: Env,
-  _ctx: ExecutionContext,
+  ctx: ExecutionContext,
   _params: RouteParams
 ): Promise<Response> {
   let body: { state: string; entityType: string; businessName?: string };
@@ -155,6 +156,19 @@ export async function handleRegulisCheck(
 
   const reportGenerator = new ReportGenerator();
   const score = reportGenerator.calculateScore(report.results);
+
+  // Publish event to other Citizens (non-blocking)
+  ctx.waitUntil(
+    EventBus.publish("REGULIS", "compliance_report_generated", {
+      reportId: report.id,
+      state,
+      entityType,
+      businessName: body.businessName ?? "Anonymous",
+      totalRules: report.results.length,
+      complianceScore: score,
+      generatedAt: report.generatedAt,
+    }, env)
+  );
 
   // Free preview: show only the first N findings
   const previewResults = report.results.slice(0, FREE_PREVIEW_LIMIT);
