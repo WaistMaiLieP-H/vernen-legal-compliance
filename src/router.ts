@@ -234,6 +234,18 @@ export async function handleRequest(
   >();
 
   routes.set("GET /", async () => serveLandingPage());
+
+  // Serve logo from KV
+  routes.set("GET /assets/logo.png", async (_request, env) => {
+    const data = await env.KNOWLEDGE_STORE.get("ASSETS:vernen-logo.png", "arrayBuffer");
+    if (!data) return new Response("Not found", { status: 404 });
+    return new Response(data, {
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=604800, immutable",
+      },
+    });
+  });
   routes.set("GET /dashboard", async (request, env) => {
     // Dashboard requires API key — check query param or Authorization header
     const url = new URL(request.url);
@@ -479,6 +491,11 @@ export async function handleRequest(
     for (const [key, value] of Object.entries(CORS_HEADERS)) {
       response.headers.set(key, value);
     }
+    // Security headers
+    response.headers.set("X-Frame-Options", "DENY");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
     return response;
   }
 

@@ -67,53 +67,65 @@ const LANDING_HTML = `<!DOCTYPE html>
   </script>
 
   <title>Business Compliance Scanning — All 50 States | Vernen Legal Compliance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --navy: #1a2744;
-      --navy-light: #243455;
-      --gold: #c8a951;
-      --gold-light: #d4bc74;
+      --navy: #0a0e17;
+      --navy-light: #141926;
+      --navy-mid: #1e2536;
+      --gold: #c9a84c;
+      --gold-light: #d4b35c;
+      --gold-dim: rgba(201,168,76,0.4);
+      --gold-faint: rgba(201,168,76,0.08);
       --white: #ffffff;
       --light-gray: #f5f5f5;
       --mid-gray: #e0e0e0;
       --text: #333333;
       --text-light: #666666;
+      --text-warm: #c0b8a8;
       --green: #2e7d32;
       --yellow: #f57f17;
       --red: #c62828;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--text); line-height: 1.6; }
+    body { font-family: 'Libre Baskerville', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text); line-height: 1.7; font-size: 15px; }
     a { color: var(--gold); text-decoration: none; }
     a:hover { color: var(--gold-light); }
 
     /* Header */
-    .header { background: var(--navy); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+    .header { background: var(--navy); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px); background: rgba(10,14,23,0.95); border-bottom: 1px solid rgba(201,168,76,0.1); }
     .logo { display: flex; align-items: center; gap: 0.75rem; }
-    .logo-mark { width: 36px; height: 36px; background: var(--gold); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; color: var(--navy); }
-    .logo-text { color: var(--white); font-size: 1.1rem; font-weight: 600; }
-    .nav { display: flex; gap: 1.5rem; align-items: center; }
-    .nav a { color: var(--white); font-size: 0.9rem; opacity: 0.85; transition: opacity 0.2s; }
-    .nav a:hover { opacity: 1; color: var(--gold); }
+    .logo-img { height: 36px; width: auto; filter: drop-shadow(0 0 8px rgba(201,168,76,0.2)); }
+    .logo-text { font-family: 'Cormorant Garamond', serif; color: var(--gold); font-size: 1.3rem; font-weight: 700; letter-spacing: 3px; }
+    .nav { display: flex; gap: 2rem; align-items: center; }
+    .nav a { font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.6); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; }
+    .nav a:hover { color: var(--gold); }
 
     /* Hero */
-    .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--white); padding: 5rem 2rem; text-align: center; }
-    .hero h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.2; }
-    .hero p { font-size: 1.2rem; opacity: 0.85; max-width: 700px; margin: 0 auto 2rem; }
-    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn { display: inline-block; padding: 0.85rem 2rem; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: all 0.2s; }
+    .hero { background: var(--navy); color: var(--white); padding: 6rem 2rem 5rem; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E"); pointer-events: none; opacity: 0.4; }
+    .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: linear-gradient(to bottom, transparent, var(--light-gray)); }
+    .hero-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 4px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 2rem; }
+    .hero-logo-img { max-width: min(500px, 80vw); width: 100%; height: auto; margin-bottom: 2.5rem; filter: drop-shadow(0 0 40px rgba(201,168,76,0.15)); transition: filter 0.6s; }
+    .hero-logo-img:hover { filter: drop-shadow(0 0 60px rgba(201,168,76,0.25)); }
+    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 300; margin-bottom: 1rem; line-height: 1.3; color: #e8e4dc; }
+    .hero p { font-family: 'Libre Baskerville', serif; font-size: 1rem; font-style: italic; color: rgba(255,255,255,0.5); max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.8; }
+    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+    .btn { display: inline-block; padding: 0.85rem 2rem; border-radius: 0; font-weight: 600; font-size: 0.8rem; cursor: pointer; border: none; transition: all 0.2s; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; text-transform: uppercase; }
     .btn-gold { background: var(--gold); color: var(--navy); }
     .btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
-    .btn-outline { background: transparent; color: var(--white); border: 2px solid rgba(255,255,255,0.4); }
-    .btn-outline:hover { border-color: var(--white); }
-    .btn-sm { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+    .btn-outline { background: transparent; color: var(--white); border: 1px solid var(--gold-dim); }
+    .btn-outline:hover { border-color: var(--gold); background: var(--gold-faint); }
+    .btn-sm { padding: 0.6rem 1.2rem; font-size: 0.75rem; }
 
     /* Sections */
     .section { padding: 4rem 2rem; max-width: 1100px; margin: 0 auto; }
     .section-gray { background: var(--light-gray); }
-    .section-title { font-size: 2rem; font-weight: 700; color: var(--navy); text-align: center; margin-bottom: 0.5rem; }
-    .section-sub { text-align: center; color: var(--text-light); margin-bottom: 2.5rem; font-size: 1.05rem; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 300; color: var(--navy); text-align: center; margin-bottom: 0.5rem; }
+    .section-sub { text-align: center; color: var(--text-light); margin-bottom: 2.5rem; font-size: 0.95rem; }
+    .section-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; text-align: center; margin-bottom: 0.75rem; }
 
     /* Check Form */
     .check-form { background: var(--white); border-radius: 12px; padding: 2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.08); max-width: 600px; margin: 0 auto; }
@@ -173,15 +185,35 @@ const LANDING_HTML = `<!DOCTYPE html>
     .cat-tag.shared { background: #e8f5e9; color: #2e7d32; }
 
     /* Stats */
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; text-align: center; }
-    .stat-item { padding: 1.5rem; }
-    .stat-number { font-size: 2.5rem; font-weight: 700; color: var(--navy); }
-    .stat-label { color: var(--text-light); margin-top: 0.25rem; }
+    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--mid-gray); border: 1px solid var(--mid-gray); max-width: 900px; margin: 0 auto; }
+    .stat-item { background: var(--white); padding: 2rem 1.5rem; text-align: center; }
+    .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 700; color: var(--gold); }
+    .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; letter-spacing: 2px; color: var(--text-light); text-transform: uppercase; margin-top: 0.25rem; }
+
+    /* Origin Section */
+    .origin-section { background: var(--navy); color: var(--text-warm); padding: 5rem 2rem; position: relative; }
+    .origin-section::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E"); pointer-events: none; opacity: 0.4; }
+    .origin-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; position: relative; z-index: 1; }
+    .origin-text { font-size: 0.95rem; line-height: 1.8; color: rgba(192,184,168,0.8); }
+    .origin-text p + p { margin-top: 1rem; }
+    .origin-ip { background: rgba(255,255,255,0.03); border: 1px solid rgba(201,168,76,0.15); padding: 2rem; }
+    .ip-row { display: flex; justify-content: space-between; padding: 0.65rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; }
+    .ip-label { color: rgba(255,255,255,0.3); letter-spacing: 1px; text-transform: uppercase; }
+    .ip-value { color: var(--gold); }
+    .divider { width: 60px; height: 1px; background: var(--gold-dim); margin: 1.5rem 0; }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
 
     /* Footer */
-    .footer { background: var(--navy); color: rgba(255,255,255,0.7); padding: 2rem; text-align: center; font-size: 0.9rem; }
+    .footer { background: var(--navy); color: rgba(255,255,255,0.5); padding: 3rem 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 2rem; }
+    .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700; color: var(--gold); letter-spacing: 5px; }
+    .footer-mark { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: rgba(255,255,255,0.2); letter-spacing: 2px; margin-top: 0.25rem; text-transform: uppercase; }
     .footer a { color: var(--gold); }
-    .footer-links { margin-bottom: 0.75rem; display: flex; gap: 1.5rem; justify-content: center; }
+    .footer-links { margin-bottom: 0.75rem; display: flex; gap: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; }
+    .footer-legal { font-family: 'JetBrains Mono', monospace; font-size: 0.5rem; color: rgba(255,255,255,0.25); line-height: 2; text-align: right; }
 
     /* Loading */
     .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(26,39,68,0.2); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.6s linear infinite; }
@@ -193,17 +225,21 @@ const LANDING_HTML = `<!DOCTYPE html>
 
     /* Responsive */
     @media (max-width: 768px) {
-      .hero h1 { font-size: 2rem; }
-      .hero p { font-size: 1rem; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero p { font-size: 0.9rem; }
       .compare-form { grid-template-columns: 1fr; }
       .compare-grid { grid-template-columns: 1fr; }
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
       .pricing-grid { grid-template-columns: 1fr; }
+      .origin-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-legal { text-align: left; }
       .nav { display: none; }
     }
     @media (max-width: 480px) {
-      .hero h1 { font-size: 1.6rem; }
+      .hero h1 { font-size: 1.5rem; }
       .section { padding: 2.5rem 1rem; }
+      .origin-section { padding: 3rem 1.5rem; }
     }
   </style>
 </head>
@@ -211,27 +247,30 @@ const LANDING_HTML = `<!DOCTYPE html>
 
   <header class="header">
     <div class="logo">
-      <div class="logo-mark">V</div>
-      <div class="logo-text">Vernen Legal Compliance</div>
+      <img src="/assets/logo.png" alt="Vernen Legal Compliance" class="logo-img">
     </div>
     <nav class="nav">
-      <a href="#check">Check Compliance</a>
+      <a href="#check">Compliance</a>
       <a href="#pricing">Pricing</a>
-      <a href="#compare">Compare States</a>
+      <a href="#compare">Compare</a>
+      <a href="#origin">About</a>
     </nav>
   </header>
 
   <section class="hero">
+    <div class="hero-eyebrow">Autonomous Compliance Intelligence &middot; Established 2026</div>
+    <img src="/assets/logo.png" alt="Vernen Legal Compliance" class="hero-logo-img">
     <h1>Know Your Compliance.<br>Every State. Every Entity.</h1>
     <p>Instant federal and state compliance scanning for LLCs, corporations, sole proprietors, partnerships, and nonprofits. 336 rules across all 50 states.</p>
     <div class="hero-ctas">
-      <a href="#check" class="btn btn-gold">Check My Compliance &mdash; Free</a>
+      <a href="#check" class="btn btn-gold">Check My Compliance</a>
       <a href="#pricing" class="btn btn-outline">View Pricing</a>
     </div>
   </section>
 
   <section id="check" class="section-gray">
     <div class="section">
+      <div class="section-eyebrow">Scan</div>
       <h2 class="section-title">Compliance Check</h2>
       <p class="section-sub">Select your state and entity type to see your compliance obligations instantly.</p>
       <div class="check-form">
@@ -273,6 +312,7 @@ const LANDING_HTML = `<!DOCTYPE html>
 
   <section id="pricing">
     <div class="section">
+      <div class="section-eyebrow">Plans</div>
       <h2 class="section-title">Pricing</h2>
       <p class="section-sub">From a free preview to full 50-state coverage. Pay only for what you need.</p>
       <div class="pricing-grid">
@@ -346,6 +386,7 @@ const LANDING_HTML = `<!DOCTYPE html>
 
   <section id="compare" class="section-gray">
     <div class="section">
+      <div class="section-eyebrow">Analysis</div>
       <h2 class="section-title">Compare States</h2>
       <p class="section-sub">Expanding to a new state? See how compliance requirements differ side by side.</p>
       <div class="compare-form">
@@ -383,14 +424,14 @@ const LANDING_HTML = `<!DOCTYPE html>
 
   <section>
     <div class="section">
-      <div class="stats-row">
+      <div class="stats-bar reveal">
         <div class="stat-item">
           <div class="stat-number" id="statRules">336</div>
           <div class="stat-label">Compliance Rules</div>
         </div>
         <div class="stat-item">
-          <div class="stat-number">50</div>
-          <div class="stat-label">States + DC</div>
+          <div class="stat-number">51</div>
+          <div class="stat-label">Jurisdictions</div>
         </div>
         <div class="stat-item">
           <div class="stat-number">6</div>
@@ -404,23 +445,62 @@ const LANDING_HTML = `<!DOCTYPE html>
     </div>
   </section>
 
-  <div style="background:var(--light-gray);padding:1rem 2rem;text-align:center;font-size:0.85rem;color:var(--text-light);border-top:1px solid var(--mid-gray);">
+  <section id="origin" class="origin-section">
+    <div class="origin-inner">
+      <div>
+        <div class="section-eyebrow" style="text-align:left;color:var(--gold)">Origin</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:#e8e4dc;margin-bottom:0.5rem;">Built From Lived Experience</h2>
+        <div class="divider"></div>
+        <div class="origin-text">
+          <p>VERNEN&trade; was born from 16 years navigating California's family court system as a pro se litigant &mdash; a father fighting for his son across multiple jurisdictions, facing institutional barriers at every turn.</p>
+          <p>Every compliance rule in this platform maps to a real regulatory requirement. Every deficiency pattern was discovered through direct experience. Every governing standard was learned the hard way.</p>
+          <p>This isn't an academic exercise. It's a tool built by someone who needed it and couldn't find it anywhere.</p>
+        </div>
+      </div>
+      <div class="origin-ip">
+        <div class="ip-row"><span class="ip-label">Creator</span><span class="ip-value">Michael Vernen Thomas Hartmann</span></div>
+        <div class="ip-row"><span class="ip-label">IP Manifest</span><span class="ip-value">February 2, 2026</span></div>
+        <div class="ip-row"><span class="ip-label">Public Disclosure</span><span class="ip-value">February 22, 2026</span></div>
+        <div class="ip-row"><span class="ip-label">Platform</span><span class="ip-value">vernenlegal.com</span></div>
+        <div class="ip-row"><span class="ip-label">Persona Citizens</span><span class="ip-value">15 Active</span></div>
+        <div class="ip-row"><span class="ip-label">Universal Catalog</span><span class="ip-value">4,717 Citizens</span></div>
+        <div class="ip-row"><span class="ip-label">Status</span><span class="ip-value">Live &mdash; Active Development</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div style="background:var(--light-gray);padding:1rem 2rem;text-align:center;font-size:0.75rem;color:var(--text-light);border-top:1px solid var(--mid-gray);font-family:'JetBrains Mono',monospace;letter-spacing:1px;">
     Vernen Legal Compliance provides legal information, not legal advice. We are not a law firm. Consult a licensed attorney for advice specific to your situation.
   </div>
 
   <footer class="footer">
-    <div class="footer-links">
-      <a href="/api/regulis/products">API</a>
-      <a href="/api/regulis/states">Coverage</a>
-      <a href="/legal/terms">Terms of Service</a>
-      <a href="/legal/privacy">Privacy Policy</a>
-      <a href="/dashboard">Dashboard</a>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">VERNEN&trade;</div>
+        <div class="footer-mark">Autonomous Compliance Intelligence</div>
+        <div class="footer-links" style="margin-top:1rem;">
+          <a href="/api/regulis/products">API</a>
+          <a href="/api/regulis/states">Coverage</a>
+          <a href="/legal/terms">Terms</a>
+          <a href="/legal/privacy">Privacy</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <strong style="color:var(--gold-dim)">&copy; 2024&ndash;2026 Michael Vernen Thomas Hartmann. All Rights Reserved.</strong><br>
+        VERNEN&trade; is a trademark of Michael Vernen Thomas Hartmann.<br>
+        IP Manifest Filed February 2, 2026.<br>
+        Powered by REGULIS&trade; &mdash; A Vernen Persona Citizen&trade;
+      </div>
     </div>
-    <p>&copy; 2026 Vernen Legal Compliance&trade; &mdash; All Rights Reserved</p>
-    <p style="margin-top:0.5rem;font-size:0.8rem;opacity:0.6">Powered by REGULIS&trade; &mdash; A Vernen Persona Citizen&trade;</p>
   </footer>
 
   <script>
+    // Scroll reveal
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
     // Load stats on page load
     (async function() {
       try {
