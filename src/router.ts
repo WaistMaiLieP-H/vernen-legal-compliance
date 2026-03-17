@@ -147,26 +147,70 @@ import {
   handleLoadForms,
 } from "./api/audit.js";
 
-const CORS_HEADERS: Record<string, string> = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
+// ═══════════════════════════════════════════════════════════════════════════
+// CORS — Origin-restricted (no wildcard)
+// ═══════════════════════════════════════════════════════════════════════════
 
-function corsResponse(body: string | null, init: ResponseInit = {}): Response {
+const ALLOWED_ORIGINS = new Set([
+  "https://compliance.vernenlegal.com",
+  "https://vernenlegal.com",
+  "http://localhost:8787",
+]);
+
+function getAllowedOrigin(request?: Request | null): string {
+  if (!request) return "https://compliance.vernenlegal.com";
+  const origin = request.headers.get("Origin");
+  if (origin && ALLOWED_ORIGINS.has(origin)) return origin;
+  return "https://compliance.vernenlegal.com";
+}
+
+function makeCorsHeaders(origin: string): Record<string, string> {
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Vary": "Origin",
+  };
+}
+
+function corsResponse(body: string | null, init: ResponseInit = {}, request?: Request | null): Response {
   const headers = new Headers(init.headers);
-  for (const [key, value] of Object.entries(CORS_HEADERS)) {
+  const origin = getAllowedOrigin(request);
+  for (const [key, value] of Object.entries(makeCorsHeaders(origin))) {
     headers.set(key, value);
   }
   return new Response(body, { ...init, headers });
 }
 
-function jsonResponse(data: unknown, status = 200): Response {
+function jsonResponse(data: unknown, status = 200, request?: Request | null): Response {
   return corsResponse(JSON.stringify(data), {
     status,
     headers: { "Content-Type": "application/json" },
-  });
+  }, request);
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Content-Security-Policy for HTML pages
+// ═══════════════════════════════════════════════════════════════════════════
+
+const CSP_POLICY = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://js.stripe.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com",
+  "img-src 'self' data:",
+  "connect-src 'self' https://api.stripe.com",
+  "frame-src https://js.stripe.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+].join("; ");
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Input validation limits
+// ═══════════════════════════════════════════════════════════════════════════
+
+const MAX_PATH_LENGTH = 2048;
+const MAX_BODY_SIZE = 1_048_576; // 1 MB
 
 type RouteParams = Record<string, string>;
 
@@ -226,8 +270,20 @@ export async function handleRequest(
   const { pathname } = url;
   const method = request.method;
 
+  // ── Input validation guards ──────────────────────────────────────────
+  if (pathname.length > MAX_PATH_LENGTH) {
+    return jsonResponse({ error: "URI too long" }, 414, request);
+  }
+
+  if (method === "POST" || method === "PUT") {
+    const contentLength = request.headers.get("Content-Length");
+    if (contentLength && parseInt(contentLength, 10) > MAX_BODY_SIZE) {
+      return jsonResponse({ error: "Request body too large" }, 413, request);
+    }
+  }
+
   if (method === "OPTIONS") {
-    return corsResponse(null, { status: 204 });
+    return corsResponse(null, { status: 204 }, request);
   }
 
   const routes = new Map<
@@ -281,11 +337,29 @@ export async function handleRequest(
       `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://compliance.vernenlegal.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://compliance.vernenlegal.com/#faq</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://compliance.vernenlegal.com/#pricing</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://compliance.vernenlegal.com/legal/terms</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
   <url><loc>https://compliance.vernenlegal.com/legal/privacy</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
 </urlset>`,
       { headers: { "Content-Type": "application/xml", "Cache-Control": "public, max-age=86400" } }
     )
+  );
+
+  // Security.txt (RFC 9116)
+  routes.set("GET /.well-known/security.txt", async () =>
+    new Response(
+      `Contact: mailto:compliance@vernenlegal.com\nExpires: 2027-03-16T00:00:00.000Z\nPreferred-Languages: en\nCanonical: https://compliance.vernenlegal.com/.well-known/security.txt`,
+      { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=86400" } }
+    )
+  );
+
+  // Common crawler/monitor health check redirect
+  routes.set("GET /health", async () =>
+    new Response(null, {
+      status: 301,
+      headers: { "Location": "/api/health" },
+    })
   );
 
   // Legal pages
@@ -552,17 +626,50 @@ export async function handleRequest(
 
   if (match) {
     const response = await match.handler(request, env, ctx, match.params);
-    // Ensure CORS headers on all responses
-    for (const [key, value] of Object.entries(CORS_HEADERS)) {
+
+    // Ensure CORS headers on all responses (origin-aware)
+    const origin = getAllowedOrigin(request);
+    for (const [key, value] of Object.entries(makeCorsHeaders(origin))) {
       response.headers.set(key, value);
     }
-    // Security headers
+
+    // Security headers — all responses
     response.headers.set("X-Frame-Options", "DENY");
     response.headers.set("X-Content-Type-Options", "nosniff");
     response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
     response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+
+    // CSP for HTML responses
+    const ct = response.headers.get("Content-Type") ?? "";
+    if (ct.includes("text/html")) {
+      response.headers.set("Content-Security-Policy", CSP_POLICY);
+    }
+
+    // Informational rate-limit headers on landing page to deter scrapers
+    if (pathname === "/") {
+      response.headers.set("X-RateLimit-Limit", "60");
+      response.headers.set("X-RateLimit-Window", "60");
+    }
+
+    // Cache-Control for API responses (only if not already set by the handler)
+    if (!response.headers.has("Cache-Control") && pathname.startsWith("/api/")) {
+      if (method === "GET") {
+        // Short TTL for dynamic GET endpoints (health, stats, status)
+        const isVolatile = /\/(health|stats|status|events|dashboard)/.test(pathname);
+        response.headers.set(
+          "Cache-Control",
+          isVolatile
+            ? "public, max-age=10, s-maxage=10"
+            : "public, max-age=60, s-maxage=120"
+        );
+      } else {
+        // No caching for mutations
+        response.headers.set("Cache-Control", "no-store");
+      }
+    }
     return response;
   }
 
-  return jsonResponse({ error: "Not found" }, 404);
+  return jsonResponse({ error: "Not found" }, 404, request);
 }

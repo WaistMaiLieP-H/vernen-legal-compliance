@@ -66,6 +66,56 @@ const LANDING_HTML = `<!DOCTYPE html>
   }
   </script>
 
+  <!-- FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a compliance scan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A compliance scan checks your business against federal and state regulatory requirements for your entity type. Our system evaluates 336 rules across categories like formation, taxation, employment, licensing, and reporting to identify obligations, gaps, and action items."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many states do you cover?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We cover all 50 US states plus the District of Columbia — 51 jurisdictions total. Each jurisdiction has state-specific rules in addition to the federal baseline that applies everywhere."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is the free preview really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The free preview requires no signup, no credit card, and no email. You get a compliance score and up to 5 top findings instantly. Paid reports unlock the full findings with detailed remediation guidance."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What entity types are supported?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We support six entity types: LLC, Corporation, S-Corporation, Sole Proprietorship, Partnership, and Nonprofit. Each entity type has different compliance obligations that our scan accounts for."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How current are the compliance rules?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our compliance rules are maintained and updated regularly to reflect current federal and state requirements. The platform tracks regulatory changes and updates rules as legislation and administrative requirements evolve."
+        }
+      }
+    ]
+  }
+  </script>
+
   <title>Business Compliance Scanning — All 50 States | Vernen Legal Compliance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -223,6 +273,34 @@ const LANDING_HTML = `<!DOCTYPE html>
     .error-msg { background: #ffebee; color: #c62828; padding: 1rem; border-radius: 8px; margin-top: 1rem; display: none; }
     .error-msg.active { display: block; }
 
+    /* Trust Signals */
+    .trust-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-width: 900px; margin: 0 auto; padding: 2.5rem 0; }
+    .trust-item { text-align: center; }
+    .trust-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .trust-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-light); line-height: 1.6; }
+    .trust-value { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; color: var(--navy); }
+
+    /* FAQ */
+    .faq-list { max-width: 760px; margin: 0 auto; }
+    .faq-item { background: var(--white); border-radius: 8px; margin-bottom: 0.75rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; }
+    .faq-q { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; cursor: pointer; font-weight: 600; color: var(--navy); font-size: 1rem; border: none; background: none; width: 100%; text-align: left; font-family: inherit; }
+    .faq-q:hover { background: var(--gold-faint); }
+    .faq-q::after { content: '+'; font-size: 1.4rem; color: var(--gold); transition: transform 0.2s; flex-shrink: 0; margin-left: 1rem; }
+    .faq-item.open .faq-q::after { content: '\\2212'; }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0 1.5rem; color: var(--text-light); line-height: 1.8; font-size: 0.95rem; }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 1.5rem 1.25rem; }
+
+    /* Mobile hamburger */
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; z-index: 200; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--gold); margin: 5px 0; transition: all 0.3s; }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    .nav-mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(10,14,23,0.97); z-index: 150; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+    .nav-mobile-overlay.active { display: flex; }
+    .nav-mobile-overlay a { font-family: 'Cormorant Garamond', serif; color: var(--white); font-size: 1.8rem; letter-spacing: 3px; }
+    .nav-mobile-overlay a:hover { color: var(--gold); }
+
     /* Responsive */
     @media (max-width: 768px) {
       .hero h1 { font-size: 1.8rem; }
@@ -235,6 +313,8 @@ const LANDING_HTML = `<!DOCTYPE html>
       .footer-inner { flex-direction: column; align-items: flex-start; }
       .footer-legal { text-align: left; }
       .nav { display: none; }
+      .hamburger { display: block; }
+      .trust-bar { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
     }
     @media (max-width: 480px) {
       .hero h1 { font-size: 1.5rem; }
@@ -253,9 +333,21 @@ const LANDING_HTML = `<!DOCTYPE html>
       <a href="#check">Compliance</a>
       <a href="#pricing">Pricing</a>
       <a href="#compare">Compare</a>
+      <a href="#faq">FAQ</a>
       <a href="#origin">About</a>
     </nav>
+    <button class="hamburger" onclick="toggleMobileNav()" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
   </header>
+
+  <div class="nav-mobile-overlay" id="mobileNav">
+    <a href="#check" onclick="closeMobileNav()">Compliance</a>
+    <a href="#pricing" onclick="closeMobileNav()">Pricing</a>
+    <a href="#compare" onclick="closeMobileNav()">Compare</a>
+    <a href="#faq" onclick="closeMobileNav()">FAQ</a>
+    <a href="#origin" onclick="closeMobileNav()">About</a>
+  </div>
 
   <section class="hero">
     <div class="hero-eyebrow">Autonomous Compliance Intelligence &middot; Established 2026</div>
@@ -265,6 +357,29 @@ const LANDING_HTML = `<!DOCTYPE html>
     <div class="hero-ctas">
       <a href="#check" class="btn btn-gold">Check My Compliance</a>
       <a href="#pricing" class="btn btn-outline">View Pricing</a>
+    </div>
+  </section>
+
+  <section class="section-gray">
+    <div class="section" style="padding-top:2.5rem;padding-bottom:2.5rem;">
+      <div class="trust-bar reveal">
+        <div class="trust-item">
+          <div class="trust-value">No Signup</div>
+          <div class="trust-label">Required &mdash; just scan</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-value">Seconds</div>
+          <div class="trust-label">Results delivered instantly</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-value">50 States + DC</div>
+          <div class="trust-label">Full US jurisdiction coverage</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-value">336 Rules</div>
+          <div class="trust-label">Federal &amp; state compliance</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -445,6 +560,36 @@ const LANDING_HTML = `<!DOCTYPE html>
     </div>
   </section>
 
+  <section id="faq" class="section-gray">
+    <div class="section">
+      <div class="section-eyebrow">Questions</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-sub">Everything you need to know about compliance scanning.</p>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What is a compliance scan?</button>
+          <div class="faq-a">A compliance scan checks your business against federal and state regulatory requirements for your entity type. Our system evaluates 336 rules across categories like formation, taxation, employment, licensing, and reporting to identify obligations, gaps, and action items.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">How many states do you cover?</button>
+          <div class="faq-a">We cover all 50 US states plus the District of Columbia &mdash; 51 jurisdictions total. Each jurisdiction has state-specific rules in addition to the federal baseline that applies everywhere.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Is the free preview really free?</button>
+          <div class="faq-a">Yes. The free preview requires no signup, no credit card, and no email. You get a compliance score and up to 5 top findings instantly. Paid reports unlock the full findings with detailed remediation guidance.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">What entity types are supported?</button>
+          <div class="faq-a">We support six entity types: LLC, Corporation, S-Corporation, Sole Proprietorship, Partnership, and Nonprofit. Each entity type has different compliance obligations that our scan accounts for.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">How current are the compliance rules?</button>
+          <div class="faq-a">Our compliance rules are maintained and updated regularly to reflect current federal and state requirements. The platform tracks regulatory changes and updates rules as legislation and administrative requirements evolve.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="origin" class="origin-section">
     <div class="origin-inner">
       <div>
@@ -481,6 +626,7 @@ const LANDING_HTML = `<!DOCTYPE html>
         <div class="footer-links" style="margin-top:1rem;">
           <a href="/api/regulis/products">API</a>
           <a href="/api/regulis/states">Coverage</a>
+          <a href="#faq">FAQ</a>
           <a href="/legal/terms">Terms</a>
           <a href="/legal/privacy">Privacy</a>
         </div>
@@ -590,13 +736,17 @@ const LANDING_HTML = `<!DOCTYPE html>
         + '<h3 style="margin-bottom:1rem;color:var(--navy)">Top Findings (Free Preview)</h3>'
         + findingsHtml
         + '<div class="upsell-box">'
-        + '<h3>See All ' + (data.fullReportFindings || total) + ' Findings</h3>'
-        + '<p>Get the complete compliance report with detailed remediation guidance for every rule.</p>'
+        + '<div style="font-family:JetBrains Mono,monospace;font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem;">Your Free Preview Showed ' + preview.length + ' of ' + (data.fullReportFindings || total) + ' Findings</div>'
+        + '<h3 style="font-size:1.5rem;margin-bottom:0.75rem;">Unlock the Full Compliance Report</h3>'
+        + '<p style="opacity:0.85;margin-bottom:0.5rem;">Get detailed remediation steps, deadline dates, filing requirements, and penalty risks for <strong>all ' + (data.fullReportFindings || total) + ' compliance obligations</strong> in your state.</p>'
+        + '<p style="font-size:0.85rem;opacity:0.6;margin-bottom:1.5rem;">Your scan results are saved for 24 hours. Purchase now to lock in your report.</p>'
         + '<div class="upsell-btns">'
         + '<button class="btn btn-gold" onclick="startCheckout(\\'' + reportId + '\\', \\'single_state\\')">Full Report &mdash; $29</button>'
-        + '<button class="btn btn-outline" onclick="startCheckout(\\'' + reportId + '\\', \\'multi_state\\')">Multi-State &mdash; $149</button>'
-        + '<button class="btn btn-outline" onclick="startCheckout(\\'' + reportId + '\\', \\'full_50_state\\')">50-State &mdash; $499</button>'
-        + '</div></div>';
+        + '<button class="btn btn-outline" onclick="startCheckout(\\'' + reportId + '\\', \\'multi_state\\')">5 States &mdash; $149</button>'
+        + '<button class="btn btn-outline" onclick="startCheckout(\\'' + reportId + '\\', \\'full_50_state\\')">All 50 States &mdash; $499</button>'
+        + '</div>'
+        + '<div style="margin-top:1rem;font-size:0.75rem;opacity:0.45;">One-time purchase. No subscription. Instant access.</div>'
+        + '</div>';
 
       el.className = 'results active';
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -656,6 +806,23 @@ const LANDING_HTML = `<!DOCTYPE html>
         errEl.textContent = 'Connection error.';
         errEl.className = 'error-msg active';
       }
+    }
+    // Mobile hamburger menu
+    function toggleMobileNav() {
+      document.getElementById('mobileNav').classList.toggle('active');
+      document.querySelector('.hamburger').classList.toggle('active');
+    }
+    function closeMobileNav() {
+      document.getElementById('mobileNav').classList.remove('active');
+      document.querySelector('.hamburger').classList.remove('active');
+    }
+
+    // FAQ accordion
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(el) { el.classList.remove('open'); });
+      if (!wasOpen) item.classList.add('open');
     }
   </script>
 

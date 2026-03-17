@@ -19,12 +19,18 @@ export default {
     try {
       return await handleRequest(request, env, ctx);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Internal server error";
-      return new Response(JSON.stringify({ error: message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      // Log the real error server-side but never expose internals to clients
+      console.error("Unhandled error:", error instanceof Error ? error.message : error);
+      return new Response(
+        JSON.stringify({ error: "Internal server error" }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+          },
+        }
+      );
     }
   },
 };
