@@ -1,0 +1,409 @@
+MEL/CDL Program Manager
+NTSB Aviation Accident Investigator
+Admiralty / Maritime Claims Attorney
+Genetic Information Nondiscrimination Act Compliance Officer
+Transplant Physician (organ-specific medical specialist)
+Tissue Bank Medical Director / Tissue Establishment Director
+Stablecoin Reserve Auditor / Attestation Specialist
+Cryptocurrency Wallet Recovery Specialist / Key Management Engineer
+Decentralized Autonomous Organization Legal Counsel
+International Crypto Transfer Compliance Officer
+Proof of Reserves Attestation Specialist
+Cryptocurrency Marketing and Advertising Compliance Officer
+Banking-as-a-Service Partnership Compliance Officer
+Fintech Charter Compliance Officer (OCC/State)
+Third-Party Technology Risk Manager (Financial Services)
+PCI-DSS Qualified Security Assessor (QSA)
+Instant Payments Compliance Specialist
+Payment Facilitator Compliance Officer
+Digital Wallet / Mobile Payment Compliance Officer
+Prepaid Access Compliance Specialist
+Embedded Finance / Platform Lending Compliance Officer
+BNPL Program Compliance Officer
+Earned Wage Access Program Compliance Officer
+Automated Investment Advisor Compliance Officer
+AI/ML Credit Model Compliance Officer / Model Risk Manager
+Regulatory Technology Compliance and Validation Officer
+Fintech Sandbox Program Compliance Manager
+International Remittance Compliance Officer
+Crowdfunding Portal Compliance Officer (Registered Funding Portal)
+Reg CF Offering Compliance Specialist
+Reg A+ Offering Compliance Officer
+Private Placement Compliance Officer (Reg D)
+Accredited Investor Verification Specialist
+State Securities (Blue Sky) Compliance Specialist
+Peer-to-Peer Lending Platform Compliance Officer
+Merchant Cash Advance Compliance Officer
+Revenue-Based Financing (RBF) Compliance Officer
+Factoring / Accounts Receivable Finance Compliance Officer
+Equipment Finance and Leasing Compliance Officer
+Opportunity Zone Fund Compliance Officer
+SBIC Regulatory Compliance Officer
+VC Fund Regulatory Compliance Officer
+Real Estate Crowdfunding Compliance Officer
+Donation and Rewards Crowdfunding Compliance Officer
+ESG and Green Bond Compliance Officer
+Historic Preservation Planner / Qualified Professional per Secretary of Interior's Standards
+Equal Employment Opportunity Investigator
+Civil Rights Litigator (Section 1983)
+Federal Constitutional Tort Litigator (Bivens)
+Voting Rights Litigator / Election Law Attorney
+Equal Protection Clause Litigator / Constitutional Law Specialist
+First Amendment Retaliation Litigator
+DOJ Civil Rights Division Investigator (Special Litigation Section)
+Racial Profiling Analyst / Biased Policing Data Analyst
+Prisoners' Rights Attorney / Correctional Conditions Litigator
+Custodial Search Policy Compliance Officer
+Desegregation Order Compliance Specialist
+Environmental Justice Compliance Analyst
+Hate Crime / Bias Crime Investigator
+Use of Force Review Analyst / Force Investigation Specialist
+Post-Conviction / Innocence Project Attorney
+UN Individual Complaint Procedure Specialist
+Inter-American Human Rights System Litigator
+Human Trafficking Investigation Specialist
+Forced Labor Investigation Specialist
+Conflict Minerals Compliance Specialist
+Global Magnitsky Sanctions Specialist
+International Criminal Law Investigator / War Crimes Analyst
+Forensic Medical Examiner (Torture Documentation) / Istanbul Protocol Specialist
+Enforced Disappearance Documentation Specialist
+Unlawful Killing Investigation Specialist / Minnesota Protocol Examiner
+Indigenous Peoples' Rights Specialist
+Convention on the Rights of Persons with Disabilities (CRPD) Analyst
+CRC Compliance Analyst / Children's Rights Specialist
+Women's Rights Investigator / CEDAW Specialist
+LGBTQ+ Human Rights Specialist
+False Claims Act / Qui Tam Litigator
+SEC Whistleblower Counsel / Securities Fraud Whistleblower Attorney
+Tax Fraud Whistleblower Counsel
+OSHA Whistleblower Protection Program Investigator
+California Whistleblower Protection Attorney
+Healthcare Fraud Whistleblower / Qui Tam Attorney
+Defense Procurement Fraud / Qui Tam Attorney
+Environmental Whistleblower Protection Attorney
+Nuclear/Energy Whistleblower Protection Attorney
+AIR21 Whistleblower Protection Attorney / Aviation Safety Whistleblower Counsel
+Pipeline Safety Whistleblower Counsel
+Whistleblower Confidentiality / Identity Protection Counsel
+Corporate Compliance Officer / DOJ Evaluation Criteria Specialist
+Whistleblower Award / Bounty Calculation Specialist
+Energy/Utility Compliance Officer
+Telecommunications Compliance Officer
+Aviation Compliance Officer / Aviation Safety Inspector
+Pharmaceutical/Life Sciences Compliance Officer
+Nuclear Regulatory Compliance Specialist
+Food Safety Compliance Officer
+PCI Qualified Security Assessor (QSA)
+Internal Audit Quality Assurance Reviewer
+External Auditor (Engagement Partner — Public Company)
+External Auditor (Non-Issuer / Private Company)
+SOC Report Practitioner (SOC 1, SOC 2, SOC 3, SOC for Cybersecurity, SOC for Supply Chain)
+Government Auditor (GAO / OIG / State Auditor)
+Engagement Quality Reviewer (EQR)
+Peer Reviewer (AICPA Peer Review Program)
+Tax Compliance Specialist / Tax Auditor
+Environmental Auditor
+Quality Auditor (ISO 9001 / AS9100 / IATF 16949)
+Health & Safety Auditor
+Information Security Auditor (ISO 27001)
+Sustainability / ESG Auditor
+Chief Risk Officer (CRO)
+Enterprise Risk Manager
+Operational Risk Manager
+Market Risk Manager
+Credit Risk Manager
+Liquidity Risk Manager
+Model Risk Manager
+Third-Party / Vendor Risk Manager
+Reputational Risk Manager
+Business Continuity Manager
+Disaster Recovery Specialist (IT)
+Crisis Manager / Crisis Communication Specialist
+Risk Manager (Corporate Insurance Buyer)
+Actuary (ERM / Insurance)
+Claims Compliance Analyst
+Underwriting Compliance Specialist
+Treasury Risk Manager
+Quantitative Risk Analyst / Risk Modeler
+GRC Program Manager
+Regulatory Change Management Specialist
+Policy & Procedure Governance Specialist
+Communication Access Realtime Translation (CART) Provider
+Shorthand Reporting Corporation Compliance Officer
+Court-Appointed Expert
+Elisor (Court-Appointed Document Executor)
+ADR Provider Organization Administrator
+Unlawful Detainer Assistant
+Legal Document Preparer
+Jury Consultant / Trial Consultant
+Notary Journal/Records Compliance Auditor
+Online Notarization Platform/Depository Administrator
+Apostille Processing Specialist
+Document Authentication Specialist (Non-Hague)
+Consular Notarization Specialist
+Notary Bond Compliance Officer
+Notary E&O Insurance Compliance Specialist
+Notary Compliance Auditor
+Licensed Contractor (General Engineering / General Building / Specialty)
+Licensed Insurance Agent / Broker / Producer
+Licensed Professional Fiduciary
+Attorney at Law / Member of the State Bar of California
+Licensed Court Reporter (cross-reference with A1-01)
+Licensed Dentist (DDS/DMD)
+Registered Nurse / Licensed Vocational Nurse
+Licensed Pharmacist (RPh/PharmD)
+Licensed Acupuncturist (L.Ac.)
+Licensed Doctor of Chiropractic (D.C.)
+Licensed Optometrist (O.D.)
+Licensed Physical Therapist (PT/DPT)
+Licensed Speech-Language Pathologist (SLP) / Audiologist (AuD)
+Licensed Marriage and Family Therapist
+Licensed Professional Clinical Counselor
+Licensed Barber / Licensed Cosmetologist
+Auctioneer
+Talent Agency Licensee
+Agreed Medical Evaluator
+Disability Evaluation Analyst -- Disability Evaluation Unit
+Attorney -- Workers Compensation (Applicant Side)
+Attorney -- Workers Compensation (Defense)
+Workers Compensation Subrogation Analyst / Recovery Specialist
+Lien Representative / Medical-Legal Billing Specialist
+Workers Compensation Death Benefits Analyst
+Attorney / Investigator -- Serious & Willful Misconduct Claims
+Return-to-Work (RTW) Coordinator / Disability Management Specialist
+Safety Engineer / Industrial Hygienist -- Cal/OSHA Division of Occupational Safety and Health (DOSH)
+Cal/OSHA District Manager
+Safety Recordkeeper / OSHA 300 Log Administrator
+WVPP Coordinator / Safety Manager (SB 553 Compliance)
+HazCom Program Coordinator / Chemical Safety Officer
+Process Safety Engineer / PSM Coordinator
+LOTO Program Coordinator / Maintenance Safety Specialist
+Confined Space Program Coordinator
+Fall Protection Competent Person / Safety Manager
+Respiratory Protection Program Manager
+Hearing Conservation Program Administrator / Industrial Audiologist
+Infection Control / BBP Program Coordinator
+Heat Illness Prevention Coordinator
+Wildfire Smoke / Air Quality Compliance Officer
+Safety Professional -- PPE Program Manager
+Emergency Preparedness / Fire Prevention Plan Coordinator
+Ergonomist / Safety Professional -- Repetitive Motion Injury Prevention
+Safety Analyst -- Job Safety Analysis / JHA Specialist
+Safety Consultant -- Cal/OSHA Consultation Service
+Public Utility Regulatory Analyst
+Utility Rate Engineer (P.E. preferred)
+Utility Billing Compliance Analyst
+Smart Grid/Advanced Metering Infrastructure (AMI) Engineer
+NERC Reliability Compliance Officer / Compliance Manager
+FERC Regulatory Attorney / Energy Regulatory Counsel
+Transmission Planning Engineer (P.E.)
+Grid Interconnection Engineer / Distributed Energy Resources (DER) Integration Engineer (P.E.)
+Nuclear Regulatory Compliance Specialist / NRC Licensing Engineer
+Nuclear Quality Assurance Manager / Nuclear QA/QC Engineer
+Petroleum Engineer (P.E.)
+Pipeline Safety Engineer / Pipeline Integrity Engineer (P.E.)
+PHMSA Compliance Officer / Pipeline Regulatory Compliance Manager
+Corrosion Engineer / Cathodic Protection Specialist
+Well Inspector / Drilling Inspector
+Air Quality Engineer / Permit Specialist
+Greenhouse Gas (GHG) Verification Specialist / Carbon Compliance Analyst
+Stormwater/Wastewater Compliance Engineer
+Power Purchase Agreement Analyst / Energy Contracts Manager
+Title 24 Energy Compliance Analyst / HERS Rater (Home Energy Rating System)
+Solar/Wind Project Engineer / Renewable Energy Project Developer (P.E.)
+Electric Vehicle Supply Equipment (EVSE) Engineer / EV Infrastructure Specialist
+Energy Industry Safety Engineer / Process Safety Engineer
+Mine Safety and Health Inspector / MSHA Compliance Officer
+Emergency Response Coordinator / HAZMAT Response Specialist
+Radioactive Waste Management Specialist / Rad Waste Engineer
+Professional Engineer — Electrical / Power Systems (P.E.)
+Energy Market Compliance Analyst / ISO Market Participant Compliance Officer
+Energy Industry Financial Auditor (CPA) / Utility Regulatory Accountant
+Energy Insurance Underwriter / Risk Engineer
+Reclamation Specialist / Mine Closure Engineer
+Wildfire Mitigation Compliance Officer / Utility Wildfire Safety Specialist
+Battery Energy Storage Systems (BESS) Engineer / Energy Storage Specialist
+Seismic Safety / Earthquake Engineering Compliance Specialist (P.E.)
+Tribal and Cultural Resources Compliance Specialist / Section 106 Compliance Officer
+Endangered Species Act Compliance Specialist / Biological Resources Consultant
+Chief Sustainability Officer / ESG Reporting Manager
+Sports League Workers' Compensation & Disability Specialist
+Bank Secrecy Act / Anti-Money Laundering Analyst
+Wire Transfer / Funds Transfer Operations Officer
+Mortgage Loan Originator (MLO)
+Consumer Lending / Credit Compliance Officer
+Auto Finance / Indirect Lending Compliance Officer
+Credit Reporting / Data Furnisher Compliance Analyst
+Fund Compliance Officer (Mutual Fund / ETF / Private Fund)
+State and Local Tax (SALT) Compliance Specialist
+Property Insurance Underwriter / Claims Specialist
+FinCEN BSA Compliance Examiner / FinCEN Intelligence Analyst
+Cryptocurrency / Digital Asset Compliance Officer
+CFPB Supervisory Examiner / Fair Lending Examiner
+Estate Planning / Trust and Estates Attorney
+PCI DSS Compliance Officer / Payment Systems Compliance Manager
+State Bank Examiner / Financial Institution Examiner
+Health Club Owner/Operator
+Tanning Facility Owner/Operator
+Licensed Cosmetologist
+Permanent Makeup Artist / Microblading Technician
+Cosmetology/Barbering Establishment Owner
+Salon Booth Rental Compliance Specialist
+Registered Body Art Practitioner -- Tattoo
+Registered Body Art Practitioner -- Piercing
+Infection Control Officer / Bloodborne Pathogen Compliance Officer
+Laser Tattoo Removal Facility Director
+Client Aftercare Documentation Specialist
+Federal Explosives Licensee / Responsible Person
+California Explosives Permit Holder
+Licensed Pyrotechnic Operator / Proximate Audience Display Operator
+Hazardous Materials CDL Driver -- Explosives (Class 1)
+Mine Blaster / Shot Firer
+Armored Contract Carrier Operator
+ATM Servicing Technician / ATM First Line Maintenance
+Electronic Monitoring Compliance Specialist
+Social Worker / Children's Social Services Worker
+Epidemiologist (state/local/federal public health)
+Public Health Nurse (PHN)
+Home Health Registered Nurse (RN — Home Health)
+Nursing Home Administrator (Licensed NHA)
+Compensation & Pension (C&P) Examiner
+Forensic Psychiatrist (MD — Psychiatry, Forensic Psychiatry subspecialty)
+Peer Review Physician / Medical Staff Peer Review Committee Chair
+Registered Dietitian Nutritionist (RDN)
+Audiologist (AuD)
+Podiatrist (DPM — Doctor of Podiatric Medicine)
+Nuclear Medicine Technologist (CNMT)
+Organ Procurement Coordinator / Transplant Coordinator
+Occupational Medicine Physician (MD/DO)
+Oral and Maxillofacial Surgeon (OMS — DDS/DMD, often MD)
+Registered Dental Hygienist (RDH)
+Blood Bank Medical Director / Transfusion Medicine Specialist (MD — BB/TM subspecialty); Blood Bank Technologist (BB(ASCP))
+HEDIS Analyst / Managed Care Quality Analyst
+Healthcare Safety Officer / Environment of Care Director
+Healthcare Attorney / Health Law Counsel
+GME Director / DIO
+Psychiatric Mental Health Nurse Practitioner (PMHNP)
+Property Broker-Agent (Property Lines)
+Casualty Broker-Agent (Casualty Lines)
+Claims Compliance Officer / UCSPA Compliance Analyst
+Title Insurance Officer / Title Underwriter
+CEA Participating Insurer Agent / Earthquake Insurance Specialist
+D&O Underwriter / Management Liability Specialist
+Environmental Liability Underwriter / Pollution Legal Liability Specialist
+Product Liability Underwriter
+Umbrella/Excess Liability Underwriter
+Subrogation Recovery Specialist / Subrogation Counsel
+National Bank Charter Compliance Officer
+Community Reinvestment Act (CRA) Officer
+Fair Lending Officer / ECOA-HMDA Compliance Analyst
+Bank Secrecy Act / Anti-Money Laundering Officer (BSA Officer)
+Electronic Fund Transfer (Reg E) Compliance Specialist
+Truth in Lending (Reg Z) Compliance Specialist
+Funds Availability (Reg CC) Compliance Specialist
+Truth in Savings (Reg DD) Compliance Specialist
+Overdraft / NSF Program Compliance Analyst
+Card Services Compliance Specialist
+Digital Banking / Mobile Compliance Specialist
+Wire Transfer Compliance Officer / Sanctions Screening Analyst
+Correspondent Banking / Foreign Financial Institution Compliance Officer
+MSB Registration / Compliance Specialist
+Prepaid Card / Stored Value Program Compliance Officer
+Fintech / Bank Partnership Compliance Specialist
+Bank M&A Regulatory Compliance Officer
+Regulatory Examination Management Officer
+IRS Authorized Representative (EA/CPA/Attorney)
+FTB Audit Representative / State Tax Controversy Specialist
+Tax Court Practitioner / Tax Litigation Specialist
+Tax Planning Advisor (CPA/EA/Attorney)
+Tax Opinion Practitioner (Attorney/CPA)
+Compilation Accountant (CPA)
+SOX Compliance / Internal Controls Over Financial Reporting (ICFR) Auditor
+AICPA Peer Review Team Captain / Administering Entity Liaison
+Bookkeeper / Accounting Service Provider
+Property Tax Appeal Agent / Assessment Analyst
+International Tax / Information Reporting Compliance Specialist
+CASA Volunteer / CASA Program Director
+Licensed Psychologist (Forensic) / Psychiatrist (Forensic)
+Social Worker / Children's Social Worker / CPS Investigator
+Deputy Trial Counsel / Chief Trial Counsel
+Commission Attorney / Investigator, Commission on Judicial Performance
+Executor / Administrator / Personal Representative of Estate
+Department of Child Support Services (DCSS) Caseworker / Enforcement Officer
+Court Technology Officer (CTO) / Director of Court Information Technology
+Staff Attorney (Legal Aid) / Managing Attorney (Legal Services)
+EFSP Manager / E-Filing Administrator
+CLETS Terminal Agency Coordinator (TAC) / CJIS Systems Officer (CSO)
+ADA Coordinator / Court Access Compliance Officer
+Licensed Structural Engineer
+Licensed Civil Engineer
+Licensed Mechanical/HVAC Engineer
+Licensed Electrical Engineer
+Licensed Fire Protection Engineer
+Licensed General Contractor
+Construction Claims Specialist / Consultant
+Licensed Master Plumber
+Licensed Electrician (Journeyperson/Master)
+Licensed HVAC Contractor
+Apprenticeship Coordinator / Training Director
+Union Trust Fund Administrator
+LEED Accredited Professional
+Construction Site Safety Manager
+Range Safety Officer
+FCC Satellite Communications Licensing Specialist
+Spectrum Coordination Engineer
+ITAR Empowered Official — Space Technology
+NASA Contract Compliance Manager
+Space Systems Quality Assurance Engineer
+Planetary Protection Officer / Compliance Engineer
+Space Situational Awareness Analyst
+Flight Surgeon / Aerospace Medical Officer
+NOAA Remote Sensing License Compliance Officer
+Space Insurance Underwriter
+Mental Health Advance Directive (MHAD) Facilitator / Attorney
+Post-Award Financial Analyst / Grants Accountant
+Research Data Manager / Data Steward
+Institutional Review Board Chair / IRB Member
+HRPP Director / Director of Research Compliance
+GLP QA Unit Manager / QA Auditor
+FCC Licensing Specialist / Spectrum Coordinator
+RF Spectrum Engineer / Spectrum Manager
+Cell Site Regulatory Compliance Specialist
+E-Rate Program Administrator / USAC Compliance Specialist
+Universal Service Fund Contribution Analyst
+Customer Proprietary Network Information Compliance Officer
+TCPA Compliance Manager / Anti-Robocall Compliance Officer
+Telecommunications Billing Compliance Analyst
+Lawful Intercept Compliance Engineer / CALEA Technical Compliance Officer
+911/E911 Compliance Manager
+EAS/WEA Compliance Coordinator
+Interconnection Agreement Manager / Wholesale Compliance Officer
+International Telecommunications Compliance Manager
+Broadband Compliance Reporting Specialist
+VoIP Regulatory Compliance Specialist
+Platform Liability & Content Compliance Attorney
+Open Internet Compliance Officer
+Private Patrol Operator / Licensed Security Company Owner
+Registered Security Guard / Security Officer
+Armed Security Officer / Firearms Qualified Security Guard
+Alarm Company Operator / Licensed Alarm Business Owner
+Electronic Surveillance Compliance Officer / Video Monitoring Specialist
+Executive Protection Agent / Close Protection Officer
+Event Security Director / Security Operations Planner
+Licensed Locksmith / Physical Access Security Specialist
+Security Risk Assessment Consultant
+Licensed Private Investigator / PI Agency Owner
+Qualified Manager — Private Investigation Agency
+Surveillance Specialist / Field Investigator
+Skip Trace Investigator / Person Locator
+Corporate Investigator / Business Intelligence Analyst
+Digital Forensics Examiner / Cyber Investigation Specialist
+Accident Reconstruction Investigator / Scene Investigator
+Special Investigations Unit Investigator / Insurance Fraud Specialist
+Licensed Debt Collector / Collection Agent
+Debt Buyer / Debt Portfolio Compliance Manager
+Collections Skip Trace Analyst
+Licensed Pawnbroker / Pawn Transaction Operator
+Licensed Secondhand Dealer / Precious Metals & Gems Dealer
+Consumer Finance Compliance Manager / Small Dollar Lending Specialist
