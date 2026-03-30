@@ -1,0 +1,252 @@
+Licensed Motor Vehicle Dealer (Principal)
+Licensed Vehicle Salesperson
+Licensed Autobroker (Dealer with Autobroker Endorsement)
+Dealership Finance and Insurance Manager
+Automotive Dealership Compliance Officer
+Automotive Title and Registration Specialist
+Wholesale Vehicle Transaction Specialist
+Vehicle Disclosure Compliance Specialist
+Automotive Warranty Compliance Specialist
+Registered Automotive Repair Dealer
+Automotive Repair Service Writer
+Collision Repair Technician / Auto Body Repair Specialist
+Tire Dealer and Service Specialist
+Licensed Smog Check Station Operator
+Qualified Smog Check Technician / Smog Check Inspector
+BAR Referee / Smog Check Referee
+Emissions Parts Compliance Specialist
+Licensed Brake and Lamp Adjuster/Inspector
+Salvage/Rebuilt Vehicle Inspector
+Tow Operator / Lien Sale Processor
+Autonomous Vehicle Testing Program Director
+Autonomous Vehicle Deployment Program Manager
+Autonomous Vehicle Remote Operator
+Autonomous Vehicle Safety Engineer
+Connected/Autonomous Vehicle Cybersecurity Officer
+Connected Vehicle Data Privacy Officer
+Telematics and UBI Compliance Specialist
+Transportation Network Company Compliance Director
+Shared Mobility Compliance Manager
+Micromobility Fleet Compliance Manager
+Vehicle Right to Repair Compliance Specialist
+TrustLine Registry Background Check Specialist
+Mandated Reporter Training & Compliance Coordinator
+Child Care Personnel Records & Training Compliance Manager
+Child Care Health Consultant (CCHC)
+Child and Adult Care Food Program (CACFP) Specialist
+Child Care Emergency Preparedness Compliance Specialist
+Pesticide Notification & Exposure Prevention Specialist
+Child Care Subsidy Eligibility Determination Specialist
+Developmental Screening & Assessment Coordinator
+Parent Authorization & Child Transport Compliance Specialist
+Emancipated Minor Services Documentation Specialist
+CalWORKs Eligibility Determination Worker
+CalFresh (SNAP) Eligibility & Issuance Specialist
+Medi-Cal Eligibility & Enrollment Specialist
+General Assistance / General Relief Caseworker
+Women, Infants, and Children (WIC) Program Nutrition Specialist
+SSI/SSDI Representative Payee Compliance Specialist
+Domestic Violence Shelter Intake & Documentation Coordinator
+Sexual Assault Counselor / Rape Crisis Center Advocate
+Psychiatric Crisis Intervention / 5150 Evaluation Specialist
+Human Trafficking Victim Services & T-Visa Documentation Specialist
+Substance Use Disorder (SUD) Treatment Admission Counselor
+Drug Court Program Compliance & Case Management Coordinator
+Regional Center Service Coordinator (Lanterman Developmental Disabilities Act)
+Disability Rights & Accessibility Compliance Analyst
+Homeless Management Information System (HMIS) Data Specialist
+In-Home Supportive Services (IHSS) Social Worker / Care Coordinator
+Refugee Resettlement & Integration Caseworker
+County Veterans Service Officer (CVSO) / Veterans Services Representative
+Section 8 Housing Choice Voucher (HCV) Program Specialist
+Public Housing Admissions & Continued Occupancy Specialist
+HUD Real Estate Assessment Center (REAC) / NSPIRE Inspector
+HOME Investment Partnerships Program Compliance Specialist
+Community Development Block Grant (CDBG) Compliance Specialist
+Low-Income Housing Tax Credit (LIHTC) Compliance Specialist
+Inclusionary Zoning & Density Bonus Compliance Analyst
+Community Land Trust (CLT) Stewardship & Compliance Officer
+Fair Housing Complaint Investigator
+Reasonable Accommodation / Reasonable Modification Specialist
+Tenant Screening & Fair Credit Reporting Act (FCRA) Compliance Analyst
+Rent Stabilization & Rent Control Compliance Analyst
+Lead-Based Paint Disclosure & Renovation, Repair, Painting (RRP) Specialist
+Habitability & Residential Property Condition Inspector
+Mold & Indoor Environmental Hazard Disclosure Specialist
+Bedbug Disclosure & Integrated Pest Management (IPM) Compliance Specialist
+Mobilehome Residency Law (MRL) Compliance Specialist
+SRO (Single Room Occupancy) Housing Compliance Inspector
+Accessory Dwelling Unit (ADU) Permit & Compliance Specialist
+Uniform Relocation Assistance & Real Property Acquisition Specialist
+Eviction Prevention & Rental Assistance Program Coordinator
+Title IX Coordinator
+A1-01. Government Contracts Attorney
+A1-02. Contracting Officer (CO) / Contracting Officer's Representative (COR)
+A1-03. Government Contracts Specialist / Procurement Analyst
+A2-04. Defense Contract Auditor (DCAA)
+A2-05. Cost/Price Analyst
+A3-08. Industrial Security Specialist
+A3-09. Special Security Officer (SSO)
+A3-10. Personnel Security Specialist / Adjudicator
+A4-11. ITAR Compliance Officer
+A4-12. EAR/Export Compliance Specialist
+A4-13. Customs/Trade Compliance Specialist
+A5-14. DCMA Quality Assurance Representative (QAR)
+A5-15. CMMC Assessor / CMMC Registered Practitioner
+A5-16. Systems Engineer (Defense Programs)
+A6-17. Military Records Specialist
+A6-18. Veterans Benefits Attorney / Veterans Service Representative
+A6-19. Military Justice Attorney (JAG / Civilian Defense Counsel)
+A6-20. Military Medical Records Specialist
+A7-21. Foreign Military Sales (FMS) Program Manager
+A7-23. Small Business Liaison Officer (SBLO) / Small Business Specialist
+A7-24. Contractor Performance Assessment Reporting System (CPARS) Assessor
+B1-01. Patent Attorney (Prosecution)
+B1-02. Patent Agent
+B1-03. Patent Examiner
+B1-04. Patent Litigation Attorney
+B1-05. Patent Valuation Analyst
+B1-06. International Patent Specialist (PCT/Foreign Filing)
+B2-07. Trademark Attorney (Prosecution)
+B2-08. Trademark Trial and Appeal Board (TTAB) Practitioner
+B2-09. International Trademark Specialist (Madrid Protocol)
+B3-11. DMCA/Digital Rights Compliance Officer
+B4-12. Trade Secret Counsel
+B4-13. NDA/Confidentiality Agreement Specialist
+B5-14. IP Licensing Attorney / Licensing Executive
+B5-15. IP Royalty Auditor
+B5-16. IP Insurance Specialist
+B6-17. Inter Partes Review (IPR) Specialist
+B6-18. Domain Name Dispute Specialist (UDRP)
+B7-19. Open Source Compliance Attorney / Officer
+B7-20. Freedom-to-Operate (FTO) Analyst
+C1-01. Data Protection Officer (DPO) / Chief Privacy Officer (CPO)
+C1-02. GDPR Compliance Specialist
+C1-04. Children's Privacy Specialist (COPPA)
+C1-05. Biometric Privacy Compliance Specialist (BIPA)
+C2-07. SOC 2 Auditor / IT Audit Professional
+C2-08. Penetration Tester / Ethical Hacker
+C2-09. Vulnerability Assessment Analyst
+C2-10. Incident Response Manager / CSIRT Lead
+C2-11. FedRAMP Assessor / 3PAO
+C2-12. FISMA Compliance Officer
+C3-13. AI Ethics Officer / Responsible AI Lead
+C3-14. Algorithmic Impact Assessment Specialist
+C3-15. AI Model Documentation Specialist / ML Engineer (Governance)
+C4-16. Cloud Security Architect / Cloud Compliance Specialist
+C4-17. Cloud Service Agreement Reviewer / IT Contracts Specialist
+C4-18. SLA Compliance Analyst
+C5-19. Software License Compliance Auditor
+C5-20. Code Auditor / Software Security Reviewer
+C5-21. API Compliance / Integration Security Specialist
+C6-22. Accessibility Compliance Specialist (WCAG/ADA)
+C7-23. Data Retention / Records Management Officer
+C7-24. Data Processing Agreement (DPA) Specialist
+C7-25. Cookie Consent / Consent Management Specialist
+C8-26. Technology Transactions Attorney / IT Counsel
+Hotel Licensing Compliance Officer
+Transient Occupancy Tax Administrator
+Guest Registration Records Manager
+Short-Term Rental Permit Compliance Specialist
+Short-Term Rental Tax Compliance Analyst
+Timeshare Disclosure Compliance Officer
+Fire Marshal — Hospitality Division
+Hotel Safety Inspection Coordinator
+Environmental Health Specialist — Aquatic Facilities
+Carbon Monoxide and Gas Safety Compliance Inspector
+Integrated Pest Management Compliance Officer — Lodging
+Housekeeping Safety Compliance Officer
+Water Management Program Manager — Hospitality
+ADA Accessibility Compliance Specialist — Lodging
+Innkeeper's Liability Claims Manager
+Resort Fee / Mandatory Fee Disclosure Officer
+Hospitality Risk & Insurance Manager
+Human Trafficking Prevention Compliance Officer — Hospitality
+Hotel Worker Protection Compliance Officer
+Employee Personal Safety Device Compliance Officer
+Workplace Violence Prevention Plan Manager — Hospitality
+Hospitality Wage & Hour Compliance Specialist
+Hotel Franchise Compliance Auditor
+Hotel Quality / Star-Diamond Rating Compliance Manager
+Hotel Management Agreement (HMA) Compliance Officer
+Home-Sharing Host Registration Coordinator
+Short-Term Rental Safety Inspector
+Vacation Rental Property Manager — Regulatory Compliance
+Hospitality Environmental Compliance Officer
+Energy Benchmarking Compliance Officer — Hospitality
+Stormwater and Fats/Oils/Grease (FOG) Compliance Officer — Hospitality
+Alcohol Beverage Control Compliance Manager — Hospitality
+In-Room Dining & Minibar Compliance Specialist
+Banquet & Catering Operations Compliance Officer
+Seismic Retrofit Compliance Officer — Hotel/Lodging
+Hospitality Cybersecurity & POS Compliance Officer
+Accessible Room Reservation Compliance Officer
+Hotel Construction & Renovation Compliance Officer
+Emergency Preparedness Manager — Hospitality
+Valet & Parking Liability Compliance Officer
+Spa & Wellness Regulatory Compliance Officer
+Hotel Telecommunications & WiFi Compliance Officer
+Hospitality Real Property Tax Compliance Officer
+Accessible Transportation Compliance Officer — Hospitality
+Seller of Travel Registration Compliance Officer
+Travel Agency Surety Bond Compliance Officer
+Tour Operator License & Safety Compliance Officer
+Airlines Reporting Corporation (ARC) Compliance Officer
+Travel Insurance Product & Distribution Compliance Officer
+Travel Refund & Cancellation Rights Compliance Officer
+Travel Loyalty Program Regulatory Compliance Officer
+Passenger Vessel Services Act (PVSA) Compliance Officer
+Shore Excursion Safety & Liability Compliance Officer
+Travel Document & Passport/Visa Facilitation Compliance Officer
+Adventure Tourism Safety & Risk Management Officer
+Agritourism Liability & Regulatory Compliance Officer
+Heritage Tourism & Cultural Resource Compliance Officer
+Sensitive Site Tourism Ethics & Protocol Officer
+DMO Fiscal & Program Compliance Officer
+Tourism Grant Compliance & Reporting Officer
+Incentive Travel Program Compliance Officer
+Travel Data / PNR Privacy Compliance Officer
+Travel Technology Platform Compliance Officer
+Travel Risk & Duty of Care Compliance Officer
+Accessible Tourism Compliance Officer
+Travel Health & Medical Clearance Documentation Officer
+Cannabis Tourism Regulatory Compliance Officer
+Wine & Spirits Tourism Compliance Officer
+Sports Tourism & Event Travel Compliance Officer
+Medical Tourism Facilitator Compliance Officer
+Religious & Pilgrimage Tourism Compliance Officer
+Student & Educational Travel Compliance Officer
+Accessible Travel Planning Specialist
+Special Event Permit Compliance Officer
+Mass Gathering Permit & Public Safety Compliance Officer
+Temporary Food Facility (TFF) Permit Compliance Officer
+Temporary Liquor License / Event Alcohol Permit Officer
+Event Street Closure & Traffic Management Permit Officer
+Event Sound & Noise Ordinance Compliance Officer
+Event Security Plan & Operations Compliance Officer
+Crowd Management & Flow Compliance Officer
+Event Medical Plan & EMS Compliance Officer
+Pyrotechnics & Special Effects Permit Compliance Officer
+Event Fire Safety & Temporary Structure Inspection Officer
+Event Counter-Terrorism & Hostile Event Preparedness Officer
+Convention Center Contract & Operations Compliance Officer
+Trade Show Exhibitor Agreement & Compliance Officer
+Sports Venue Safety & Regulatory Compliance Officer
+Event Insurance & Risk Transfer Compliance Officer
+Amusement Ride & Inflatable Device Inspection Compliance Officer
+Event Vendor & Mobile Food Facility Permit Coordinator
+Event ADA Accessibility Compliance Officer
+Event Communication Access Compliance Officer
+Event Digital Accessibility & Inclusion Technology Officer
+Unmanned Aircraft Systems (UAS) Event Operations Compliance Officer
+Event Filming & Photography Permit Compliance Officer
+Event Waste Diversion & Environmental Compliance Officer
+Event On-Site Alcohol Service Compliance Officer
+Event Sustainability & Carbon Offset Verification Officer
+Event Registration & Attendee Data Privacy Compliance Officer
+Event Live-Streaming & Broadcast Regulatory Compliance Officer
+Event Cybersecurity & Temporary Network Operations Officer
+Festival & Fair Comprehensive Permit Compliance Officer
+Outdoor & Wilderness Event Permit Compliance Officer
+Virtual & Hybrid Event Regulatory Compliance Officer
+Political & Advocacy Event Regulatory Compliance Officer
