@@ -8,7 +8,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import type {
   DashboardData,
   DashboardSnapshotRow,
@@ -65,7 +65,7 @@ export class Dash1Worker {
         .run();
     } catch {
       // Fallback to KV
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}snapshot:${id}`,
         JSON.stringify(dashboard)
       );

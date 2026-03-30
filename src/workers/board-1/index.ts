@@ -2,7 +2,7 @@ import type { Env } from "../../index.js";
 import type { BusinessEntityType, USState } from "../../types/client.js";
 import type { OnboardingFlow, OnboardingStep, OnboardingRow } from "./types.js";
 import { OnboardingStepId, OnboardingStepStatus } from "./types.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 
 /** KV namespace prefix for BOARD-1 data. */
 const KV_PREFIX = "ADVOCIS:board:";
@@ -93,14 +93,14 @@ export class Board1Worker {
         .run();
     } catch {
       // Fallback to KV
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}flow:${id}`,
         JSON.stringify(flow)
       );
     }
 
     // Also cache in KV for fast retrieval
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}client:${client.id}:flow`,
       JSON.stringify(flow)
     );
@@ -147,7 +147,7 @@ export class Board1Worker {
       };
 
       // Populate cache
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}client:${clientId}:flow`,
         JSON.stringify(flow)
       );
@@ -209,7 +209,7 @@ export class Board1Worker {
     }
 
     // Update KV cache
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}client:${clientId}:flow`,
       JSON.stringify(flow)
     );

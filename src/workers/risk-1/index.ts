@@ -7,7 +7,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import { RiskStatus } from "./types.js";
 import type {
   Risk,
@@ -80,7 +80,7 @@ export class Risk1Worker {
         .run();
     } catch {
       // Table may not exist — store in KV as fallback
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}${id}`,
         JSON.stringify({
           id,
@@ -103,7 +103,7 @@ export class Risk1Worker {
     const counterKey = `${KV_PREFIX}stats:total_risks`;
     const currentRaw = await env.KNOWLEDGE_STORE.get(counterKey);
     const current = currentRaw ? parseInt(currentRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put(counterKey, String(current + 1));
+    await safeKvPut(env.KNOWLEDGE_STORE, counterKey, String(current + 1));
 
     return {
       id,

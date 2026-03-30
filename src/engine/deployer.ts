@@ -1,5 +1,5 @@
 import type { Env } from "../index.js";
-import { generateId } from "../utils/helpers.js";
+import { generateId ,safeKvPut} from "../utils/helpers.js";
 import { PersonaCitizenStatus } from "../types/persona.js";
 import type { CitizenSpec, DeployedCitizen, DeploymentResult } from "./types.js";
 import { getSpec } from "./catalog.js";
@@ -94,15 +94,15 @@ export async function deployCitizen(
     }
 
     // 3. Create a KV namespace prefix for this Citizen
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${kvPrefix}system:deployed_at`,
       new Date().toISOString()
     );
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${kvPrefix}system:spec`,
       JSON.stringify(spec)
     );
-    await env.KNOWLEDGE_STORE.put(`${kvPrefix}stats:events_received`, "0");
+    await safeKvPut(env.KNOWLEDGE_STORE, `${kvPrefix}stats:events_received`, "0");
 
     // 4. Create worker records in D1 workers table
     for (const workerSpec of spec.workers) {
@@ -123,7 +123,7 @@ export async function deployCitizen(
           .run();
       } catch {
         // Workers table may not exist — store in KV as fallback
-        await env.KNOWLEDGE_STORE.put(
+        await safeKvPut(env.KNOWLEDGE_STORE, 
           `${kvPrefix}worker:${workerSpec.id}`,
           JSON.stringify(workerSpec)
         );

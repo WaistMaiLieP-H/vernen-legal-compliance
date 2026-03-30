@@ -1,0 +1,18 @@
+{
+  "name": "vernen-verification-contracts",
+  "version": "1.0.0",
+  "description": "Vernen Legal Compliance — On-chain verification smart contracts",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:testnet": "hardhat run scripts/deploy.ts --network base-sepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network base-mainnet",
+    "verify:testnet": "hardhat verify --network base-sepolia",
+    "verify:mainnet": "hardhat verify --network base-mainnet"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.0"
+  }
+}

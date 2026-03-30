@@ -12,7 +12,7 @@
 
 import { PersonaCitizenBase } from "../base.js";
 import { PersonaCitizenStatus } from "../../types/persona.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 import { Pitch1Worker } from "../../workers/pitch-1/index.js";
 import type { Env } from "../../index.js";
 
@@ -86,7 +86,7 @@ export class Vestara extends PersonaCitizenBase {
     }
 
     const bootKey = `${KV_PREFIX}system:last_boot`;
-    await env.KNOWLEDGE_STORE.put(bootKey, new Date().toISOString());
+    await safeKvPut(env.KNOWLEDGE_STORE, bootKey, new Date().toISOString());
   }
 
   async receiveEvent(
@@ -203,6 +203,6 @@ export class Vestara extends PersonaCitizenBase {
     env: Env
   ): Promise<void> {
     const fullKey = `${KV_PREFIX}${key}`;
-    await env.KNOWLEDGE_STORE.put(fullKey, JSON.stringify(value));
+    await safeKvPut(env.KNOWLEDGE_STORE, fullKey, JSON.stringify(value));
   }
 }

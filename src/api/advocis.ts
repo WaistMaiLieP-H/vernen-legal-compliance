@@ -13,12 +13,39 @@ function jsonResponse(data: unknown, status = 200): Response {
 }
 
 /**
- * Validate that a string is a valid BusinessEntityType enum value.
+ * Normalize entity type input to match enum values.
  */
+const ENTITY_TYPE_ALIASES: Record<string, BusinessEntityType> = {
+  llc: BusinessEntityType.LLC,
+  corporation: BusinessEntityType.CORPORATION,
+  corp: BusinessEntityType.CORPORATION,
+  s_corp: BusinessEntityType.S_CORP,
+  "s corp": BusinessEntityType.S_CORP,
+  scorp: BusinessEntityType.S_CORP,
+  sole_proprietorship: BusinessEntityType.SOLE_PROPRIETORSHIP,
+  "sole proprietorship": BusinessEntityType.SOLE_PROPRIETORSHIP,
+  soleproprietorship: BusinessEntityType.SOLE_PROPRIETORSHIP,
+  "sole proprietor": BusinessEntityType.SOLE_PROPRIETORSHIP,
+  partnership: BusinessEntityType.PARTNERSHIP,
+  nonprofit: BusinessEntityType.NONPROFIT,
+  "non-profit": BusinessEntityType.NONPROFIT,
+  "non profit": BusinessEntityType.NONPROFIT,
+  cooperative: BusinessEntityType.COOPERATIVE,
+  "co-op": BusinessEntityType.COOPERATIVE,
+  coop: BusinessEntityType.COOPERATIVE,
+  "co-operative": BusinessEntityType.COOPERATIVE,
+};
+
+function normalizeEntityType(value: string): BusinessEntityType | null {
+  if (Object.values(BusinessEntityType).includes(value as BusinessEntityType)) {
+    return value as BusinessEntityType;
+  }
+  const normalized = ENTITY_TYPE_ALIASES[value.toLowerCase().trim()];
+  return normalized ?? null;
+}
+
 function isValidEntityType(value: string): value is BusinessEntityType {
-  return Object.values(BusinessEntityType).includes(
-    value as BusinessEntityType
-  );
+  return normalizeEntityType(value) !== null;
 }
 
 // ---------------------------------------------------------------------------
@@ -86,18 +113,26 @@ export async function handleAdvocisOnboard(
   _ctx: ExecutionContext,
   _params: RouteParams
 ): Promise<Response> {
-  let body: {
-    businessName: string;
-    email: string;
-    entityType: string;
-    states: string[];
-  };
+  let raw: Record<string, unknown>;
 
   try {
-    body = await parseJsonBody<typeof body>(request);
+    raw = await parseJsonBody<Record<string, unknown>>(request);
   } catch {
     return jsonResponse({ error: "Invalid JSON in request body" }, 400);
   }
+
+  // Accept common field name aliases
+  const body = {
+    businessName: (raw.businessName ?? raw.business_name ?? raw.name ?? raw.companyName ?? raw.company_name ?? "") as string,
+    email: (raw.email ?? raw.contactEmail ?? raw.contact_email ?? raw.emailAddress ?? raw.email_address ?? "") as string,
+    entityType: (raw.entityType ?? raw.entity_type ?? raw.type ?? "") as string,
+    states: ((): string[] => {
+      const s = raw.states ?? raw.state;
+      if (Array.isArray(s)) return s as string[];
+      if (typeof s === "string") return [s];
+      return [];
+    })(),
+  };
 
   // Validate required fields
   if (!body.businessName || !body.email || !body.entityType || !body.states?.length) {
@@ -105,25 +140,29 @@ export async function handleAdvocisOnboard(
       {
         error:
           "All fields required: businessName, email, entityType, states[]",
+        hint: "Also accepts: name, business_name, entity_type, state (string or array)",
       },
       400
     );
   }
 
-  // Validate entity type
-  if (!isValidEntityType(body.entityType)) {
+  // Validate and normalize entity type
+  const entityType = normalizeEntityType(body.entityType);
+  if (!entityType) {
     return jsonResponse(
       {
         error: `Invalid entityType: '${body.entityType}'.`,
         validTypes: Object.values(BusinessEntityType),
+        hint: "Accepted formats: 'LLC', 'Corporation', 'S Corp', 'Sole Proprietorship', 'Partnership', 'Nonprofit'",
       },
       400
     );
   }
 
-  // Validate states
+  // Validate and normalize states (accept lowercase)
   const validStates = Object.values(USState) as string[];
-  const invalidStates = body.states.filter((s) => !validStates.includes(s));
+  const normalizedStates = body.states.map((s) => s.toUpperCase().trim());
+  const invalidStates = normalizedStates.filter((s) => !validStates.includes(s));
   if (invalidStates.length > 0) {
     return jsonResponse(
       {
@@ -143,16 +182,16 @@ export async function handleAdvocisOnboard(
       `INSERT INTO clients (id, name, email, entity_type, industry, created_at, updated_at)
        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`
     )
-      .bind(clientId, body.businessName, body.email, body.entityType, "General", now, now)
+      .bind(clientId, body.businessName, body.email, entityType, "General", now, now)
       .run();
 
     // Insert client-state associations
-    for (const state of body.states) {
+    for (const state of normalizedStates) {
       await env.DB.prepare(
         `INSERT INTO client_states (client_id, state, is_formation_state)
          VALUES (?1, ?2, ?3)`
       )
-        .bind(clientId, state, body.states.indexOf(state) === 0 ? 1 : 0)
+        .bind(clientId, state, normalizedStates.indexOf(state) === 0 ? 1 : 0)
         .run();
     }
   } catch (error) {
@@ -172,25 +211,31 @@ export async function handleAdvocisOnboard(
     {
       id: clientId,
       name: body.businessName,
-      entityType: body.entityType as BusinessEntityType,
-      states: body.states as USState[],
+      entityType,
+      states: normalizedStates as USState[],
       industry: "General",
       createdAt: now,
     },
     env
   );
 
-  return jsonResponse(
-    {
-      success: true,
-      clientId: result.clientId,
-      onboardingId: result.onboardingId,
-      welcome: result.welcomeSequence,
-      onboardingSteps: result.steps,
-      nextStep: "Complete your profile at /api/advocis/client/" + clientId + "/onboarding",
-    },
-    201
-  );
+  // PROOF pass — verify onboarding output before release
+  const responseBody: Record<string, unknown> = {
+    success: true,
+    clientId: result.clientId,
+    onboardingId: result.onboardingId,
+    welcome: result.welcomeSequence,
+    onboardingSteps: result.steps,
+    nextStep: "Complete your profile at /api/advocis/client/" + clientId + "/onboarding",
+  };
+
+  const advocisForProof = await getAdvocisInstance(env);
+  advocisForProof.proof("onboarding", responseBody, {
+    entityType: entityType,
+    jurisdiction: normalizedStates[0],
+  });
+
+  return jsonResponse(responseBody, 201);
 }
 
 /**

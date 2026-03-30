@@ -13,7 +13,7 @@
 
 import { PersonaCitizenBase } from "../base.js";
 import { PersonaCitizenStatus } from "../../types/persona.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 import { Audit1Worker } from "../../workers/audit-1/index.js";
 import { Proc1Worker } from "../../workers/proc-1/index.js";
 import { HealthStatus } from "../../workers/audit-1/types.js";
@@ -99,13 +99,13 @@ export class Integra extends PersonaCitizenBase {
 
     // Initialize KV knowledge namespace with boot marker
     const bootKey = `${KV_PREFIX}system:last_boot`;
-    await env.KNOWLEDGE_STORE.put(bootKey, new Date().toISOString());
+    await safeKvPut(env.KNOWLEDGE_STORE, bootKey, new Date().toISOString());
 
     // Ensure KV counters exist
     const totalAuditKey = `${KV_PREFIX}stats:total_audits`;
     const existing = await env.KNOWLEDGE_STORE.get(totalAuditKey);
     if (existing === null) {
-      await env.KNOWLEDGE_STORE.put(totalAuditKey, "0");
+      await safeKvPut(env.KNOWLEDGE_STORE, totalAuditKey, "0");
     }
   }
 
@@ -520,6 +520,6 @@ export class Integra extends PersonaCitizenBase {
     env: Env
   ): Promise<void> {
     const fullKey = `${KV_PREFIX}${key}`;
-    await env.KNOWLEDGE_STORE.put(fullKey, JSON.stringify(value));
+    await safeKvPut(env.KNOWLEDGE_STORE, fullKey, JSON.stringify(value));
   }
 }

@@ -15,7 +15,7 @@ import {
   AuditStatus,
   SENTINEL_KV_KEYS,
 } from "./types.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import type { Env } from "../../index.js";
 
 /**
@@ -240,7 +240,7 @@ export class Sentinel0Worker {
     }
 
     // Cache latest audit in KV for fast status lookups
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${SENTINEL_KV_KEYS.AUDIT_PREFIX}${result.id}`,
       JSON.stringify(result),
       { expirationTtl: 86400 * 30 } // 30 days
@@ -368,7 +368,7 @@ export class Sentinel0Worker {
     };
 
     // Cache in KV
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${SENTINEL_KV_KEYS.GATE_PREFIX}${gateId}`,
       JSON.stringify(result),
       { expirationTtl: 3600 }
@@ -826,7 +826,7 @@ export class Sentinel0Worker {
       .run();
 
     // Also cache in KV for fast lookup
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${SENTINEL_KV_KEYS.ISSUE_PREFIX}${issue.id}`,
       JSON.stringify(issue),
       { expirationTtl: 86400 * 90 } // 90 days
@@ -856,7 +856,7 @@ export class Sentinel0Worker {
       state.lastAdjustment = adjustment;
     }
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       SENTINEL_KV_KEYS.SCHEDULE_STATE,
       JSON.stringify(state)
     );

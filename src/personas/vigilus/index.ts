@@ -12,7 +12,7 @@
 
 import { PersonaCitizenBase } from "../base.js";
 import { PersonaCitizenStatus } from "../../types/persona.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 import { Risk1Worker } from "../../workers/risk-1/index.js";
 import { Thrt1Worker } from "../../workers/thrt-1/index.js";
 import type { RiskInput } from "../../workers/risk-1/types.js";
@@ -96,13 +96,13 @@ export class Vigilus extends PersonaCitizenBase {
 
     // Initialize KV knowledge namespace with boot marker
     const bootKey = `${KV_PREFIX}system:last_boot`;
-    await env.KNOWLEDGE_STORE.put(bootKey, new Date().toISOString());
+    await safeKvPut(env.KNOWLEDGE_STORE, bootKey, new Date().toISOString());
 
     // Ensure KV counters exist
     const totalRisksKey = `${KV_PREFIX}stats:total_assessments`;
     const existing = await env.KNOWLEDGE_STORE.get(totalRisksKey);
     if (existing === null) {
-      await env.KNOWLEDGE_STORE.put(totalRisksKey, "0");
+      await safeKvPut(env.KNOWLEDGE_STORE, totalRisksKey, "0");
     }
   }
 
@@ -412,13 +412,13 @@ export class Vigilus extends PersonaCitizenBase {
     env: Env
   ): Promise<void> {
     const fullKey = `${KV_PREFIX}${key}`;
-    await env.KNOWLEDGE_STORE.put(fullKey, JSON.stringify(value));
+    await safeKvPut(env.KNOWLEDGE_STORE, fullKey, JSON.stringify(value));
   }
 
   private async _incrementStat(statName: string, env: Env): Promise<void> {
     const key = `${KV_PREFIX}stats:${statName}`;
     const currentRaw = await env.KNOWLEDGE_STORE.get(key);
     const current = currentRaw ? parseInt(currentRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put(key, String(current + 1));
+    await safeKvPut(env.KNOWLEDGE_STORE, key, String(current + 1));
   }
 }

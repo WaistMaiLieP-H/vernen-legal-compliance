@@ -6,7 +6,7 @@
  * build outputs, AUDIT-1 audits the live operational environment.
  */
 
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import type { Env } from "../../index.js";
 import {
   AuditScope,
@@ -486,7 +486,7 @@ export class Audit1Worker {
     }
 
     // Update KV with current D1 values for next comparison
-    await env.KNOWLEDGE_STORE.put("INTEGRA:stats:citizen_count", d1CitizenCount);
+    await safeKvPut(env.KNOWLEDGE_STORE, "INTEGRA:stats:citizen_count", d1CitizenCount);
 
     const hasCritical = findings.some((f) => f.severity === AuditSeverity.CRITICAL);
     const hasWarning = findings.some((f) => f.severity === AuditSeverity.WARNING);
@@ -578,10 +578,10 @@ export class Audit1Worker {
     // Update KV audit counter
     const totalAuditsRaw = await env.KNOWLEDGE_STORE.get("INTEGRA:stats:total_audits");
     const totalAudits = totalAuditsRaw ? parseInt(totalAuditsRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put("INTEGRA:stats:total_audits", String(totalAudits + 1));
+    await safeKvPut(env.KNOWLEDGE_STORE, "INTEGRA:stats:total_audits", String(totalAudits + 1));
 
     // Cache latest report
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `INTEGRA:audit:latest`,
       JSON.stringify(report),
       { expirationTtl: 86400 }

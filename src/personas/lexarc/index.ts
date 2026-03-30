@@ -2,7 +2,7 @@ import { PersonaCitizenBase } from "../base.js";
 import { PersonaCitizenStatus } from "../../types/persona.js";
 import { Lex1Worker, DOCUMENT_PRODUCTS, DOCUMENT_BUNDLES } from "../../workers/lex-1/index.js";
 import { DocumentType, type GeneratedDocument } from "../../workers/lex-1/types.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 import type { Env } from "../../index.js";
 
 /** KV namespace prefix for all LEXARC knowledge entries. */
@@ -96,13 +96,13 @@ export class Lexarc extends PersonaCitizenBase {
 
     // Initialize KV knowledge namespace with boot marker
     const bootKey = `${KV_PREFIX}system:last_boot`;
-    await env.KNOWLEDGE_STORE.put(bootKey, new Date().toISOString());
+    await safeKvPut(env.KNOWLEDGE_STORE, bootKey, new Date().toISOString());
 
     // Ensure counters exist
     const totalDocsKey = `${KV_PREFIX}stats:total_documents`;
     const existing = await env.KNOWLEDGE_STORE.get(totalDocsKey);
     if (existing === null) {
-      await env.KNOWLEDGE_STORE.put(totalDocsKey, "0");
+      await safeKvPut(env.KNOWLEDGE_STORE, totalDocsKey, "0");
     }
   }
 
@@ -360,7 +360,7 @@ export class Lexarc extends PersonaCitizenBase {
     env: Env
   ): Promise<void> {
     const fullKey = `${KV_PREFIX}${key}`;
-    await env.KNOWLEDGE_STORE.put(fullKey, JSON.stringify(value));
+    await safeKvPut(env.KNOWLEDGE_STORE, fullKey, JSON.stringify(value));
   }
 
   /**
@@ -374,18 +374,18 @@ export class Lexarc extends PersonaCitizenBase {
     const totalKey = `${KV_PREFIX}stats:total_documents`;
     const currentTotal = await env.KNOWLEDGE_STORE.get(totalKey);
     const newTotal = (currentTotal ? parseInt(currentTotal, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(totalKey, String(newTotal));
+    await safeKvPut(env.KNOWLEDGE_STORE, totalKey, String(newTotal));
 
     // Increment per-type count
     const typeKey = `${KV_PREFIX}stats:type:${doc.type}`;
     const currentType = await env.KNOWLEDGE_STORE.get(typeKey);
     const newType = (currentType ? parseInt(currentType, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(typeKey, String(newType));
+    await safeKvPut(env.KNOWLEDGE_STORE, typeKey, String(newType));
 
     // Record state demand
     const stateKey = `${KV_PREFIX}demand:state:${doc.state}`;
     const currentState = await env.KNOWLEDGE_STORE.get(stateKey);
     const newState = (currentState ? parseInt(currentState, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(stateKey, String(newState));
+    await safeKvPut(env.KNOWLEDGE_STORE, stateKey, String(newState));
   }
 }

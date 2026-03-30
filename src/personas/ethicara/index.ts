@@ -13,7 +13,7 @@
 
 import { PersonaCitizenBase } from "../base.js";
 import { PersonaCitizenStatus } from "../../types/persona.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 import { Code1Worker } from "../../workers/code-1/index.js";
 import { Fair1Worker } from "../../workers/fair-1/index.js";
 import { EthicsReportCategory, EthicsReportStatus } from "../../workers/code-1/types.js";
@@ -99,19 +99,19 @@ export class Ethicara extends PersonaCitizenBase {
 
     // Initialize KV knowledge namespace with boot marker
     const bootKey = `${KV_PREFIX}system:last_boot`;
-    await env.KNOWLEDGE_STORE.put(bootKey, new Date().toISOString());
+    await safeKvPut(env.KNOWLEDGE_STORE, bootKey, new Date().toISOString());
 
     // Ensure KV counters exist
     const totalReviewsKey = `${KV_PREFIX}stats:total_reviews`;
     const existing = await env.KNOWLEDGE_STORE.get(totalReviewsKey);
     if (existing === null) {
-      await env.KNOWLEDGE_STORE.put(totalReviewsKey, "0");
+      await safeKvPut(env.KNOWLEDGE_STORE, totalReviewsKey, "0");
     }
 
     const totalReportsKey = `${KV_PREFIX}stats:total_reports`;
     const existingReports = await env.KNOWLEDGE_STORE.get(totalReportsKey);
     if (existingReports === null) {
-      await env.KNOWLEDGE_STORE.put(totalReportsKey, "0");
+      await safeKvPut(env.KNOWLEDGE_STORE, totalReportsKey, "0");
     }
   }
 
@@ -321,7 +321,7 @@ export class Ethicara extends PersonaCitizenBase {
         .run();
     } catch {
       // Table may not exist — store in KV as fallback
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}report:${ethicsReport.id}`,
         JSON.stringify(ethicsReport)
       );
@@ -439,13 +439,13 @@ export class Ethicara extends PersonaCitizenBase {
     env: Env
   ): Promise<void> {
     const fullKey = `${KV_PREFIX}${key}`;
-    await env.KNOWLEDGE_STORE.put(fullKey, JSON.stringify(value));
+    await safeKvPut(env.KNOWLEDGE_STORE, fullKey, JSON.stringify(value));
   }
 
   private async _incrementStat(statName: string, env: Env): Promise<void> {
     const key = `${KV_PREFIX}stats:${statName}`;
     const currentRaw = await env.KNOWLEDGE_STORE.get(key);
     const current = currentRaw ? parseInt(currentRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put(key, String(current + 1));
+    await safeKvPut(env.KNOWLEDGE_STORE, key, String(current + 1));
   }
 }

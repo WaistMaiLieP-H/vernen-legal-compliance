@@ -6,6 +6,7 @@ import type {
 import { ComplianceStatus } from "../types/compliance.js";
 import { generateId, formatDate, sanitizeInput } from "../utils/helpers.js";
 import { getReportDisclaimer } from "../legal/disclaimers.js";
+import { generateComplianceReportPDF } from "./pdf-generator.js";
 
 /**
  * ReportGenerator -- Produces compliance reports from check results.
@@ -505,11 +506,11 @@ export class ReportGenerator {
   }
 
   /**
-   * Format a compliance report as PDF.
-   * Stub -- will integrate with a PDF generation service.
+   * Format a compliance report as a downloadable PDF document.
+   * Uses the pure-TypeScript PDF generator (no external dependencies).
    */
-  formatAsPDF(_report: ComplianceReport): Uint8Array {
-    return new Uint8Array(0);
+  formatAsPDF(report: ComplianceReport): Uint8Array {
+    return generateComplianceReportPDF(report);
   }
 
   // -- Private helpers --

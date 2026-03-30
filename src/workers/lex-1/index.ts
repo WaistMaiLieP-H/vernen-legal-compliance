@@ -9,7 +9,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import {
   DocumentType,
   type GeneratedDocument,
@@ -405,7 +405,7 @@ export class Lex1Worker {
     }
 
     // Cache in KV (90-day expiration)
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}${doc.id}`,
       JSON.stringify(doc),
       { expirationTtl: 90 * 86400 }
@@ -415,7 +415,7 @@ export class Lex1Worker {
     const countKey = `${KV_PREFIX}stats:generated`;
     const current = await env.KNOWLEDGE_STORE.get(countKey);
     const count = (current ? parseInt(current, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(countKey, String(count));
+    await safeKvPut(env.KNOWLEDGE_STORE, countKey, String(count));
   }
 
   /**

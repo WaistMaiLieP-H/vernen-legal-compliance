@@ -48,3 +48,23 @@ export async function parseJsonBody<T>(request: Request): Promise<T> {
     throw new Error("Invalid JSON in request body");
   }
 }
+
+/**
+ * Safe KV put — wraps KNOWLEDGE_STORE.put() to gracefully handle
+ * KV daily write limit exceeded errors. Non-critical KV writes
+ * (boot markers, counters, caches) should never crash the request.
+ */
+export async function safeKvPut(
+  kv: { put: (key: string, value: string, options?: { expirationTtl?: number }) => Promise<void> },
+  key: string,
+  value: string,
+  options?: { expirationTtl?: number },
+): Promise<boolean> {
+  try {
+    await kv.put(key, value, options);
+    return true;
+  } catch {
+    // KV write limit exceeded or other KV error — non-fatal
+    return false;
+  }
+}

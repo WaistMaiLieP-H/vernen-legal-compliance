@@ -7,7 +7,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import { CheckType } from "./types.js";
 import type {
   QualityCheck,
@@ -87,7 +87,7 @@ export class Qual1Worker {
     try {
       const start = Date.now();
       const testKey = "SYNTARA:healthcheck";
-      await env.KNOWLEDGE_STORE.put(testKey, new Date().toISOString());
+      await safeKvPut(env.KNOWLEDGE_STORE, testKey, new Date().toISOString());
       const readBack = await env.KNOWLEDGE_STORE.get(testKey);
       const elapsed = Date.now() - start;
 

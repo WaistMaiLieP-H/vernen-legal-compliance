@@ -7,7 +7,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import {
   DataClassification,
   DSARType,
@@ -170,7 +170,7 @@ export class Guard1Worker {
     const auditedAt = new Date().toISOString();
 
     // Record audit in KV
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}audit:data_collection:${Date.now()}`,
       JSON.stringify({
         totalEndpoints: PLATFORM_DATA_POINTS.length,
@@ -220,7 +220,7 @@ export class Guard1Worker {
 
     const checkedAt = new Date().toISOString();
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}consent:last_check`,
       JSON.stringify({
         compliantCount,
@@ -388,7 +388,7 @@ export class Guard1Worker {
 
     const classifiedAt = new Date().toISOString();
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}classification:last_run`,
       JSON.stringify({
         summary,
@@ -447,7 +447,7 @@ export class Guard1Worker {
     }
 
     // Record in KV for fast lookup
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}dsar:${dsar.id}`,
       JSON.stringify(dsar)
     );
@@ -456,7 +456,7 @@ export class Guard1Worker {
     const counterKey = `${KV_PREFIX}stats:total_dsars`;
     const currentRaw = await env.KNOWLEDGE_STORE.get(counterKey);
     const current = currentRaw ? parseInt(currentRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put(counterKey, String(current + 1));
+    await safeKvPut(env.KNOWLEDGE_STORE, counterKey, String(current + 1));
 
     return dsar;
   }
@@ -517,7 +517,7 @@ export class Guard1Worker {
     }));
 
     // Record flow map in KV
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}dataflows:latest`,
       JSON.stringify({
         flowCount: flows.length,

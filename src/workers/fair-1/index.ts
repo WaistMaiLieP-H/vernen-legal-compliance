@@ -8,7 +8,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import { FairnessStatus } from "./types.js";
 import type { FairnessCheck, FairnessReport } from "./types.js";
 
@@ -94,7 +94,7 @@ export class Fair1Worker {
       threshold: VARIANCE_THRESHOLD,
     };
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}recommendation_audit:latest`,
       JSON.stringify(check)
     );
@@ -172,7 +172,7 @@ export class Fair1Worker {
       threshold: VARIANCE_THRESHOLD,
     };
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}pricing_audit:latest`,
       JSON.stringify(check)
     );
@@ -210,7 +210,7 @@ export class Fair1Worker {
       assessedAt: new Date().toISOString(),
     };
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}report:latest`,
       JSON.stringify({
         id: report.id,

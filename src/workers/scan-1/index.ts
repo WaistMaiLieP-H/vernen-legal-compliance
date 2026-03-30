@@ -53,21 +53,57 @@ function rowToRule(row: RuleRow): ComplianceRule {
   };
 }
 
+/** In-memory rule cache — survives across requests within the same Worker isolate. */
+const ruleCache = new Map<string, { rules: ComplianceRule[]; cachedAt: number }>();
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const MAX_CACHE_ENTRIES = 500;
+
+function getCacheKey(prefix: string, ...parts: string[]): string {
+  return `${prefix}:${parts.join(":")}`;
+}
+
+function getCachedRules(key: string): ComplianceRule[] | null {
+  const entry = ruleCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.cachedAt > CACHE_TTL_MS) {
+    ruleCache.delete(key);
+    return null;
+  }
+  return entry.rules;
+}
+
+function setCachedRules(key: string, rules: ComplianceRule[]): void {
+  // Evict oldest entries if cache is full
+  if (ruleCache.size >= MAX_CACHE_ENTRIES) {
+    const oldest = ruleCache.keys().next().value;
+    if (oldest) ruleCache.delete(oldest);
+  }
+  ruleCache.set(key, { rules, cachedAt: Date.now() });
+}
+
 /**
  * SCAN-1: Regulatory scanner worker -- the first worker of REGULIS.
  * Scans federal and state regulatory sources to identify
  * applicable compliance rules and coverage gaps.
+ *
+ * Rule queries are cached in-memory (per Worker isolate) with 24hr TTL.
+ * Same state + same entity type = same rules. No reason to query D1
+ * hundreds of times for the same answer.
  */
 export class Scan1Worker {
   /**
    * Scan state-specific compliance rules from the D1 database.
-   * Returns structured ComplianceRule objects for the given state and entity type.
+   * Results are cached by state+entityType for 24 hours.
    */
   async scanState(
     state: USState,
     entityType: BusinessEntityType,
     db: D1Database
   ): Promise<ComplianceRule[]> {
+    const cacheKey = getCacheKey("state", state, entityType);
+    const cached = getCachedRules(cacheKey);
+    if (cached) return cached;
+
     const query = getStateRules(state, entityType);
     const result = await db
       .prepare(query.sql)
@@ -78,17 +114,23 @@ export class Scan1Worker {
       return [];
     }
 
-    return result.results.map(rowToRule);
+    const rules = result.results.map(rowToRule);
+    setCachedRules(cacheKey, rules);
+    return rules;
   }
 
   /**
    * Scan federal compliance rules from the D1 database.
-   * Federal rules apply across all states.
+   * Results are cached by entityType for 24 hours.
    */
   async scanFederal(
     entityType: BusinessEntityType,
     db: D1Database
   ): Promise<ComplianceRule[]> {
+    const cacheKey = getCacheKey("federal", entityType);
+    const cached = getCachedRules(cacheKey);
+    if (cached) return cached;
+
     const query = getFederalRules(entityType);
     const result = await db
       .prepare(query.sql)
@@ -99,7 +141,9 @@ export class Scan1Worker {
       return [];
     }
 
-    return result.results.map(rowToRule);
+    const rules = result.results.map(rowToRule);
+    setCachedRules(cacheKey, rules);
+    return rules;
   }
 
   /**

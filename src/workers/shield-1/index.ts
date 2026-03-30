@@ -7,7 +7,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import {
   SecurityEventType,
   SecuritySeverity,
@@ -110,7 +110,7 @@ export class Shield1Worker {
     const passingCount = checks.filter((c) => c.isSecure).length;
     const auditedAt = new Date().toISOString();
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}auth_audit:latest`,
       JSON.stringify({
         passingCount,
@@ -156,7 +156,7 @@ export class Shield1Worker {
 
     const checkedAt = new Date().toISOString();
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}exposure_check:latest`,
       JSON.stringify({
         totalExposures: exposures.length,
@@ -284,7 +284,7 @@ export class Shield1Worker {
       findings,
     };
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}posture:latest`,
       JSON.stringify(posture)
     );
@@ -329,7 +329,7 @@ export class Shield1Worker {
         .run();
     } catch {
       // Table may not exist — store in KV as fallback
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}event:${securityEvent.id}`,
         JSON.stringify(securityEvent)
       );
@@ -339,7 +339,7 @@ export class Shield1Worker {
     const counterKey = `${KV_PREFIX}stats:total_events`;
     const currentRaw = await env.KNOWLEDGE_STORE.get(counterKey);
     const current = currentRaw ? parseInt(currentRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put(counterKey, String(current + 1));
+    await safeKvPut(env.KNOWLEDGE_STORE, counterKey, String(current + 1));
 
     return securityEvent;
   }

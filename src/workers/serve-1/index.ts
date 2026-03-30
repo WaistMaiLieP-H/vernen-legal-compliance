@@ -1,7 +1,7 @@
 import type { Env } from "../../index.js";
 import type { Inquiry, InquiryRow } from "./types.js";
 import { InquiryType, InquiryStatus } from "./types.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 
 /** KV namespace prefix for SERVE-1 data. */
 const KV_PREFIX = "ADVOCIS:serve:";
@@ -59,19 +59,23 @@ export class Serve1Worker {
         )
         .run();
     } catch {
-      // If table doesn't exist yet, store in KV as fallback
-      await env.KNOWLEDGE_STORE.put(
-        `${KV_PREFIX}inquiry:${id}`,
-        JSON.stringify({
-          id,
-          clientId: inquiry.clientId ?? null,
-          type: inquiryType,
-          message: inquiry.message,
-          response,
-          status: InquiryStatus.OPEN,
-          createdAt: now,
-        })
-      );
+      // If table doesn't exist, try KV fallback (non-fatal if limit hit)
+      try {
+        await safeKvPut(env.KNOWLEDGE_STORE, 
+          `${KV_PREFIX}inquiry:${id}`,
+          JSON.stringify({
+            id,
+            clientId: inquiry.clientId ?? null,
+            type: inquiryType,
+            message: inquiry.message,
+            response,
+            status: InquiryStatus.OPEN,
+            createdAt: now,
+          })
+        );
+      } catch {
+        // KV limit exceeded — inquiry still returned in response
+      }
     }
 
     return {

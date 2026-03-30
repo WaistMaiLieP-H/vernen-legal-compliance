@@ -15,7 +15,7 @@
  */
 
 import type { Env } from "../index.js";
-import { generateId } from "../utils/helpers.js";
+import { generateId ,safeKvPut} from "../utils/helpers.js";
 
 // Citizen imports — lazy-loaded to avoid circular dependencies
 import { Regulis } from "../personas/regulis/index.js";
@@ -195,7 +195,7 @@ export class EventBus {
 
     // Log to KV for quick access
     try {
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `EVENTBUS:last:${eventType}`,
         JSON.stringify({
           eventId,

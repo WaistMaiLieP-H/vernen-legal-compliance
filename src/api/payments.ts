@@ -12,7 +12,8 @@ import {
   getSession,
   verifyWebhook,
 } from "../services/stripe.js";
-import { parseJsonBody } from "../utils/helpers.js";
+import { parseJsonBody , safeKvPut } from "../utils/helpers.js";
+import { ReportGenerator } from "../services/report-generator.js";
 import { EventBus } from "../services/event-bus.js";
 import { Fiscara } from "../personas/fiscara/index.js";
 import {
@@ -198,7 +199,7 @@ export async function handlePaymentWebhook(
 
       // Store payment record in KV for fast lookup
       try {
-        await env.KNOWLEDGE_STORE.put(
+        await safeKvPut(env.KNOWLEDGE_STORE, 
           `payment:${reportId}`,
           JSON.stringify({
             sessionId: stripePaymentId,
@@ -447,10 +448,65 @@ a.btn:hover{background:#d4bc74;}</style></head>
 <a class="btn" href="/#check">Run a Compliance Check</a></div></body></html>`, 402);
   }
 
-  // Paid — render the full HTML report
+  // Paid — render the full HTML report with PDF download button
   const generator = new ReportGenerator();
-  const html = generator.formatAsHTML(report);
+  let html = generator.formatAsHTML(report);
+
+  // Inject PDF download button before the footer
+  const pdfButton = `
+    <div style="text-align:center;padding:1.5rem 2.5rem;border-top:1px solid #e5e7eb;">
+      <a href="/report/${reportId}/pdf"
+         style="display:inline-block;background:#1a2744;color:#fff;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.95rem;"
+         download>Download PDF Report</a>
+      <p style="margin-top:0.5rem;font-size:0.8rem;color:#6b7280;">Full report with all findings and remediation guidance</p>
+    </div>`;
+  html = html.replace("<!-- Footer -->", pdfButton + "\n    <!-- Footer -->");
+
   return htmlResponse(html);
+}
+
+// =============================================================================
+// GET /report/:id/pdf — Download paid report as PDF
+// =============================================================================
+
+export async function handleDownloadReportPDF(
+  _request: Request,
+  env: Env,
+  _ctx: ExecutionContext,
+  params: RouteParams
+): Promise<Response> {
+  const reportId = params["id"];
+  if (!reportId) {
+    return jsonResponse({ error: "Report ID required" }, 400);
+  }
+
+  const regulis = new Regulis();
+  await regulis.initialize(env);
+
+  const report = await regulis.getReportById(reportId, env);
+  if (!report) {
+    return jsonResponse({ error: "Report not found" }, 404);
+  }
+
+  const paid = await regulis.isReportPaid(reportId, env);
+  if (!paid) {
+    return jsonResponse(
+      { error: "Report not paid. Purchase to download PDF." },
+      402
+    );
+  }
+
+  const generator = new ReportGenerator();
+  const pdfBytes = generator.formatAsPDF(report);
+
+  return new Response(pdfBytes, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="vernen-compliance-${reportId}.pdf"`,
+      "Content-Length": String(pdfBytes.length),
+    },
+  });
 }
 
 // =============================================================================

@@ -1,6 +1,6 @@
 import { PersonaCitizenBase } from "../personas/base.js";
 import { PersonaCitizenStatus } from "../types/persona.js";
-import { generateId } from "../utils/helpers.js";
+import { generateId ,safeKvPut} from "../utils/helpers.js";
 import type { Env } from "../index.js";
 import type { CitizenSpec } from "./types.js";
 
@@ -60,7 +60,7 @@ export class DynamicCitizen extends PersonaCitizenBase {
     }
 
     // Initialize KV with boot marker
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${this.kvPrefix}system:last_boot`,
       new Date().toISOString()
     );
@@ -83,7 +83,7 @@ export class DynamicCitizen extends PersonaCitizenBase {
 
     // Store in KV knowledge namespace for retrieval
     const eventKey = `${this.kvPrefix}event:${event}:${Date.now()}`;
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       eventKey,
       JSON.stringify({ event, payload, processedAt: new Date().toISOString() }),
       { expirationTtl: 90 * 86400 } // 90 days
@@ -93,7 +93,7 @@ export class DynamicCitizen extends PersonaCitizenBase {
     const counterKey = `${this.kvPrefix}stats:events_received`;
     const current = await env.KNOWLEDGE_STORE.get(counterKey);
     const count = (current ? parseInt(current, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(counterKey, String(count));
+    await safeKvPut(env.KNOWLEDGE_STORE, counterKey, String(count));
   }
 
   /**
@@ -148,7 +148,7 @@ export class DynamicCitizen extends PersonaCitizenBase {
     } catch {
       // Fallback: store in KV if D1 table doesn't exist
       const key = `${this.kvPrefix}activity:${Date.now()}`;
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         key,
         JSON.stringify({ action, details, createdAt: new Date().toISOString() })
       );

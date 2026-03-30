@@ -5,6 +5,7 @@ export enum BusinessEntityType {
   SOLE_PROPRIETORSHIP = "SOLE_PROPRIETORSHIP",
   PARTNERSHIP = "PARTNERSHIP",
   NONPROFIT = "NONPROFIT",
+  COOPERATIVE = "COOPERATIVE",
 }
 
 export enum USState {

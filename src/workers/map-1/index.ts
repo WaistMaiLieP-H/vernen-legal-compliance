@@ -10,6 +10,9 @@ import type {
 } from "./types.js";
 import type { ComplianceRuleCategory } from "../../types/compliance.js";
 
+/** In-memory comparison cache — survives across requests within same Worker isolate. */
+const compareCache = new Map<string, { result: StateComparison; at: number }>();
+
 /**
  * Database row shape for compliance_rules queries.
  */
@@ -259,6 +262,7 @@ export class Map1Worker {
   /**
    * Compare compliance requirements between two states for a given
    * entity type. Useful for businesses considering expansion.
+   * Results cached per state+entityType combo.
    */
   async compareStates(
     state1: USState,
@@ -266,51 +270,38 @@ export class Map1Worker {
     entityType: BusinessEntityType,
     env: { DB: D1Database }
   ): Promise<StateComparison> {
-    const entityFilter = `
-      AND (
-        entity_types LIKE '%"' || ?2 || '"%'
-        OR entity_types LIKE '%"ALL"%'
-      )
-    `;
+    // Check cache first
+    const cacheKey = `compare:${state1}:${state2}:${entityType}`;
+    const cached = compareCache.get(cacheKey);
+    if (cached && Date.now() - cached.at < 24 * 60 * 60 * 1000) {
+      return cached.result;
+    }
 
-    // Query rules for state 1
-    const result1 = await env.DB.prepare(
-      `SELECT id, code, title, category, effective_date
+    const sql = `SELECT id, code, title, category, effective_date
        FROM compliance_rules
        WHERE state = ?1 AND is_active = 1
-       ${entityFilter}
-       ORDER BY category, code`
-    )
-      .bind(state1, entityType)
-      .all<{
-        id: string;
-        code: string;
-        title: string;
-        category: string;
-        effective_date: string;
-      }>();
+       AND (
+         entity_types LIKE '%"' || ?2 || '"%'
+         OR entity_types LIKE '%"ALL"%'
+       )
+       ORDER BY category, code`;
 
-    // Query rules for state 2
-    const result2 = await env.DB.prepare(
-      `SELECT id, code, title, category, effective_date
-       FROM compliance_rules
-       WHERE state = ?1 AND is_active = 1
-       ${entityFilter}
-       ORDER BY category, code`
-    )
-      .bind(state2, entityType)
-      .all<{
-        id: string;
-        code: string;
-        title: string;
-        category: string;
-        effective_date: string;
-      }>();
+    type RuleRow = {
+      id: string;
+      code: string;
+      title: string;
+      category: string;
+      effective_date: string;
+    };
 
-    const rules1 =
-      result1.success && result1.results ? result1.results : [];
-    const rules2 =
-      result2.success && result2.results ? result2.results : [];
+    // Batch both queries in a single D1 round-trip
+    const [result1, result2] = await env.DB.batch([
+      env.DB.prepare(sql).bind(state1, entityType),
+      env.DB.prepare(sql).bind(state2, entityType),
+    ]);
+
+    const rules1 = (result1.success && result1.results ? result1.results : []) as RuleRow[];
+    const rules2 = (result2.success && result2.results ? result2.results : []) as RuleRow[];
 
     // Extract categories
     const categories1 = new Set(rules1.map((r) => r.category));
@@ -340,7 +331,7 @@ export class Map1Worker {
       effectiveDate: r.effective_date,
     });
 
-    return {
+    const comparison: StateComparison = {
       state1,
       state2,
       entityType,
@@ -353,5 +344,14 @@ export class Map1Worker {
       state2Rules: rules2.map(toSummary),
       comparedAt: new Date().toISOString(),
     };
+
+    // Cache the result
+    compareCache.set(cacheKey, { result: comparison, at: Date.now() });
+    if (compareCache.size > 200) {
+      const oldest = compareCache.keys().next().value;
+      if (oldest) compareCache.delete(oldest);
+    }
+
+    return comparison;
   }
 }

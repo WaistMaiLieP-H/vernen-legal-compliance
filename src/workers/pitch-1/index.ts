@@ -7,7 +7,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import type {
   InvestorNarrative,
   KeyMetrics,
@@ -67,7 +67,7 @@ export class Pitch1Worker {
         .bind(id, "narrative_generated", JSON.stringify(metrics), "snapshot", now)
         .run();
     } catch {
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}narrative:${id}`,
         JSON.stringify(narrative)
       );

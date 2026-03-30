@@ -8,6 +8,7 @@
 import type { Env } from "../index.js";
 import { AuditEngine } from "../services/audit-engine.js";
 import { FormNavigator } from "../services/form-navigator.js";
+import { FORM_REGISTRY } from "../data/form-registry.js";
 
 type RouteParams = Record<string, string>;
 
@@ -281,9 +282,9 @@ export async function handleListScenarios(
   // Return the scenario IDs and basic info
   const scenarios = [
     "divorce_no_children", "divorce_with_children", "response_to_divorce",
-    "custody_modification", "custody_emergency", "dv_restraining_order",
-    "fee_waiver", "child_support_modification", "motion_general",
-    "respond_to_motion", "child_abduction_prevention",
+    "custody_modification", "custody_emergency", "child_support_modification",
+    "dv_restraining_order", "dv_response", "fee_waiver",
+    "motion_general", "respond_to_motion", "child_abduction_prevention",
   ];
 
   return jsonResponse({ total: scenarios.length, scenarios });
@@ -396,4 +397,44 @@ export async function handleLoadForms(
     const message = error instanceof Error ? error.message : "Failed to load forms";
     return jsonResponse({ error: message }, 500);
   }
+}
+
+/**
+ * GET /api/forms/registry
+ * Returns the enriched form registry with 13-language titles,
+ * governing statutes, Tier A + Tier B forms, and metadata.
+ */
+export async function handleFormRegistry(
+  request: Request,
+  _env: Env,
+  _ctx: ExecutionContext,
+  _params: RouteParams
+): Promise<Response> {
+  const url = new URL(request.url);
+  const tier = url.searchParams.get("tier")?.toUpperCase();
+  const category = url.searchParams.get("category")?.toLowerCase();
+
+  let forms = [...(FORM_REGISTRY.forms || []), ...(FORM_REGISTRY.tier_b_forms || [])];
+
+  if (tier === "A") {
+    forms = FORM_REGISTRY.forms || [];
+  } else if (tier === "B") {
+    forms = FORM_REGISTRY.tier_b_forms || [];
+  }
+
+  if (category) {
+    forms = forms.filter((f: any) => f.category === category || f.subcategory === category);
+  }
+
+  return new Response(JSON.stringify({
+    metadata: FORM_REGISTRY.metadata,
+    total: forms.length,
+    forms,
+  }), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "public, max-age=3600, s-maxage=7200",
+    },
+  });
 }

@@ -8,6 +8,8 @@ export interface Env {
   STRIPE_SECRET_KEY?: string;
   /** Stripe webhook signing secret — set via `wrangler secret put STRIPE_WEBHOOK_SECRET` */
   STRIPE_WEBHOOK_SECRET?: string;
+  /** FAC API key — set via `wrangler secret put FAC_API_KEY` (free from api.data.gov) */
+  FAC_API_KEY?: string;
 }
 
 export default {

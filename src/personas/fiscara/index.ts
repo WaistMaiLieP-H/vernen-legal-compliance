@@ -12,7 +12,7 @@
 
 import { PersonaCitizenBase } from "../base.js";
 import { PersonaCitizenStatus } from "../../types/persona.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 import { Ledger1Worker } from "../../workers/ledger-1/index.js";
 import { Flow1Worker } from "../../workers/flow-1/index.js";
 import {
@@ -106,13 +106,13 @@ export class Fiscara extends PersonaCitizenBase {
 
     // Initialize KV knowledge namespace with boot marker
     const bootKey = `${KV_PREFIX}system:last_boot`;
-    await env.KNOWLEDGE_STORE.put(bootKey, new Date().toISOString());
+    await safeKvPut(env.KNOWLEDGE_STORE, bootKey, new Date().toISOString());
 
     // Ensure KV counters exist
     const totalTxnKey = `${KV_PREFIX}stats:total_transactions`;
     const existing = await env.KNOWLEDGE_STORE.get(totalTxnKey);
     if (existing === null) {
-      await env.KNOWLEDGE_STORE.put(totalTxnKey, "0");
+      await safeKvPut(env.KNOWLEDGE_STORE, totalTxnKey, "0");
     }
   }
 
@@ -559,14 +559,14 @@ export class Fiscara extends PersonaCitizenBase {
     env: Env
   ): Promise<void> {
     const fullKey = `${KV_PREFIX}${key}`;
-    await env.KNOWLEDGE_STORE.put(fullKey, JSON.stringify(value));
+    await safeKvPut(env.KNOWLEDGE_STORE, fullKey, JSON.stringify(value));
   }
 
   private async _incrementStat(statName: string, env: Env): Promise<void> {
     const key = `${KV_PREFIX}stats:${statName}`;
     const currentRaw = await env.KNOWLEDGE_STORE.get(key);
     const current = currentRaw ? parseInt(currentRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put(key, String(current + 1));
+    await safeKvPut(env.KNOWLEDGE_STORE, key, String(current + 1));
   }
 
   private async _incrementStatBy(
@@ -577,6 +577,6 @@ export class Fiscara extends PersonaCitizenBase {
     const key = `${KV_PREFIX}stats:${statName}`;
     const currentRaw = await env.KNOWLEDGE_STORE.get(key);
     const current = currentRaw ? parseInt(currentRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put(key, String(current + amount));
+    await safeKvPut(env.KNOWLEDGE_STORE, key, String(current + amount));
   }
 }

@@ -3,7 +3,7 @@ import type { Client, BusinessEntityType, USState } from "../../types/client.js"
 import { PersonaCitizenStatus } from "../../types/persona.js";
 import { Serve1Worker } from "../../workers/serve-1/index.js";
 import { Board1Worker } from "../../workers/board-1/index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 import type { Env } from "../../index.js";
 
 /** KV namespace prefix for all ADVOCIS knowledge entries. */
@@ -150,13 +150,13 @@ export class Advocis extends PersonaCitizenBase {
 
     // Initialize KV knowledge namespace with boot marker
     const bootKey = `${KV_PREFIX}system:last_boot`;
-    await env.KNOWLEDGE_STORE.put(bootKey, new Date().toISOString());
+    await safeKvPut(env.KNOWLEDGE_STORE, bootKey, new Date().toISOString());
 
     // Ensure counters exist
     const totalClientsKey = `${KV_PREFIX}stats:total_clients_onboarded`;
     const existing = await env.KNOWLEDGE_STORE.get(totalClientsKey);
     if (existing === null) {
-      await env.KNOWLEDGE_STORE.put(totalClientsKey, "0");
+      await safeKvPut(env.KNOWLEDGE_STORE, totalClientsKey, "0");
     }
   }
 
@@ -209,7 +209,7 @@ export class Advocis extends PersonaCitizenBase {
           env
         );
         // Update last purchase timestamp
-        await env.KNOWLEDGE_STORE.put(
+        await safeKvPut(env.KNOWLEDGE_STORE, 
           `${KV_PREFIX}client:${data.clientId}:last_purchase`,
           data.purchasedAt
         );
@@ -326,7 +326,7 @@ export class Advocis extends PersonaCitizenBase {
       `Your ${client.entityType} operating in ${client.states.join(", ")} ` +
       `is now set up for continuous compliance monitoring.`;
 
-    await env.KNOWLEDGE_STORE.put(
+    await safeKvPut(env.KNOWLEDGE_STORE, 
       `${KV_PREFIX}welcome:${client.id}`,
       welcomeMessage
     );
@@ -335,7 +335,7 @@ export class Advocis extends PersonaCitizenBase {
     const counterKey = `${KV_PREFIX}stats:total_clients_onboarded`;
     const current = await env.KNOWLEDGE_STORE.get(counterKey);
     const newCount = (current ? parseInt(current, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(counterKey, String(newCount));
+    await safeKvPut(env.KNOWLEDGE_STORE, counterKey, String(newCount));
 
     return {
       clientId: client.id,
@@ -711,7 +711,7 @@ export class Advocis extends PersonaCitizenBase {
         .run();
     } catch {
       // Fallback to KV
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}feedback:${id}`,
         JSON.stringify({ id, clientId, rating, comment, createdAt: now })
       );
@@ -740,7 +740,7 @@ export class Advocis extends PersonaCitizenBase {
     env: Env
   ): Promise<void> {
     const fullKey = `${KV_PREFIX}${key}`;
-    await env.KNOWLEDGE_STORE.put(fullKey, JSON.stringify(value));
+    await safeKvPut(env.KNOWLEDGE_STORE, fullKey, JSON.stringify(value));
   }
 
   /** Expose service engine for direct use by API layer. */

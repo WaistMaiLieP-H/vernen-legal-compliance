@@ -6,7 +6,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import type {
   Transaction,
   TransactionRow,
@@ -335,6 +335,6 @@ export class Ledger1Worker {
     const key = `${KV_PREFIX}total:${type}`;
     const currentRaw = await env.KNOWLEDGE_STORE.get(key);
     const current = currentRaw ? parseInt(currentRaw, 10) : 0;
-    await env.KNOWLEDGE_STORE.put(key, String(current + amount));
+    await safeKvPut(env.KNOWLEDGE_STORE, key, String(current + amount));
   }
 }

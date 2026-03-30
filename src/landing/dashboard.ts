@@ -605,9 +605,16 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
         '</div></div>';
     }
 
+    // Extract API key from URL for authenticated requests
+    var API_KEY = new URLSearchParams(window.location.search).get('key') || '';
+
     async function fetchJSON(url) {
       try {
-        var res = await fetch(url);
+        var opts = {};
+        if (API_KEY) {
+          opts.headers = { 'Authorization': 'Bearer ' + API_KEY };
+        }
+        var res = await fetch(url, opts);
         if (!res.ok) return null;
         return await res.json();
       } catch (e) { return null; }

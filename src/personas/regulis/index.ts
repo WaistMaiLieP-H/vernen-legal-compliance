@@ -10,7 +10,8 @@ import { PersonaCitizenStatus } from "../../types/persona.js";
 import { ComplianceEngine } from "../../services/compliance-engine.js";
 import { ReportGenerator } from "../../services/report-generator.js";
 import { Scan1Worker } from "../../workers/scan-1/index.js";
-import { generateId } from "../../utils/helpers.js";
+import { D1EvidenceStore } from "../../services/evidence-store.js";
+import { generateId , safeKvPut } from "../../utils/helpers.js";
 import type { Env } from "../../index.js";
 
 /** KV namespace prefix for all REGULIS knowledge entries. */
@@ -122,15 +123,19 @@ export class Regulis extends PersonaCitizenBase {
       this._status = PersonaCitizenStatus.SHELL_DEPLOYED;
     }
 
-    // Initialize KV knowledge namespace with boot marker
-    const bootKey = `${KV_PREFIX}system:last_boot`;
-    await env.KNOWLEDGE_STORE.put(bootKey, new Date().toISOString());
+    // Initialize KV knowledge namespace with boot marker (non-fatal if KV limit hit)
+    try {
+      const bootKey = `${KV_PREFIX}system:last_boot`;
+      await safeKvPut(env.KNOWLEDGE_STORE, bootKey, new Date().toISOString());
 
-    // Ensure counters exist
-    const totalChecksKey = `${KV_PREFIX}stats:total_checks`;
-    const existing = await env.KNOWLEDGE_STORE.get(totalChecksKey);
-    if (existing === null) {
-      await env.KNOWLEDGE_STORE.put(totalChecksKey, "0");
+      // Ensure counters exist
+      const totalChecksKey = `${KV_PREFIX}stats:total_checks`;
+      const existing = await env.KNOWLEDGE_STORE.get(totalChecksKey);
+      if (existing === null) {
+        await safeKvPut(env.KNOWLEDGE_STORE, totalChecksKey, "0");
+      }
+    } catch {
+      // KV write limit exceeded — proceed without KV. Core functionality uses D1.
     }
   }
 
@@ -268,9 +273,11 @@ export class Regulis extends PersonaCitizenBase {
       ...(await this.scanner.scanState(state, entityType, env.DB)),
     ];
 
-    // 2. Process through ComplianceEngine
+    // 2. Process through ComplianceEngine with evidence
     this.complianceEngine.loadRules(allRules);
-    const checkResults = this.complianceEngine.checkCompliance(client, [state]);
+    const evidenceStore = new D1EvidenceStore(env.DB);
+    this.complianceEngine.setEvidenceStore(evidenceStore);
+    const checkResults = await this.complianceEngine.checkComplianceWithEvidence(client, [state]);
 
     // 3. Generate report
     const report: ComplianceReport = {
@@ -335,41 +342,52 @@ export class Regulis extends PersonaCitizenBase {
         )
         .run();
 
-      // Persist individual results to compliance_results table
-      for (const result of checkResults) {
-        await env.DB.prepare(
+      // Persist individual results to compliance_results table — batched
+      const resultStmts = checkResults.map((result) =>
+        env.DB.prepare(
           `INSERT INTO compliance_results
            (id, report_id, rule_id, status, details, remediation, checked_at)
            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`
+        ).bind(
+          generateId("cr"),
+          report.id,
+          result.ruleId,
+          result.status,
+          result.details ?? null,
+          result.remediation ?? null,
+          report.generatedAt
         )
-          .bind(
-            generateId("cr"),
-            report.id,
-            result.ruleId,
-            result.status,
-            result.details ?? null,
-            result.remediation ?? null,
-            report.generatedAt
-          )
-          .run();
+      );
+      // D1 batch: single round-trip for all result inserts
+      if (resultStmts.length > 0) {
+        await env.DB.batch(resultStmts);
       }
     } catch (err) {
       console.error("Failed to persist report to D1:", err);
-      // Store in KV as fallback
-      await env.KNOWLEDGE_STORE.put(
-        `${KV_PREFIX}report:${report.id}`,
-        JSON.stringify(report)
-      );
     }
 
-    // Also store in KV for fast retrieval
-    await env.KNOWLEDGE_STORE.put(
-      `${KV_PREFIX}report:${report.id}`,
-      JSON.stringify(report),
-      { expirationTtl: 180 * 86400 } // 180 days
+    // Store in KV for fast retrieval (non-fatal if limit hit)
+    try {
+      await safeKvPut(env.KNOWLEDGE_STORE, 
+        `${KV_PREFIX}report:${report.id}`,
+        JSON.stringify(report),
+        { expirationTtl: 180 * 86400 } // 180 days
+      );
+    } catch {
+      // KV limit — report is in D1, this is just a cache
+    }
+
+    // 5. PROOF pass — verify output before release
+    const proofResult = this.proof(
+      "compliance_report",
+      report as unknown as Record<string, unknown>,
+      { jurisdiction: state, entityType }
     );
 
-    // 5. Record knowledge for self-improvement
+    // Attach verification to report
+    report.verificationId = proofResult.id;
+
+    // 6. Record knowledge for self-improvement
     await this._recordCheckKnowledge(state, entityType, checkResults, env);
 
     return report;
@@ -452,7 +470,7 @@ export class Regulis extends PersonaCitizenBase {
     env: Env
   ): Promise<void> {
     const fullKey = `${KV_PREFIX}${key}`;
-    await env.KNOWLEDGE_STORE.put(fullKey, JSON.stringify(value));
+    await safeKvPut(env.KNOWLEDGE_STORE, fullKey, JSON.stringify(value));
   }
 
   /**
@@ -673,24 +691,25 @@ export class Regulis extends PersonaCitizenBase {
     results: ComplianceCheckResult[],
     env: Env
   ): Promise<void> {
+    try {
     // 1. Increment total checks
     const totalKey = `${KV_PREFIX}stats:total_checks`;
     const currentTotal = await env.KNOWLEDGE_STORE.get(totalKey);
     const newTotal = (currentTotal ? parseInt(currentTotal, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(totalKey, String(newTotal));
+    await safeKvPut(env.KNOWLEDGE_STORE, totalKey, String(newTotal));
 
     // 2. Increment reports generated counter
     const reportsKey = `${KV_PREFIX}stats:reports_generated`;
     const currentReports = await env.KNOWLEDGE_STORE.get(reportsKey);
     const newReports = (currentReports ? parseInt(currentReports, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(reportsKey, String(newReports));
+    await safeKvPut(env.KNOWLEDGE_STORE, reportsKey, String(newReports));
 
     // 3. Record state frequency
     const stateFreqKey = `${KV_PREFIX}frequency:state:${state}`;
     const currentStateFreq = await env.KNOWLEDGE_STORE.get(stateFreqKey);
     const newStateFreq =
       (currentStateFreq ? parseInt(currentStateFreq, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(stateFreqKey, String(newStateFreq));
+    await safeKvPut(env.KNOWLEDGE_STORE, stateFreqKey, String(newStateFreq));
 
     // 4. Update states covered set
     const statesCoveredKey = `${KV_PREFIX}stats:states_covered`;
@@ -702,7 +721,7 @@ export class Regulis extends PersonaCitizenBase {
     if (!statesCovered.includes(state)) {
       statesCovered.push(state);
       statesCovered.sort();
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         statesCoveredKey,
         JSON.stringify(statesCovered)
       );
@@ -713,7 +732,7 @@ export class Regulis extends PersonaCitizenBase {
     const currentEntityFreq = await env.KNOWLEDGE_STORE.get(entityFreqKey);
     const newEntityFreq =
       (currentEntityFreq ? parseInt(currentEntityFreq, 10) : 0) + 1;
-    await env.KNOWLEDGE_STORE.put(entityFreqKey, String(newEntityFreq));
+    await safeKvPut(env.KNOWLEDGE_STORE, entityFreqKey, String(newEntityFreq));
 
     // 6. Track rules that trigger NEEDS_REVIEW (building expertise)
     const needsReviewResults = results.filter(
@@ -745,6 +764,10 @@ export class Regulis extends PersonaCitizenBase {
       .sort((a, b) => b.count - a.count)
       .slice(0, 50);
 
-    await env.KNOWLEDGE_STORE.put(topIssuesKey, JSON.stringify(sortedIssues));
+    await safeKvPut(env.KNOWLEDGE_STORE, topIssuesKey, JSON.stringify(sortedIssues));
+    } catch {
+      // KV write limit exceeded — knowledge recording is non-critical
+      // Core compliance check and D1 persistence already completed
+    }
   }
 }

@@ -7,7 +7,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import { StatementType } from "./types.js";
 import type {
   IncomeStatement,
@@ -448,7 +448,7 @@ export class Gaap1Worker {
         .run();
     } catch {
       // Fallback to KV
-      await env.KNOWLEDGE_STORE.put(
+      await safeKvPut(env.KNOWLEDGE_STORE, 
         `${KV_PREFIX}statement:${type}:${id}`,
         JSON.stringify({ id, statementType: type, period, data, generatedAt: now })
       );

@@ -6,7 +6,7 @@
  */
 
 import type { Env } from "../../index.js";
-import { generateId } from "../../utils/helpers.js";
+import { generateId ,safeKvPut} from "../../utils/helpers.js";
 import { ThreatType, ThreatSeverity } from "./types.js";
 import type {
   ThreatAssessment,
@@ -110,7 +110,7 @@ export class Thrt1Worker {
           .run();
       } catch {
         // Table may not exist — store in KV as fallback
-        await env.KNOWLEDGE_STORE.put(`${KV_PREFIX}${id}`, JSON.stringify(threat));
+        await safeKvPut(env.KNOWLEDGE_STORE, `${KV_PREFIX}${id}`, JSON.stringify(threat));
       }
     }
 
@@ -169,7 +169,7 @@ export class Thrt1Worker {
           .bind(threat.id, threat.threatType, threat.severity, threat.description, threat.source, 1, now)
           .run();
       } catch {
-        await env.KNOWLEDGE_STORE.put(`${KV_PREFIX}${threat.id}`, JSON.stringify(threat));
+        await safeKvPut(env.KNOWLEDGE_STORE, `${KV_PREFIX}${threat.id}`, JSON.stringify(threat));
       }
     }
 
@@ -237,7 +237,7 @@ export class Thrt1Worker {
           .bind(threat.id, threat.threatType, threat.severity, threat.description, threat.source, 1, now)
           .run();
       } catch {
-        await env.KNOWLEDGE_STORE.put(`${KV_PREFIX}${threat.id}`, JSON.stringify(threat));
+        await safeKvPut(env.KNOWLEDGE_STORE, `${KV_PREFIX}${threat.id}`, JSON.stringify(threat));
       }
     }
 

@@ -1,3 +1,4 @@
+import { safeKvPut } from "../../utils/helpers.js";
 import type { Env } from "../../index.js";
 import {
   RATE_LIMIT_WINDOW_MS,
@@ -36,7 +37,7 @@ export async function rateLimit(
 
   // Persist the updated count with a TTL matching the window
   const ttlSeconds = Math.ceil(RATE_LIMIT_WINDOW_MS / 1000);
-  await env.KNOWLEDGE_STORE.put(key, JSON.stringify(entry), {
+  await safeKvPut(env.KNOWLEDGE_STORE, key, JSON.stringify(entry), {
     expirationTtl: ttlSeconds,
   });
 

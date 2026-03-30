@@ -20,7 +20,7 @@ npm test          # Run Vitest
 - **Workers** (`src/workers/`) — Specialized task executors (SCAN-1, FORGE-0, SENTINEL-0, etc.)
 - **Services** (`src/services/`) — Business logic (ComplianceEngine, AuditEngine, LegalIntelligence, FormNavigator, ReportGenerator)
 
-**15 deployed Citizens:** FORGE-0, SENTINEL-0, REGULIS, ADVOCIS, LEXARC, SYNTARA, FISCARA, INTEGRA, VIGILUS, ETHICARA, PRIVAXIS, VESTARA, METRIQA, CLARIDEX, NEXARIS
+**16 deployed Citizens:** FORGE-0, SENTINEL-0, REGULIS, ADVOCIS, LEXARC, SYNTARA, FISCARA, INTEGRA, VIGILUS, ETHICARA, PRIVAXIS, VESTARA, METRIQA, CLARIDEX, NEXARIS, FACIALEX
 
 ## Project Structure
 
@@ -28,7 +28,7 @@ npm test          # Run Vitest
 src/
   api/            # Route handlers (one file per Citizen + core routes)
   api/middleware/  # auth.ts (Bearer token), rate-limit.ts (KV sliding window)
-  personas/       # Citizen classes (base.ts + 14 implementations)
+  personas/       # Citizen classes (base.ts + 15 implementations)
   workers/        # Worker implementations (26 workers)
   services/       # ComplianceEngine, AuditEngine, LegalIntelligence, ReportGenerator
   engine/         # Citizen Deployment Engine (catalog, deployer, dynamic routing)

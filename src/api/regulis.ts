@@ -27,12 +27,45 @@ function isValidState(value: string): value is USState {
 }
 
 /**
+ * Normalize entity type input to match enum values.
+ * Accepts common variations: "Corporation", "sole proprietorship", "S Corp", etc.
+ */
+const ENTITY_TYPE_ALIASES: Record<string, BusinessEntityType> = {
+  llc: BusinessEntityType.LLC,
+  corporation: BusinessEntityType.CORPORATION,
+  corp: BusinessEntityType.CORPORATION,
+  s_corp: BusinessEntityType.S_CORP,
+  "s corp": BusinessEntityType.S_CORP,
+  scorp: BusinessEntityType.S_CORP,
+  sole_proprietorship: BusinessEntityType.SOLE_PROPRIETORSHIP,
+  "sole proprietorship": BusinessEntityType.SOLE_PROPRIETORSHIP,
+  soleproprietorship: BusinessEntityType.SOLE_PROPRIETORSHIP,
+  "sole proprietor": BusinessEntityType.SOLE_PROPRIETORSHIP,
+  partnership: BusinessEntityType.PARTNERSHIP,
+  nonprofit: BusinessEntityType.NONPROFIT,
+  "non-profit": BusinessEntityType.NONPROFIT,
+  "non profit": BusinessEntityType.NONPROFIT,
+  cooperative: BusinessEntityType.COOPERATIVE,
+  "co-op": BusinessEntityType.COOPERATIVE,
+  coop: BusinessEntityType.COOPERATIVE,
+  "co-operative": BusinessEntityType.COOPERATIVE,
+};
+
+function normalizeEntityType(value: string): BusinessEntityType | null {
+  // Direct match first
+  if (Object.values(BusinessEntityType).includes(value as BusinessEntityType)) {
+    return value as BusinessEntityType;
+  }
+  // Case-insensitive alias match
+  const normalized = ENTITY_TYPE_ALIASES[value.toLowerCase().trim()];
+  return normalized ?? null;
+}
+
+/**
  * Validate that a string is a valid BusinessEntityType enum value.
  */
 function isValidEntityType(value: string): value is BusinessEntityType {
-  return Object.values(BusinessEntityType).includes(
-    value as BusinessEntityType
-  );
+  return normalizeEntityType(value) !== null;
 }
 
 /**
@@ -119,6 +152,9 @@ export async function handleRegulisCheck(
     );
   }
 
+  // Normalize state input (accept lowercase)
+  body.state = body.state.toUpperCase().trim();
+
   // Validate state
   if (!isValidState(body.state)) {
     return jsonResponse(
@@ -130,21 +166,42 @@ export async function handleRegulisCheck(
     );
   }
 
-  // Validate entity type
-  if (!isValidEntityType(body.entityType)) {
+  // Validate and normalize entity type
+  const entityType = normalizeEntityType(body.entityType);
+  if (!entityType) {
     return jsonResponse(
       {
         error: `Invalid entityType: '${body.entityType}'.`,
         validTypes: Object.values(BusinessEntityType),
+        hint: "Accepted formats: 'LLC', 'Corporation', 'S Corp', 'Sole Proprietorship', 'Partnership', 'Nonprofit'",
       },
       400
     );
   }
 
   const state = body.state as USState;
-  const entityType = body.entityType as BusinessEntityType;
+  const startTime = Date.now();
+
+  try {
 
   const regulis = await getRegulisInstance(env);
+
+  // PROTECTION — guard the input
+  const protectionResult = regulis.protect(
+    "compliance_check",
+    body as unknown as Record<string, unknown>,
+  );
+
+  if (protectionResult.verdict === "REJECTED") {
+    return jsonResponse({
+      error: "Input rejected by PROTECTION scan.",
+      threats: protectionResult.threats.map((t) => ({
+        type: t.type,
+        field: t.field,
+        description: t.description,
+      })),
+    }, 400);
+  }
 
   // Run the compliance check through REGULIS
   const report = await regulis.performComplianceCheck(
@@ -177,7 +234,7 @@ export async function handleRegulisCheck(
   // Determine recommended product
   const { recommended, allProducts } = getProductForRequest(1, entityType);
 
-  return jsonResponse({
+  const responsePayload = {
     reportId: report.id,
     state,
     entityType,
@@ -230,7 +287,44 @@ export async function handleRegulisCheck(
       : null,
     checkedAt: report.generatedAt,
     checkedBy: "REGULIS",
-  });
+    verification: (report as unknown as Record<string, unknown>)._proof ?? null,
+  };
+
+  // TRUST — create audit trail (non-blocking)
+  const proofData = (report as unknown as Record<string, unknown>)._proof as { id?: string; verdict?: string; deficiencies?: number; correctionsMade?: number } | undefined;
+  ctx.waitUntil(
+    regulis.trust(
+      "compliance_check",
+      body as unknown as Record<string, unknown>,
+      responsePayload as Record<string, unknown>,
+      protectionResult,
+      proofData ? {
+        id: proofData.id ?? "",
+        citizenName: "REGULIS",
+        outputType: "compliance_report",
+        verdict: proofData.verdict as "PASS" | "CORRECTED" | "FLAGGED" | "BLOCKED",
+        deficiencies: [],
+        standardsChecked: regulis.standards.length,
+        standardsApplicable: 0,
+        checksRun: 6,
+        checksPassed: 6 - (proofData.deficiencies ?? 0),
+        checksFailed: proofData.deficiencies ?? 0,
+        correctionsMade: proofData.correctionsMade ?? 0,
+        proofDurationMs: 0,
+        timestamp: report.generatedAt,
+      } : undefined,
+      report.clientId,
+      startTime,
+      env,
+    )
+  );
+
+  return jsonResponse(responsePayload);
+
+  } catch (error) {
+    const message = error instanceof Error ? error.stack ?? error.message : String(error);
+    return jsonResponse({ error: "Compliance check failed", debug: message }, 500);
+  }
 }
 
 /**
@@ -517,7 +611,8 @@ export async function handleRegulisCompare(
       400
     );
   }
-  if (!isValidEntityType(entityTypeParam)) {
+  const compareEntityType = normalizeEntityType(entityTypeParam);
+  if (!compareEntityType) {
     return jsonResponse(
       {
         error: `Invalid entityType: '${entityTypeParam}'.`,
@@ -533,7 +628,7 @@ export async function handleRegulisCompare(
     const comparison = await mapper.compareStates(
       s1 as USState,
       s2 as USState,
-      entityTypeParam as BusinessEntityType,
+      compareEntityType,
       env
     );
     return jsonResponse({

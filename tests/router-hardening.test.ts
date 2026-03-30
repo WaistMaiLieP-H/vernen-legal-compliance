@@ -250,10 +250,11 @@ describe("landing page content", () => {
     expect(html).toContain("mainEntity");
   });
 
-  it("includes trust signals section", async () => {
+  it("includes stats bar section", async () => {
     const res = await handleRequest(req("/"), makeEnv(), makeCtx());
     const html = await res.text();
-    expect(html).toContain("No Signup");
+    expect(html).toContain("stats-bar");
+    expect(html).toContain("Jurisdictions");
   });
 
   it("includes FAQ accordion section", async () => {

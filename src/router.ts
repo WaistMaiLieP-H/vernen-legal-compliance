@@ -27,6 +27,7 @@ import {
   handlePaymentSuccess,
   handlePaymentCancel,
   handleViewReport,
+  handleDownloadReportPDF,
 } from "./api/payments.js";
 import {
   handleAdvocisStatus,
@@ -114,6 +115,89 @@ import {
   handleNexarisReputation,
 } from "./api/nexaris.js";
 import {
+  handleFacialexStatus,
+  handleFacialexMethodology,
+  handleFacialexKnowledge,
+} from "./api/facialex.js";
+import {
+  handleSubmitAttestation,
+  handleSubmitDocument,
+  handleVerifyEvidence,
+  handleGetEvidence,
+  handleGetEvidenceSummary,
+  handleGetRetentionRules,
+  handleRetentionLookup,
+  handleRetentionSummary,
+  handlePlaceLegalHold,
+  handleReleaseLegalHold,
+} from "./api/evidence.js";
+import {
+  handleFACStatus,
+  handleFACDiscover,
+  handleFACPipeline,
+  handleFACReport,
+  handleFACOutreach,
+  handleFACOutreachBatch,
+  handleFACStates,
+  handleFACLeads,
+  handleFACFindings,
+} from "./api/fac.js";
+import {
+  handleFedRegStatus,
+  handleFedRegSearch,
+  handleFedRegImpact,
+  handleFedRegPipeline,
+  handleFedRegAlert,
+  handleFedRegAgencies,
+  handleFedRegLeads,
+} from "./api/fedreg.js";
+import {
+  handleHHSStatus,
+  handleHHSBreaches,
+  handleHHSPipeline,
+  handleHHSReport,
+  handleHHSStates,
+  handleHHSLeads,
+} from "./api/hhs.js";
+import {
+  handleEDGARStatus,
+  handleEDGARSearch,
+  handleEDGARPipeline,
+  handleEDGARReport,
+  handleEDGARLeads,
+} from "./api/edgar.js";
+import {
+  handleSBAStatus,
+  handleSBADiscover,
+  handleSBAPipeline,
+  handleSBAReport,
+  handleSBAOutreach,
+  handleSBAOutreachBatch,
+  handleSBAChecklist,
+  handleSBAChecklistUpdate,
+  handleSBAAppealReadiness,
+  handleSBAStates,
+  handleSBALeads,
+} from "./api/sba.js";
+import {
+  handleSpendingStatus,
+  handleSpendingSearch,
+  handleSpendingGrants,
+  handleSpendingPipeline,
+  handleSpendingReport,
+  handleSpendingAgencies,
+  handleSpendingLeads,
+} from "./api/usaspending.js";
+import {
+  handleRescueStatus,
+  handleRescueInitiate,
+  handleRescueGet,
+  handleRescueReport,
+  handleRescueList,
+  handleRescueDeliverableUpdate,
+  handleRescueAutomate,
+} from "./api/rescue.js";
+import {
   handleEngineCatalog,
   handleEngineCatalogStats,
   handleEngineCatalogById,
@@ -125,6 +209,30 @@ import {
   handleEngineDeployedById,
   handleDynamicCitizenRoute,
 } from "./api/engine.js";
+import {
+  handleGetAllSkills,
+  handleGetCitizenSkills,
+  handleGetSkillDetail,
+  handleInstallSkill,
+  handleInstallBatch,
+  handleMatchSkill,
+  handleGetExecutions,
+} from "./api/skills.js";
+import {
+  handleGetAllStandards,
+  handleGetCitizenStandards,
+  handleGetLibrarySummary,
+  handleLookupStandard,
+  handleStandardsForDocument,
+  handleStandardsForSkill,
+  handleSearchStandards,
+  handleSeedStandards,
+  handleGetStandardsByType,
+  handleGetStandardsByJurisdiction,
+  handleGetActionableStandards,
+  handleGetCrossReferences,
+  handleAddCrossReference,
+} from "./api/standards.js";
 import {
   handleLegalStatus,
   handleLegalPracticeAreas,
@@ -145,7 +253,20 @@ import {
   handleListScenarios,
   handleGetScenario,
   handleLoadForms,
+  handleFormRegistry,
 } from "./api/audit.js";
+import {
+  handleI18nLanguages,
+  handleI18nBundle,
+  handleI18nSection,
+} from "./api/i18n.js";
+import {
+  handleVerifyLookup,
+  handleVerificationStats,
+  handlePublicRules,
+  handleRuleCategories,
+  handleRuleStates,
+} from "./api/verification.js";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CORS — Origin-restricted (no wildcard)
@@ -199,7 +320,7 @@ const CSP_POLICY = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data:",
-  "connect-src 'self' https://api.stripe.com",
+  "connect-src 'self' https://api.stripe.com https://api.fac.gov https://www.federalregister.gov https://api.usaspending.gov",
   "frame-src https://js.stripe.com",
   "object-src 'none'",
   "base-uri 'self'",
@@ -370,6 +491,13 @@ export async function handleRequest(
     jsonResponse({ status: "healthy", timestamp: new Date().toISOString() })
   );
 
+  // ── PUBLIC: Verification & Rules — The Book is Open ────────────────
+  routes.set("GET /verify/:hash", handleVerifyLookup);
+  routes.set("GET /api/verification/status", handleVerificationStats);
+  routes.set("GET /api/rules", handlePublicRules);
+  routes.set("GET /api/rules/categories", handleRuleCategories);
+  routes.set("GET /api/rules/states", handleRuleStates);
+
   // API routes are handled by the api module
   routes.set("POST /api/compliance/check", handleApiRoutes.complianceCheck);
   routes.set("GET /api/compliance/report/:id", handleApiRoutes.getReport);
@@ -404,6 +532,7 @@ export async function handleRequest(
   routes.set("GET /payment/success", handlePaymentSuccess);
   routes.set("GET /payment/cancel", handlePaymentCancel);
   routes.set("GET /report/:id", handleViewReport);
+  routes.set("GET /report/:id/pdf", handleDownloadReportPDF);
 
   // ADVOCIS Persona Citizen routes — the retention engine
   routes.set("GET /api/advocis/status", handleAdvocisStatus);
@@ -496,6 +625,11 @@ export async function handleRequest(
   routes.set("GET /api/nexaris/partnerships", handleNexarisPartnerships);
   routes.set("POST /api/nexaris/evaluate", handleNexarisEvaluate);
   routes.set("GET /api/nexaris/reputation", handleNexarisReputation);
+
+  // FACIALEX Persona Citizen routes — forensic facial examination & photo comparison (founder-only)
+  routes.set("GET /api/facialex/status", handleFacialexStatus);
+  routes.set("GET /api/facialex/methodology", handleFacialexMethodology);
+  routes.set("GET /api/facialex/knowledge", handleFacialexKnowledge);
 
   // SENTINEL-0 audit system routes — the independent auditor
   routes.set("GET /api/sentinel/status", handleSentinelRoutes.status);
@@ -612,13 +746,151 @@ export async function handleRequest(
 
   // Forms / GDN endpoints
   routes.set("GET /api/forms", handleListForms);
+  routes.set("GET /api/forms/registry", handleFormRegistry);
   routes.set("GET /api/forms/scenarios", handleListScenarios);
   routes.set("GET /api/forms/scenario/:id", handleGetScenario);
   routes.set("GET /api/forms/:code", handleGetFormGuidance);
   routes.set("GET /api/forms/:code/validate", handleValidateFormField);
   routes.set("POST /api/forms/load", handleLoadForms);
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // i18n — 13-Language UI String Bundles
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/i18n/languages", handleI18nLanguages);
+  routes.set("GET /api/i18n/:lang/:section", handleI18nSection);
+  routes.set("GET /api/i18n/:lang", handleI18nBundle);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CITIZEN SKILL REGISTRY — professional competencies owned by Citizens
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/skills", handleGetAllSkills);
+  routes.set("GET /api/skills/detail/:slug", handleGetSkillDetail);
+  routes.set("GET /api/skills/:citizenName", handleGetCitizenSkills);
+  routes.set("POST /api/skills/install", handleInstallSkill);
+  routes.set("POST /api/skills/install-batch", handleInstallBatch);
+  routes.set("POST /api/skills/match", handleMatchSkill);
+  routes.set("GET /api/skills/executions/:citizenName", handleGetExecutions);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CITIZEN STANDARDS LIBRARY — governing standards each Citizen measures against
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/standards", handleGetAllStandards);
+  routes.set("GET /api/standards/types", handleGetStandardsByType);
+  routes.set("GET /api/standards/actionable", handleGetActionableStandards);
+  routes.set("GET /api/standards/jurisdiction/:jurisdiction", handleGetStandardsByJurisdiction);
+  routes.set("POST /api/standards/seed", handleSeedStandards);
+  routes.set("POST /api/standards/cross-reference", handleAddCrossReference);
+  routes.set("GET /api/standards/:citizenName", handleGetCitizenStandards);
+  routes.set("GET /api/standards/:citizenName/summary", handleGetLibrarySummary);
+  routes.set("GET /api/standards/:citizenName/lookup", handleLookupStandard);
+  routes.set("GET /api/standards/:citizenName/for-document", handleStandardsForDocument);
+  routes.set("GET /api/standards/:citizenName/for-skill/:skillSlug", handleStandardsForSkill);
+  routes.set("GET /api/standards/:citizenName/cross-references/:standardId", handleGetCrossReferences);
+  routes.set("POST /api/standards/:citizenName/search", handleSearchStandards);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FAC INTELLIGENCE — Federal Audit Clearinghouse compliance gap pipeline
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/fac/status", handleFACStatus);
+  routes.set("GET /api/fac/discover", handleFACDiscover);
+  routes.set("GET /api/fac/pipeline", handleFACPipeline);
+  routes.set("GET /api/fac/report/:reportId", handleFACReport);
+  routes.set("GET /api/fac/outreach/:reportId", handleFACOutreach);
+  routes.set("GET /api/fac/outreach-batch", handleFACOutreachBatch);
+  routes.set("GET /api/fac/states", handleFACStates);
+  routes.set("GET /api/fac/leads", handleFACLeads);
+  routes.set("GET /api/fac/findings/:reportId", handleFACFindings);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FEDERAL REGISTER INTELLIGENCE — Regulatory change monitoring pipeline
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/fedreg/status", handleFedRegStatus);
+  routes.set("GET /api/fedreg/search", handleFedRegSearch);
+  routes.set("GET /api/fedreg/impact", handleFedRegImpact);
+  routes.set("GET /api/fedreg/pipeline", handleFedRegPipeline);
+  routes.set("GET /api/fedreg/alert/:docNumber", handleFedRegAlert);
+  routes.set("GET /api/fedreg/agencies", handleFedRegAgencies);
+  routes.set("GET /api/fedreg/leads", handleFedRegLeads);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HHS INTELLIGENCE — HIPAA breach portal (Wall of Shame) pipeline
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/hhs/status", handleHHSStatus);
+  routes.set("GET /api/hhs/breaches", handleHHSBreaches);
+  routes.set("GET /api/hhs/pipeline", handleHHSPipeline);
+  routes.set("GET /api/hhs/report/:entityId", handleHHSReport);
+  routes.set("GET /api/hhs/states", handleHHSStates);
+  routes.set("GET /api/hhs/leads", handleHHSLeads);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EDGAR INTELLIGENCE — SEC 8-K material weakness & restatement monitor
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/edgar/status", handleEDGARStatus);
+  routes.set("GET /api/edgar/search", handleEDGARSearch);
+  routes.set("GET /api/edgar/pipeline", handleEDGARPipeline);
+  routes.set("GET /api/edgar/report/:cik", handleEDGARReport);
+  routes.set("GET /api/edgar/leads", handleEDGARLeads);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SBA INTELLIGENCE — 8(a) Program restatement & OHA appeal pipeline
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/sba/status", handleSBAStatus);
+  routes.set("GET /api/sba/discover", handleSBADiscover);
+  routes.set("GET /api/sba/pipeline", handleSBAPipeline);
+  routes.set("GET /api/sba/report/:uei", handleSBAReport);
+  routes.set("GET /api/sba/outreach/:uei", handleSBAOutreach);
+  routes.set("GET /api/sba/outreach-batch", handleSBAOutreachBatch);
+  routes.set("GET /api/sba/checklist/:uei", handleSBAChecklist);
+  routes.set("POST /api/sba/checklist/update", handleSBAChecklistUpdate);
+  routes.set("GET /api/sba/appeal-readiness/:uei", handleSBAAppealReadiness);
+  routes.set("GET /api/sba/states", handleSBAStates);
+  routes.set("GET /api/sba/leads", handleSBALeads);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // USASPENDING INTELLIGENCE — Federal spending, high-value contracts & grants
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/spending/status", handleSpendingStatus);
+  routes.set("GET /api/spending/search", handleSpendingSearch);
+  routes.set("GET /api/spending/grants", handleSpendingGrants);
+  routes.set("GET /api/spending/pipeline", handleSpendingPipeline);
+  routes.set("GET /api/spending/report/:awardId", handleSpendingReport);
+  routes.set("GET /api/spending/agencies", handleSpendingAgencies);
+  routes.set("GET /api/spending/leads", handleSpendingLeads);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // RESCUE ENGINE — Automated Rescue Sequence for statutory failures
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  routes.set("GET /api/rescue/status", handleRescueStatus);
+  routes.set("POST /api/rescue/initiate", handleRescueInitiate);
+  routes.set("GET /api/rescue/list", handleRescueList);
+  routes.set("POST /api/rescue/deliverable/update", handleRescueDeliverableUpdate);
+  routes.set("POST /api/rescue/automate", handleRescueAutomate);
+  routes.set("GET /api/rescue/report/:sequenceId", handleRescueReport);
+  routes.set("GET /api/rescue/:sequenceId", handleRescueGet);
+
   // Dynamic Citizen routes — MUST be LAST so they don't override core Citizen routes
+  // Evidence & Retention
+  routes.set("POST /api/evidence/attest", handleSubmitAttestation);
+  routes.set("POST /api/evidence/document", handleSubmitDocument);
+  routes.set("POST /api/evidence/verify/:evidenceId", handleVerifyEvidence);
+  routes.set("GET /api/evidence/:clientId", handleGetEvidence);
+  routes.set("GET /api/evidence/:clientId/summary", handleGetEvidenceSummary);
+  routes.set("GET /api/retention/rules", handleGetRetentionRules);
+  routes.set("GET /api/retention/lookup", handleRetentionLookup);
+  routes.set("GET /api/retention/:clientId/summary", handleRetentionSummary);
+  routes.set("POST /api/retention/:documentId/hold", handlePlaceLegalHold);
+  routes.set("DELETE /api/retention/:documentId/hold", handleReleaseLegalHold);
+
   routes.set("GET /api/citizens/:name/:action", handleDynamicCitizenRoute);
   routes.set("POST /api/citizens/:name/:action", handleDynamicCitizenRoute);
 
