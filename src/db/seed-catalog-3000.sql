@@ -1,5 +1,5 @@
 -- Auto-generated from catalog-3000 markdown files
--- Generated: 2026-03-30T04:01:56.594Z
+-- Generated: 2026-03-30T04:14:54.917Z
 -- Total personas: 2806
 
 CREATE TABLE IF NOT EXISTS citizen_catalog (
