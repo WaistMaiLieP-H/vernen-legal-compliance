@@ -2,6 +2,33 @@
 
 Multi-state legal compliance engine built on Cloudflare Workers, powered by Persona Citizens.
 
+---
+
+## Judicial Standard of Notice (JSON)™
+
+**Defined:** April 12, 2026 — Vernen Compliance LLC  
+**Common Law Trademark:** International Class 045 — Legal Services and Compliance  
+**USPTO Filing:** Pending
+
+A **Judicial Standard of Notice (JSON)** is a structured, machine-readable compliance record
+carrying the legal weight of formal notice — timestamped, immutable, and cryptographically
+verifiable. Any document processed through the Vernen Compliance engine and rendered in this
+format constitutes a Judicial Standard of Notice for purposes of legal accountability and
+audit verification.
+
+Every record produced by this engine is anchored to the six-layer compliance framework and
+must satisfy the triple constraint before achieving notice status. Partial compliance is not notice.
+
+The individual is the genesis block. The chain is the witness.
+
+Full specification: [`docs/JSON_JUDICIAL_STANDARD_OF_NOTICE.md`](docs/JSON_JUDICIAL_STANDARD_OF_NOTICE.md)
+
+*Note: The file format `.json` (JavaScript Object Notation, ECMA-404 / RFC 8259) is an open
+international standard and is not claimed. This trademark applies exclusively to the legal
+meaning of the acronym JSON within compliance and legal services contexts.*
+
+---
+
 ## Development
 
 ```bash
