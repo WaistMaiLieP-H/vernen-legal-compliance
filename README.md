@@ -29,6 +29,28 @@ meaning of the acronym JSON within compliance and legal services contexts.*
 
 ---
 
+## Traceable Standard (TS)™
+
+**Defined:** April 12, 2026 — Vernen Compliance LLC  
+**Common Law Trademark:** International Class 045 — Legal Services and Compliance  
+**USPTO Filing:** Pending
+
+A **Traceable Standard (TS)** is the executable compliance logic layer of the Vernen engine —
+the structured, version-controlled, independently verifiable code that produces every Judicial
+Standard of Notice. Every step the engine takes is recorded, timestamped, and verifiable.
+Called with the same inputs at any point in time, it produces the same auditable output.
+
+The TS produces the JSON. Together they form a complete chain of custody: how the analysis
+was performed, and what it found.
+
+Full specification: [`docs/TS_TRACEABLE_STANDARD.md`](docs/TS_TRACEABLE_STANDARD.md)
+
+*Note: The file extension `.ts` (TypeScript) is an open standard maintained by Microsoft
+and is not claimed. This trademark applies exclusively to the legal meaning of the acronym
+TS within compliance and legal services contexts.*
+
+---
+
 ## Development
 
 ```bash
