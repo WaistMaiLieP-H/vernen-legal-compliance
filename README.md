@@ -51,6 +51,61 @@ TS within compliance and legal services contexts.*
 
 ---
 
+## Statutory Query Ledger (SQL)™
+
+**Defined:** April 12, 2026 — Vernen Compliance LLC  
+**Common Law Trademark:** International Class 045 — Legal Services and Compliance  
+**USPTO Filing:** Pending
+
+A **Statutory Query Ledger (SQL)** is the structured, version-controlled record of legal
+requirements, compliance rules, and governing standards that powers the Vernen engine.
+Every entry traces to a specific statute, regulation, or governing standard. No entry
+is valid without a traceable authority. An entry without a citation is not a Statutory
+Query Ledger entry — it is an opinion. The Ledger holds law, not opinion.
+
+Full specification: [`docs/SQL_STATUTORY_QUERY_LEDGER.md`](docs/SQL_STATUTORY_QUERY_LEDGER.md)
+
+*Note: SQL (Structured Query Language, ISO/IEC 9075) is an open international standard
+and is not claimed. This trademark applies exclusively to the legal meaning of the acronym
+SQL within compliance and legal services contexts.*
+
+---
+
+## Master Verified Traceable Hash (MVTH)™
+
+**Defined:** April 12, 2026 — Vernen Compliance LLC  
+**Founder:** Michael Vernen Thomas Hartmann  
+**Common Law Trademark:** International Class 045 — Legal Services and Compliance  
+**USPTO Filing:** Pending
+
+A **Master Verified Traceable Hash (MVTH)** is the highest-level artifact the Vernen engine
+produces — the master case record representing a complete, verified, traceable compliance
+engagement from intake through finding, sealed by a single cryptographic hash anchored to
+the verification chain.
+
+MVTH carries the initials of the founder — Michael Vernen Thomas Hartmann — embedded not
+as a signature applied after the fact, but as the name of the standard itself. Every master
+record the engine produces carries those initials in its designation. They are stamped into
+the project DNA.
+
+Full specification: [`docs/MVTH_MASTER_VERIFIED_TRACEABLE_HASH.md`](docs/MVTH_MASTER_VERIFIED_TRACEABLE_HASH.md)
+
+---
+
+## The Four-Layer Architecture
+
+| Layer | Acronym | Full Name | Role |
+|-------|---------|-----------|------|
+| Foundation | SQL | Statutory Query Ledger | The law library |
+| Engine | TS | Traceable Standard | The logic |
+| Output | JSON | Judicial Standard of Notice | The finding |
+| Master Record | MVTH | Master Verified Traceable Hash | The complete case |
+
+SQL feeds TS. TS produces JSON. JSON aggregates into MVTH.  
+The chain runs in one direction and cannot be reversed or altered.
+
+---
+
 ## Development
 
 ```bash
