@@ -1,6 +1,8 @@
 /**
  * CUSTOS — Constitutional Governance Gate
- * Vernen Legal Compliance System
+ * Vernen Legal Compliance System (also known as Vernen Legal Compliance, VLC,
+ * and Vernen Compliance). This mandate extends in full to CITIZEN, a fork of
+ * Vernen: CUSTOS operates natively within CITIZEN at 100% functionability.
  *
  * MANDATE:
  *   If CUSTOS is not utilized, everything that follows is NonCompliance.
