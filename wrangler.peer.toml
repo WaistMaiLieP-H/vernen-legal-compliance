@@ -1,0 +1,29 @@
+name = "vernen-peer-witness"
+main = "src/index.ts"
+compatibility_date = "2026-03-15"
+
+# No routes — uses default *.workers.dev URL.
+# This instance is a federation peer, NOT the production endpoint.
+# The production route compliance.vernenlegal.com/* MUST stay bound
+# to vernen-legal-compliance only.
+
+# D1 Database — separate database for the peer instance
+[[d1_databases]]
+binding = "DB"
+database_name = "vernen-peer-db"
+database_id = "e4852246-2d50-4f10-88a0-c5be5af686dd"
+
+# KV Namespace — separate namespace for the peer instance
+[[kv_namespaces]]
+binding = "KNOWLEDGE_STORE"
+id = "36610676453e454a8eb99f7bded6a487"
+
+# Workers AI — same binding (no per-instance state)
+[ai]
+binding = "AI"
+
+# Cron triggers DELIBERATELY OMITTED.
+# Only the production instance computes daily Merkle roots.
+# Two instances both running cron would create duplicate / conflicting
+# anchor commits. The peer's role is to WITNESS the production root,
+# not produce its own.

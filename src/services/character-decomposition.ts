@@ -395,12 +395,14 @@ function generateCrossPerspectiveRules(members: TeamMember[]): CrossPerspectiveR
   const officers = members.filter(m => m.personaName.includes("POST"));
   for (let i = 0; i < officers.length; i++) {
     for (let j = i + 1; j < officers.length; j++) {
+      const oA = officers[i]!;
+      const oB = officers[j]!;
       rules.push({
         id: generateId("xrule"),
-        memberA: officers[i].characterId,
-        memberB: officers[j].characterId,
+        memberA: oA.characterId,
+        memberB: oB.characterId,
         ruleName: "OFFICER_DUTY_COMPARISON",
-        description: `Compare duties fulfilled by ${officers[i].characterName} vs ${officers[j].characterName}`,
+        description: `Compare duties fulfilled by ${oA.characterName} vs ${oB.characterName}`,
         triggerCondition: "Different officers on same call — compare report contributions",
       });
     }
@@ -427,7 +429,7 @@ function generateCrossPerspectiveRules(members: TeamMember[]): CrossPerspectiveR
   if (minors.length > 0) {
     rules.push({
       id: generateId("xrule"),
-      memberA: minors[0].characterId,
+      memberA: minors[0]!.characterId,
       memberB: "doc-level",
       ruleName: "CHILD_SAFETY_CROSS_CHECK",
       description: "Verify child safety was assessed and all mandatory protections triggered",
@@ -440,7 +442,7 @@ function generateCrossPerspectiveRules(members: TeamMember[]): CrossPerspectiveR
   if (dispatchers.length > 0) {
     rules.push({
       id: generateId("xrule"),
-      memberA: dispatchers[0].characterId,
+      memberA: dispatchers[0]!.characterId,
       memberB: "doc-level",
       ruleName: "CAD_REPORT_RECONCILIATION",
       description: "Verify CAD dispatch entry reconciles with filed report",

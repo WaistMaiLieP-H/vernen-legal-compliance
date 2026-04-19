@@ -427,6 +427,43 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       </div>
     </div>
 
+    <!-- Pipeline Intelligence -->
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-accent accent-gold"></div>
+        <div class="card-header">
+          <span class="card-title">Pipeline Intelligence</span>
+          <span class="card-citizen">40 AGENCIES</span>
+        </div>
+        <div id="pipelineStats">
+          <div class="shimmer" style="margin-bottom:0.5rem"></div>
+          <div class="shimmer" style="width:70%"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent accent-red"></div>
+        <div class="card-header">
+          <span class="card-title">Risk Distribution</span>
+          <span class="card-citizen">ALL PIPELINES</span>
+        </div>
+        <div id="riskDistribution">
+          <div class="shimmer" style="margin-bottom:0.5rem"></div>
+          <div class="shimmer" style="width:60%"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-accent accent-green"></div>
+        <div class="card-header">
+          <span class="card-title">Top Agencies</span>
+          <span class="card-citizen">BY LEADS</span>
+        </div>
+        <div id="topAgencies">
+          <div class="shimmer" style="margin-bottom:0.5rem"></div>
+          <div class="shimmer" style="width:80%"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Row 1: Financials + Investor Readiness -->
     <div class="grid-2">
       <div class="card">
@@ -544,7 +581,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
   </div>
 
   <footer class="dash-footer">
-    &copy; 2026 Vernen Legal Compliance&trade; &mdash; Founder Dashboard &mdash; Powered by 15 Persona Citizens&trade;
+    &copy; 2026 Vernen Legal Compliance&trade; &mdash; Founder Dashboard &mdash; 34 Persona Citizens&trade; &middot; 40 Intelligence Pipelines
     <br>
     <a href="/legal/terms">Terms</a> &middot; <a href="/legal/privacy">Privacy</a>
   </footer>
@@ -844,11 +881,47 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
       el.innerHTML = html || '<span style="color:var(--text-dim)">Partnership data unavailable</span>';
     }
 
+    async function loadPipelineIntelligence() {
+      var data = await fetchJSON('/api/analytics/quick');
+      var psEl = document.getElementById('pipelineStats');
+      var rdEl = document.getElementById('riskDistribution');
+      var taEl = document.getElementById('topAgencies');
+
+      if (!data) {
+        psEl.innerHTML = '<span style="color:var(--text-dim)">Pipeline data unavailable</span>';
+        rdEl.innerHTML = '<span style="color:var(--text-dim)">—</span>';
+        taEl.innerHTML = '<span style="color:var(--text-dim)">—</span>';
+        return;
+      }
+
+      // Pipeline stats
+      psEl.innerHTML =
+        '<div class="metric-row"><span class="metric-label">Total Leads</span><span class="metric-value">' + (data.total || 0).toLocaleString() + '</span></div>' +
+        '<div class="metric-row"><span class="metric-label">Active Pipelines</span><span class="metric-value green">' + (data.active || 0) + '/40</span></div>' +
+        '<div class="metric-row"><span class="metric-label">Avg Risk Score</span><span class="metric-value ' + scoreClass(100 - (data.distribution?.avgScore || 0)) + '">' + (data.distribution?.avgScore || 0) + '</span></div>';
+
+      // Risk distribution bars
+      var dist = data.distribution || {};
+      var total = dist.total || 1;
+      rdEl.innerHTML =
+        '<div class="risk-bar-container"><div class="risk-bar-header"><span style="color:var(--red)">Critical (' + (dist.critical || 0) + ')</span><span>' + Math.round((dist.critical || 0) / total * 100) + '%</span></div><div class="risk-bar-track"><div class="risk-bar-fill" style="width:' + ((dist.critical || 0) / total * 100) + '%;background:var(--red)"></div></div></div>' +
+        '<div class="risk-bar-container"><div class="risk-bar-header"><span style="color:var(--yellow)">High (' + (dist.high || 0) + ')</span><span>' + Math.round((dist.high || 0) / total * 100) + '%</span></div><div class="risk-bar-track"><div class="risk-bar-fill" style="width:' + ((dist.high || 0) / total * 100) + '%;background:var(--yellow)"></div></div></div>' +
+        '<div class="risk-bar-container"><div class="risk-bar-header"><span style="color:var(--blue)">Medium (' + (dist.medium || 0) + ')</span><span>' + Math.round((dist.medium || 0) / total * 100) + '%</span></div><div class="risk-bar-track"><div class="risk-bar-fill" style="width:' + ((dist.medium || 0) / total * 100) + '%;background:var(--blue)"></div></div></div>' +
+        '<div class="risk-bar-container"><div class="risk-bar-header"><span style="color:var(--green)">Low (' + (dist.low || 0) + ')</span><span>' + Math.round((dist.low || 0) / total * 100) + '%</span></div><div class="risk-bar-track"><div class="risk-bar-fill" style="width:' + ((dist.low || 0) / total * 100) + '%;background:var(--green)"></div></div></div>';
+
+      // Top agencies
+      var agencies = (data.topAgencies || []).slice(0, 5);
+      taEl.innerHTML = agencies.map(function(a) {
+        return '<div class="metric-row"><span class="metric-label">' + a.agency + '</span><span class="metric-value">' + (a.count || 0).toLocaleString() + ' leads</span></div>';
+      }).join('') || '<span style="color:var(--text-dim)">No data yet</span>';
+    }
+
     // Boot dashboard
     async function boot() {
       document.getElementById('lastRefresh').textContent = new Date().toLocaleTimeString();
       await Promise.all([
         loadCitizenGrid(),
+        loadPipelineIntelligence(),
         loadFinancials(),
         loadInvestorReadiness(),
         loadRiskRegister(),

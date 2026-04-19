@@ -2,6 +2,7 @@ import type { CitizenSkill, SkillExecution, ChecklistItem } from "../types/skill
 import { SkillType, CITIZEN_SKILL_ASSIGNMENTS } from "../types/skill.js";
 import { generateId ,safeKvPut} from "../utils/helpers.js";
 import type { Env } from "../index.js";
+import { VerificationEngine } from "./verification-engine.js";
 
 /**
  * SkillRegistry — The authoritative system for Citizen skill management.
@@ -139,8 +140,18 @@ export class SkillRegistry {
    * Log a skill execution — called when a Citizen exercises one of their skills.
    */
   async logExecution(execution: Omit<SkillExecution, "id" | "executedAt">, env: Env): Promise<SkillExecution> {
+    // Resolve skill_id: if passed value looks like a slug, look up the actual ID
+    let resolvedSkillId = execution.skillId;
+    if (resolvedSkillId && !resolvedSkillId.startsWith("sk-") && !resolvedSkillId.startsWith("skill_")) {
+      const skill = await env.DB.prepare(
+        "SELECT id FROM citizen_skills WHERE skill_slug = ?1 LIMIT 1"
+      ).bind(resolvedSkillId).first<{ id: string }>();
+      if (skill) resolvedSkillId = skill.id;
+    }
+
     const record: SkillExecution = {
       ...execution,
+      skillId: resolvedSkillId,
       id: generateId("skex"),
       executedAt: new Date().toISOString(),
     };
@@ -164,6 +175,33 @@ export class SkillRegistry {
       record.durationMs ?? null,
       record.executedAt
     ).run();
+
+    // Append to the verification hash chain. Non-fatal if it fails — we never
+    // want a verifiability hiccup to break a real skill execution.
+    try {
+      const engine = new VerificationEngine(env);
+      await engine.appendRecord({
+        recordId: record.id,
+        recordType: "skill_execution",
+        sourceTable: "skill_executions",
+        sourceId: record.id,
+        content: {
+          skillId: record.skillId,
+          citizenName: record.citizenName,
+          triggerType: record.triggerType,
+          findingsCount: record.findingsCount,
+          violationsCount: record.violationsCount,
+          determination: record.determination ?? null,
+          executionSummary: record.executionSummary ?? null,
+        },
+        metadata: { citizen: record.citizenName },
+      });
+    } catch (err) {
+      console.warn(
+        `[skill-registry] verification append failed for ${record.id}:`,
+        err instanceof Error ? err.message : err
+      );
+    }
 
     return record;
   }

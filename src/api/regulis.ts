@@ -5,6 +5,7 @@ import { PRODUCTS, getProductForRequest } from "../personas/regulis/products.js"
 import { ReportGenerator } from "../services/report-generator.js";
 import { EventBus } from "../services/event-bus.js";
 import { parseJsonBody } from "../utils/helpers.js";
+import { ProofVerdict, type ProofDeficiency } from "../services/proof.js";
 import { Map1Worker } from "../workers/map-1/index.js";
 import { Alert1Worker } from "../workers/alert-1/index.js";
 
@@ -302,8 +303,8 @@ export async function handleRegulisCheck(
         id: proofData.id ?? "",
         citizenName: "REGULIS",
         outputType: "compliance_report",
-        verdict: proofData.verdict as "PASS" | "CORRECTED" | "FLAGGED" | "BLOCKED",
-        deficiencies: [],
+        verdict: proofData.verdict as ProofVerdict,
+        deficiencies: [] as ProofDeficiency[],
         standardsChecked: regulis.standards.length,
         standardsApplicable: 0,
         checksRun: 6,

@@ -428,7 +428,7 @@ function groupByCategory(
       }
     }
     if (!grouped[category]) grouped[category] = [];
-    grouped[category].push(result);
+    grouped[category]!.push(result);
   }
 
   return grouped;

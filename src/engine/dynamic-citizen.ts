@@ -3,6 +3,7 @@ import { PersonaCitizenStatus } from "../types/persona.js";
 import { generateId ,safeKvPut} from "../utils/helpers.js";
 import type { Env } from "../index.js";
 import type { CitizenSpec } from "./types.js";
+import { CUSTOS } from "../services/custos.js";
 
 // ---------------------------------------------------------------------------
 // Activity row shape
@@ -103,6 +104,11 @@ export class DynamicCitizen extends PersonaCitizenBase {
     query: string,
     env: Env
   ): Promise<{ query: string; results: Array<{ key: string; value: unknown }>; source: string }> {
+    // CUSTOS hard gate — Citizen knowledge output requires authorization
+    const custosToken = CUSTOS.authorize(
+      `citizen-query:${this.spec.name}:${query}`
+    );
+
     const prefix = `${this.kvPrefix}${query}`;
     const listResult = await env.KNOWLEDGE_STORE.list({ prefix, limit: 50 });
 
@@ -117,6 +123,7 @@ export class DynamicCitizen extends PersonaCitizenBase {
       }
     }
 
+    CUSTOS.enforce(custosToken, `citizen-query-output:${this.spec.name}`);
     return { query, results, source: this.name };
   }
 

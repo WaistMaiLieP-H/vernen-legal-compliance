@@ -211,7 +211,7 @@ function generateRemediationSteps(finding: AuditFinding): RemediationStep[] {
     deadline: "Week 4",
     deliverable: "Training attendance log with signatures, training materials, competency assessment",
     estimatedHours: 4,
-    dependencies: [steps[0].id],
+    dependencies: [steps[0]!.id],
   });
 
   // Area-specific steps
@@ -224,7 +224,7 @@ function generateRemediationSteps(finding: AuditFinding): RemediationStep[] {
       deadline: "Week 3",
       deliverable: "SAM verification log template, screenshot requirement, pre-award checklist",
       estimatedHours: 6,
-      dependencies: [steps[0].id],
+      dependencies: [steps[0]!.id],
     });
 
     steps.push({
@@ -248,7 +248,7 @@ function generateRemediationSteps(finding: AuditFinding): RemediationStep[] {
       deadline: "Week 3",
       deliverable: "Expenditure approval workflow with dual-signature requirement",
       estimatedHours: 8,
-      dependencies: [steps[0].id],
+      dependencies: [steps[0]!.id],
     });
   }
 
@@ -261,7 +261,7 @@ function generateRemediationSteps(finding: AuditFinding): RemediationStep[] {
       deadline: "Week 3",
       deliverable: "Report reconciliation checklist, supervisory review sign-off template",
       estimatedHours: 6,
-      dependencies: [steps[0].id],
+      dependencies: [steps[0]!.id],
     });
   }
 
@@ -274,7 +274,7 @@ function generateRemediationSteps(finding: AuditFinding): RemediationStep[] {
       deadline: "Week 4",
       deliverable: "Environmental review tracking log, clearance-before-commitment policy",
       estimatedHours: 12,
-      dependencies: [steps[0].id],
+      dependencies: [steps[0]!.id],
     });
   }
 
@@ -287,7 +287,7 @@ function generateRemediationSteps(finding: AuditFinding): RemediationStep[] {
       deadline: "Week 4",
       deliverable: "Inspection tracking spreadsheet/database, re-inspection scheduling protocol",
       estimatedHours: 10,
-      dependencies: [steps[0].id],
+      dependencies: [steps[0]!.id],
     });
   }
 
@@ -468,7 +468,7 @@ export function generateCorrectiveActionPlan(
       ],
       estimatedCost: cost,
       priority,
-      targetCloseDate: targetDate.toISOString().split("T")[0],
+      targetCloseDate: targetDate.toISOString().split("T")[0]!,
     };
   });
 

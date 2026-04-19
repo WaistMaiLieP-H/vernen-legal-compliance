@@ -99,8 +99,8 @@ function extractStatements(text: string, sourcePage: number): StatementRecord[] 
 
   let match;
   while ((match = stmtPattern.exec(text)) !== null) {
-    const speaker = match[1].trim();
-    const content = match[2].trim();
+    const speaker = match[1]!.trim();
+    const content = match[2]!.trim();
 
     // Check if it's a direct quote
     const directQuote = content.includes('"') || content.includes("'") || content.includes("\u201C");
@@ -124,9 +124,9 @@ function extractStatements(text: string, sourcePage: number): StatementRecord[] 
     const speakerMatch = before.match(/(V-\d|S-\d|O-\d|[A-Z][a-z]+)\s+(?:said|stated|yelled|told)/i);
 
     statements.push({
-      speaker: speakerMatch ? speakerMatch[1] : "Unknown",
-      speakerRole: speakerMatch ? inferRole(speakerMatch[1]) : "Unknown",
-      content: match[1],
+      speaker: speakerMatch ? speakerMatch[1]! : "Unknown",
+      speakerRole: speakerMatch ? inferRole(speakerMatch[1]!) : "Unknown",
+      content: match[1]!,
       context: "Direct quote in narrative",
       sourcePage,
       directQuote: true,
@@ -231,10 +231,10 @@ function extractEvidence(text: string, sourcePage: number): EvidenceItem[] {
   const propertyPattern = /property\s*#?\s*[:.]?\s*(\d+)[\s\S]*?description\s*[:.]?\s*([^\n]+)/gi;
   while ((match = propertyPattern.exec(text)) !== null) {
     items.push({
-      description: match[2].trim(),
+      description: match[2]!.trim(),
       type: "Physical Evidence",
       collected: true,
-      propertyNumber: match[1],
+      propertyNumber: match[1]!,
       sourcePage,
     });
   }
@@ -281,9 +281,9 @@ function extractPersons(text: string): PersonMention[] {
 
   let match;
   while ((match = personBlockPattern.exec(text)) !== null) {
-    const num = match[1];
-    const role = match[2].trim();
-    const name = match[3].trim();
+    const num = match[1]!;
+    const role = match[2]!.trim();
+    const name = match[3]!.trim();
 
     // Extract additional attributes
     const block = match[0];
@@ -315,11 +315,11 @@ function extractPersons(text: string): PersonMention[] {
   const officerPattern = /(?:reporting|primary|secondary|assigned)\s+(?:officer|responding)\s*(?:['']s)?\s*(?:supervis)?\s*(\d+)\s*(?:badge#?)?\s*([A-Z][A-Z\s,]+?)(?:\n|$)/gi;
   while ((match = officerPattern.exec(text)) !== null) {
     persons.push({
-      name: match[2].trim(),
+      name: match[2]!.trim(),
       role: "Officer",
-      designation: `Emp# ${match[1]}`,
+      designation: `Emp# ${match[1]!}`,
       agency: "OPD",
-      badgeOrId: match[1],
+      badgeOrId: match[1]!,
       firstMentionPage: 1,
       attributes: {},
     });
@@ -364,15 +364,15 @@ export function extractDocumentContent(
     const disp = fullText.match(POLICE_REPORT_PATTERNS.disposition);
     const agency = fullText.match(POLICE_REPORT_PATTERNS.agency);
 
-    if (incNum) metadata.incidentNumber = incNum[1];
-    if (incType) metadata.incidentType = incType[1].trim();
-    if (incDate) metadata.incidentDate = incDate[1];
-    if (repDate) metadata.reportDate = repDate[1];
-    if (addr) metadata.address = addr[1].trim();
-    if (domestic) metadata.domestic = domestic[1];
-    if (statute) metadata.statuteCode = statute[1].trim();
-    if (severity) metadata.statuteSeverity = severity[1].trim();
-    if (disp) metadata.disposition = disp[1].trim();
+    if (incNum) metadata.incidentNumber = incNum[1]!;
+    if (incType) metadata.incidentType = incType[1]!.trim();
+    if (incDate) metadata.incidentDate = incDate[1]!;
+    if (repDate) metadata.reportDate = repDate[1]!;
+    if (addr) metadata.address = addr[1]!.trim();
+    if (domestic) metadata.domestic = domestic[1]!;
+    if (statute) metadata.statuteCode = statute[1]!.trim();
+    if (severity) metadata.statuteSeverity = severity[1]!.trim();
+    if (disp) metadata.disposition = disp[1]!.trim();
     if (agency) metadata.agency = agency[0].trim();
 
     // DV supplement fields
@@ -382,11 +382,11 @@ export function extractDocumentContent(
     const dvCard = fullText.match(POLICE_REPORT_PATTERNS.dvResourceCard);
     const prosecute = fullText.match(POLICE_REPORT_PATTERNS.victimProsecute);
 
-    if (priorInc) metadata.priorIncidents = priorInc[1].trim();
-    if (totalInc) metadata.totalIncidents = totalInc[1].trim();
-    if (ro) metadata.restrainingOrder = ro[1].trim();
-    if (dvCard) metadata.dvResourceCardGiven = dvCard[1].trim();
-    if (prosecute) metadata.victimProsecute = prosecute[1].trim();
+    if (priorInc) metadata.priorIncidents = priorInc[1]!.trim();
+    if (totalInc) metadata.totalIncidents = totalInc[1]!.trim();
+    if (ro) metadata.restrainingOrder = ro[1]!.trim();
+    if (dvCard) metadata.dvResourceCardGiven = dvCard[1]!.trim();
+    if (prosecute) metadata.victimProsecute = prosecute[1]!.trim();
   }
 
   if (isCourtForm) {
@@ -396,11 +396,11 @@ export function extractDocumentContent(
     const pet = fullText.match(COURT_FORM_PATTERNS.petitioner);
     const resp = fullText.match(COURT_FORM_PATTERNS.respondent);
 
-    if (formNum) metadata.formNumber = formNum[1];
-    if (caseNum) metadata.caseNumber = caseNum[1];
-    if (filed) metadata.filedDate = filed[1].trim();
-    if (pet) metadata.petitioner = pet[1].trim();
-    if (resp) metadata.respondent = resp[1].trim();
+    if (formNum) metadata.formNumber = formNum[1]!;
+    if (caseNum) metadata.caseNumber = caseNum[1]!;
+    if (filed) metadata.filedDate = filed[1]!.trim();
+    if (pet) metadata.petitioner = pet[1]!.trim();
+    if (resp) metadata.respondent = resp[1]!.trim();
   }
 
   // Extract structured data

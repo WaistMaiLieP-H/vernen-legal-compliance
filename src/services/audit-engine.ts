@@ -1,27 +1,49 @@
 /**
  * VERNEN™ Autonomous Audit Engine — Cloudflare Workers Service
- * 6-Pass document audit pipeline, rule-based implementation.
+ * Full Stack of Organizational Trust — 6-Layer audit pipeline.
  *
- * Pass 1: Document Classification — identify document type, jurisdiction, governing law
- * Pass 2: Statutory Retrieval — look up applicable statutes from D1
- * Pass 3: Procedural Compliance — check format, signatures, service, deadlines
- * Pass 4: Substantive Audit — check conflicts, inconsistencies, missing elements
- * Pass 5: Bias & Fraud Detection — check manipulation patterns
- * Pass 6: Risk Scoring — aggregate findings into overall risk score (0-100)
+ * Layer 1 — Regulatory Frameworks    : The laws you must obey.
+ *                                       Identifies document type, jurisdiction, governing statutes.
+ * Layer 2 — Governing Guidelines     : Your internal mission and ethics.
+ *                                       Constitutional alignment, public policy purpose, spirit of law.
+ * Layer 3 — GRC Frameworks           : How you manage risk and business goals.
+ *                                       Risk exposure, governance failures, escalation obligations.
+ * Layer 4 — Standards of Creation    : The technical blueprints.
+ *                                       Substantive completeness, required elements, internal consistency.
+ * Layer 5 — Procedures               : The human and system manuals.
+ *                                       Format, signatures, service, deadlines, filing rules.
+ * Layer 6 — Internal Controls         : The real-time Citizens ensuring procedures are followed.
+ *                                       Bias detection, manipulation patterns, cross-document analysis.
+ * Layer 7 — External SOC Audits       : Independent proof the entire stack is functioning.
+ *                                       Risk score, authenticity seal, blockchain anchor, verifiability.
  *
  * © 2024-2026 Michael Vernen Thomas Hartmann. All Rights Reserved.
  */
 
 import type { Env } from "../index.js";
+import { CUSTOS, CUSTOSViolation } from "./custos.js";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/** The seven organizational trust layers every document is evaluated against. */
+export const TRUST_LAYERS = {
+  1: "Regulatory Frameworks",
+  2: "Governing Guidelines",
+  3: "GRC Frameworks",
+  4: "Standards of Creation",
+  5: "Procedures",
+  6: "Internal Controls",
+  7: "External SOC Audits",
+} as const;
+
+export type TrustLayerNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
 export interface AuditFinding {
   id: string;
-  passNumber: number;
-  passName: string;
+  layerNumber: TrustLayerNumber;
+  layerName: string;
   severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "INFO";
   finding: string;
   recommendation: string;
@@ -31,9 +53,9 @@ export interface AuditFinding {
   type?: string;
 }
 
-export interface PassResult {
-  passNumber: number;
-  passName: string;
+export interface LayerResult {
+  layerNumber: TrustLayerNumber;
+  layerName: string;
   status: "completed" | "failed";
   findings: AuditFinding[];
   metadata: Record<string, unknown>;
@@ -55,8 +77,10 @@ export interface AuditResult {
   id: string;
   documentType: string;
   status: "COMPLETED" | "FAILED";
-  passesCompleted: number;
-  totalPasses: number;
+  layersCompleted: number;
+  totalLayers: number;
+  trustFramework: typeof TRUST_LAYERS;
+  findingsByLayer: Record<TrustLayerNumber, AuditFinding[]>;
   findings: AuditFinding[];
   riskScore: number;
   riskRating: string;
@@ -141,7 +165,7 @@ function extractFormCode(content: string): string | null {
 
 export class AuditEngine {
 
-  // ─── PASS 1: Document Classification ────────────────────────────────────────
+  // ─── LAYER 1: Regulatory Frameworks — Document Classification + Statutory Retrieval ──
   private classifyDocument(content: string): { classification: DocumentClassification; findings: AuditFinding[] } {
     const findings: AuditFinding[] = [];
     const normalized = normalizeContent(content).toLowerCase();
@@ -201,9 +225,9 @@ export class AuditEngine {
     // Classification findings
     if (detectedType === "unknown") {
       findings.push({
-        id: `P1-${generateId().slice(0, 8)}`,
-        passNumber: 1,
-        passName: "Document Classification",
+        id: `L1-${generateId().slice(0, 8)}`,
+        layerNumber: 1 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[1],
         severity: "MEDIUM",
         finding: "Unable to determine document type. The document does not match known California Judicial Council form patterns.",
         recommendation: "Verify the document type and ensure it is a recognized legal document.",
@@ -213,9 +237,9 @@ export class AuditEngine {
 
     if (!caseNumber && detectedType !== "petition") {
       findings.push({
-        id: `P1-${generateId().slice(0, 8)}`,
-        passNumber: 1,
-        passName: "Document Classification",
+        id: `L1-${generateId().slice(0, 8)}`,
+        layerNumber: 1 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[1],
         severity: "LOW",
         finding: "No case number detected in the document.",
         recommendation: "Ensure the case number is clearly displayed on all filings.",
@@ -225,9 +249,9 @@ export class AuditEngine {
 
     if (statutes.length === 0) {
       findings.push({
-        id: `P1-${generateId().slice(0, 8)}`,
-        passNumber: 1,
-        passName: "Document Classification",
+        id: `L1-${generateId().slice(0, 8)}`,
+        layerNumber: 1 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[1],
         severity: "INFO",
         finding: "No governing statutes could be identified from the document content.",
         recommendation: "The document should reference applicable statutory authority.",
@@ -252,7 +276,7 @@ export class AuditEngine {
     return { classification, findings };
   }
 
-  // ─── PASS 2: Statutory Retrieval ────────────────────────────────────────────
+  // ─── LAYER 1 (cont.): Statutory Retrieval ───────────────────────────────────
   private async retrieveStatutes(
     classification: DocumentClassification,
     env: Env
@@ -270,9 +294,9 @@ export class AuditEngine {
         if (result?.data) {
           statutes[classification.formCode] = result.data;
           findings.push({
-            id: `P2-${generateId().slice(0, 8)}`,
-            passNumber: 2,
-            passName: "Statutory Retrieval",
+            id: `L1-${generateId().slice(0, 8)}`,
+            layerNumber: 1 as TrustLayerNumber,
+            layerName: TRUST_LAYERS[1],
             severity: "INFO",
             finding: `Form annotation data retrieved for ${classification.formCode} from internal database.`,
             recommendation: "",
@@ -294,9 +318,9 @@ export class AuditEngine {
 
     if (Object.keys(statutes).length === 0) {
       findings.push({
-        id: `P2-${generateId().slice(0, 8)}`,
-        passNumber: 2,
-        passName: "Statutory Retrieval",
+        id: `L1-${generateId().slice(0, 8)}`,
+        layerNumber: 1 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[1],
         severity: "MEDIUM",
         finding: "No statutory requirements could be retrieved for this document type. Audit will proceed with general compliance checks.",
         recommendation: "Consider manual review against applicable statutes.",
@@ -354,7 +378,7 @@ export class AuditEngine {
     return null;
   }
 
-  // ─── PASS 3: Procedural Compliance ──────────────────────────────────────────
+  // ─── LAYER 5: Procedures — Format, Signatures, Service, Deadlines ───────────
   private checkProceduralCompliance(
     content: string,
     classification: DocumentClassification
@@ -372,9 +396,9 @@ export class AuditEngine {
       const hasRespondent = /respondent|defendant|restrained person/i.test(original);
       if (!hasPetitioner && !hasRespondent) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "HIGH",
           finding: "No party names or designations detected in the document.",
           recommendation: "All court filings must identify parties. Include Petitioner and Respondent names per CRC 2.111.",
@@ -387,9 +411,9 @@ export class AuditEngine {
     // Check case number
     if (requirements.includes("case_number") && !classification.caseNumber) {
       findings.push({
-        id: `P3-${generateId().slice(0, 8)}`,
-        passNumber: 3,
-        passName: "Procedural Compliance",
+        id: `L5-${generateId().slice(0, 8)}`,
+        layerNumber: 5 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[5],
         severity: "HIGH",
         finding: "No case number found. All filed documents except initial petitions must include the case number.",
         recommendation: "Add the case number assigned by the court to the caption area.",
@@ -403,9 +427,9 @@ export class AuditEngine {
       const hasSignature = /\bsign(?:ed|ature)\b|\/s\/|_{5,}|\.{5,}/i.test(original);
       if (!hasSignature) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "CRITICAL",
           finding: "No signature detected. An unsigned document is invalid and will be rejected by the clerk.",
           recommendation: "Sign the document before filing.",
@@ -420,9 +444,9 @@ export class AuditEngine {
       const hasPerjury = /under penalty of perjury|declare under penalty|perjury/i.test(original);
       if (!hasPerjury) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "CRITICAL",
           finding: "No declaration under penalty of perjury found. California requires verification under CCP §2015.5.",
           recommendation: "Include the standard declaration: 'I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct.'",
@@ -437,9 +461,9 @@ export class AuditEngine {
       const hasDate = /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}/i.test(original);
       if (!hasDate) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "MEDIUM",
           finding: "No date detected on the document.",
           recommendation: "All court filings must be dated. Include the date of signing.",
@@ -454,9 +478,9 @@ export class AuditEngine {
       const hasVenue = /county of|superior court/i.test(original);
       if (!hasVenue) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "HIGH",
           finding: "No venue/court designation found. Petitions must identify the Superior Court and county.",
           recommendation: "Include 'Superior Court of California, County of [Name]' in the caption.",
@@ -471,9 +495,9 @@ export class AuditEngine {
       const hasHearing = /hearing\s*(?:date|on|set)|(?:date|set)\s*(?:for|of)\s*hearing/i.test(original);
       if (!hasHearing) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "HIGH",
           finding: "No hearing date detected. Motions (FL-300) must include a pre-reserved hearing date.",
           recommendation: "Contact the clerk to reserve a hearing date before filing. Must be at least 16 court days out.",
@@ -488,9 +512,9 @@ export class AuditEngine {
       const hasDeclaration = /declaration|mc-031|attached declaration|supporting declaration/i.test(original);
       if (!hasDeclaration) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "HIGH",
           finding: "No supporting declaration referenced. Motions must be supported by a declaration under penalty of perjury stating the facts.",
           recommendation: "Prepare and attach a declaration (MC-031) setting forth the facts supporting your request.",
@@ -505,9 +529,9 @@ export class AuditEngine {
       const hasService = /proof of service|served|service by|personally served/i.test(original);
       if (!hasService) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "MEDIUM",
           finding: "No proof of service detected or referenced.",
           recommendation: "File a proof of service (FL-330) demonstrating proper service on the other party.",
@@ -522,9 +546,9 @@ export class AuditEngine {
       const hasRelationship = /spouse|married|dating|cohabitant|domestic partner|parent of|formerly/i.test(original);
       if (!hasRelationship) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "HIGH",
           finding: "No qualifying relationship identified. A DVRO requires a qualifying relationship under Family Code §6211.",
           recommendation: "Specify the relationship: spouse, cohabitant, dating, parent of same child, or close relative.",
@@ -538,9 +562,9 @@ export class AuditEngine {
       const hasAbuse = /abuse|violence|threaten|hit|struck|push|stalk|harass|fear|afraid|harm/i.test(original);
       if (!hasAbuse) {
         findings.push({
-          id: `P3-${generateId().slice(0, 8)}`,
-          passNumber: 3,
-          passName: "Procedural Compliance",
+          id: `L5-${generateId().slice(0, 8)}`,
+          layerNumber: 5 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[5],
           severity: "CRITICAL",
           finding: "No description of abuse detected. A DVRO requires reasonable proof of past act of abuse.",
           recommendation: "Describe specific incidents with dates, locations, and details of what happened.",
@@ -553,7 +577,176 @@ export class AuditEngine {
     return findings;
   }
 
-  // ─── PASS 4: Substantive Audit ──────────────────────────────────────────────
+  // ─── LAYER 2: Governing Guidelines — Mission, Ethics, Spirit of Law ─────────
+  private checkGoverningGuidelines(
+    content: string,
+    classification: DocumentClassification
+  ): AuditFinding[] {
+    const findings: AuditFinding[] = [];
+    const normalized = normalizeContent(content).toLowerCase();
+
+    // Constitutional alignment — 14th Amendment equal protection
+    const genderBias = /\b(mother|father)\b.*\b(should|must|always|never|naturally|inherently)\b/gi;
+    const genderMatches = content.match(genderBias);
+    if (genderMatches && genderMatches.length >= 2) {
+      findings.push({
+        id: `L2-${generateId().slice(0, 8)}`,
+        layerNumber: 2 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[2],
+        severity: "HIGH",
+        finding: "Document contains gender-determinative language regarding parental roles. Under 14th Amendment equal protection and FAM §3020, parenting capacity is not presumed by sex.",
+        recommendation: "Replace gendered assumptions with specific factual allegations tied to the child's best interest factors under FAM §3011.",
+        statutoryBasis: "U.S. Const. amend. XIV; FAM §3020; FAM §3011",
+        type: "Constitutional_Alignment",
+      });
+    }
+
+    // Public policy purpose — is the filing weaponizing the system?
+    const adversarialPatterns = [
+      /prevent.*(?:contact|visitation|access)/i,
+      /deny.*(?:contact|visitation|access)/i,
+      /block.*(?:contact|visitation|access)/i,
+    ];
+    let weaponizationSignals = 0;
+    for (const p of adversarialPatterns) {
+      if (p.test(content)) weaponizationSignals++;
+    }
+    if (weaponizationSignals >= 2 && !/domestic violence|abuse|harm|safety/i.test(content)) {
+      findings.push({
+        id: `L2-${generateId().slice(0, 8)}`,
+        layerNumber: 2 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[2],
+        severity: "HIGH",
+        finding: "Document contains multiple requests to restrict parental contact without documented safety concern. FAM §3020 declares public policy favors frequent and continuing contact with both parents.",
+        recommendation: "Contact restriction requests must be grounded in documented safety findings. Unsubstantiated access restrictions conflict with governing public policy.",
+        statutoryBasis: "FAM §3020; FAM §3040",
+        type: "Public_Policy_Alignment",
+      });
+    }
+
+    // Spirit of the law — DVPA purpose check
+    if (classification.documentType === "dvro_request") {
+      const hasProtectivePurpose = /safety|protect|fear|harm|injury|welfare/i.test(content);
+      const hasProcedural = /custody|property|support|financial/i.test(content);
+      if (!hasProtectivePurpose && hasProcedural) {
+        findings.push({
+          id: `L2-${generateId().slice(0, 8)}`,
+          layerNumber: 2 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[2],
+          severity: "CRITICAL",
+          finding: "DVRO request contains no safety-based language but references custody, property, or support. The DVPA was enacted to protect victims of violence (FAM §6200). Filings lacking genuine safety purpose may constitute misuse of the protective order system.",
+          recommendation: "DVRO must be grounded in documented acts of abuse under FAM §6203. Courts look for genuine protective purpose, not tactical advantage in custody or financial proceedings.",
+          statutoryBasis: "FAM §6200; FAM §6203; FAM §6300",
+          type: "Spirit_of_Law",
+        });
+      }
+    }
+
+    // Vernen mission alignment — every standard carries the wound behind it
+    // Any document that cites a law should reflect awareness of why that law exists
+    if (classification.governingStatutes.includes("FAM §3044") && !/rebuttable presumption|domestic violence/i.test(normalized)) {
+      findings.push({
+        id: `L2-${generateId().slice(0, 8)}`,
+        layerNumber: 2 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[2],
+        severity: "MEDIUM",
+        finding: "Document invokes FAM §3044 (DV custody presumption) without describing the underlying domestic violence basis. The presumption exists to protect victims — citation without factual grounding misapplies its protective purpose.",
+        recommendation: "Document the specific acts of domestic violence that trigger the §3044 presumption. The statute's purpose is victim protection, not tactical presumption-flipping.",
+        statutoryBasis: "FAM §3044",
+        type: "Standard_Purpose_Alignment",
+      });
+    }
+
+    return findings;
+  }
+
+  // ─── LAYER 3: GRC Frameworks — Risk, Governance, Escalation ─────────────────
+  private checkGRCFrameworks(
+    content: string,
+    classification: DocumentClassification,
+    priorFindings: AuditFinding[]
+  ): AuditFinding[] {
+    const findings: AuditFinding[] = [];
+    const normalized = normalizeContent(content).toLowerCase();
+
+    // Governance failure: no authorization, no oversight
+    const criticalCount = priorFindings.filter(f => f.severity === "CRITICAL").length;
+    if (criticalCount >= 2) {
+      findings.push({
+        id: `L3-${generateId().slice(0, 8)}`,
+        layerNumber: 3 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[3],
+        severity: "HIGH",
+        finding: `Document has ${criticalCount} critical defects identified in prior layers. Under GRC governance principles, a document with this defect density should not proceed through the filing pipeline without human review and remediation.`,
+        recommendation: "Escalate to attorney review before filing. Multi-critical-defect documents create compounding risk: each unresolved defect increases the probability that the filing will be rejected, create adverse precedent, or cause irreversible procedural harm.",
+        statutoryBasis: "CRC 3.20; Rules of Professional Conduct 3.3",
+        type: "Governance_Escalation",
+      });
+    }
+
+    // Risk exposure: irreversible actions
+    if (/terminat.*spousal support|waiv.*spousal support/i.test(content)) {
+      findings.push({
+        id: `L3-${generateId().slice(0, 8)}`,
+        layerNumber: 3 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[3],
+        severity: "CRITICAL",
+        finding: "Document contains or references termination or waiver of spousal support. This is an irreversible action — once jurisdiction is terminated under FAM §4336, it cannot be restored regardless of future circumstances including disability or medical crisis.",
+        recommendation: "Risk assessment required before filing. Party must understand: (1) support termination is permanent; (2) future illness, job loss, or disability cannot reopen spousal support; (3) reservation of jurisdiction preserves future rights at no present cost.",
+        statutoryBasis: "FAM §4336",
+        type: "Irreversible_Action_Risk",
+      });
+    }
+
+    // Mandatory reporting obligations triggered by document content
+    if (/minor|child|juvenile|under 18/i.test(content) && /abus|neglect|injur|harm/i.test(content)) {
+      findings.push({
+        id: `L3-${generateId().slice(0, 8)}`,
+        layerNumber: 3 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[3],
+        severity: "HIGH",
+        finding: "Document describes abuse or neglect of a minor. Any mandated reporter (attorney, court officer, healthcare provider, teacher, social worker) who reviewed this document may be obligated to report to child protective services under CANRA.",
+        recommendation: "Assess CANRA reporting obligations immediately. Failure to report when obligated is a misdemeanor under PC §11166. The reporting obligation is not discretionary for mandated reporters.",
+        statutoryBasis: "PC §11164–11174.3 (CANRA); PC §11166",
+        type: "Mandatory_Reporting_Obligation",
+      });
+    }
+
+    // CLETS / law enforcement system integrity risk
+    if (/restraining order|protective order|clets/i.test(content)) {
+      findings.push({
+        id: `L3-${generateId().slice(0, 8)}`,
+        layerNumber: 3 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[3],
+        severity: "MEDIUM",
+        finding: "Document involves a restraining or protective order. If granted, this order will be entered into CLETS (California Law Enforcement Telecommunications System) within one business day. CLETS entry creates systemic risk: any law enforcement contact with the restrained person will reflect the order nationwide.",
+        recommendation: "Ensure the factual basis is accurate and documented. CLETS entries based on inaccurate or fraudulent petitions create systemic law enforcement risk and may constitute a federal crime under 18 U.S.C. §1001.",
+        statutoryBasis: "FAM §6380; 18 U.S.C. §1001",
+        type: "System_Integrity_Risk",
+      });
+    }
+
+    // Ex parte notice governance
+    if (classification.documentType === "ex_parte") {
+      const hasNotice = /notice|notif/i.test(content);
+      if (!hasNotice) {
+        findings.push({
+          id: `L3-${generateId().slice(0, 8)}`,
+          layerNumber: 3 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[3],
+          severity: "CRITICAL",
+          finding: "Ex parte application with no notice documentation. Ex parte orders without proper notice are a fundamental due process violation — the governance risk is that any order obtained may be immediately voidable on appeal, and the filing party may face sanctions.",
+          recommendation: "Document notice given to opposing party by 10:00 AM the court day before hearing (CRC 5.165), or document specifically why notice should be waived under CRC 5.151(b).",
+          statutoryBasis: "CRC 5.151; CRC 5.165; U.S. Const. amend. XIV",
+          type: "Due_Process_Risk",
+        });
+      }
+    }
+
+    return findings;
+  }
+
+  // ─── LAYER 4: Standards of Creation — Substantive Completeness + Technical Blueprints ──
   private auditSubstance(
     content: string,
     classification: DocumentClassification
@@ -570,9 +763,9 @@ export class AuditEngine {
     // If we find many dates, flag potential inconsistency
     if (dates.length > 5) {
       findings.push({
-        id: `P4-${generateId().slice(0, 8)}`,
-        passNumber: 4,
-        passName: "Substantive Audit",
+        id: `L4-${generateId().slice(0, 8)}`,
+        layerNumber: 4 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[4],
         severity: "INFO",
         finding: `Document contains ${dates.length} date references. Manual review recommended to ensure chronological consistency.`,
         recommendation: "Verify all dates are accurate and internally consistent.",
@@ -598,9 +791,9 @@ export class AuditEngine {
 
       if (mentionedCount < 2) {
         findings.push({
-          id: `P4-${generateId().slice(0, 8)}`,
-          passNumber: 4,
-          passName: "Substantive Audit",
+          id: `L4-${generateId().slice(0, 8)}`,
+          layerNumber: 4 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[4],
           severity: "MEDIUM",
           finding: "Custody-related document does not address key best interest factors required by FAM §3011.",
           recommendation: "Address: health/safety of child, contact with both parents, history of DV, substance abuse, and any other relevant factors.",
@@ -615,9 +808,9 @@ export class AuditEngine {
       const hasIncome = /income|salary|wages|earn|fl-150|pay stub/i.test(content);
       if (!hasIncome) {
         findings.push({
-          id: `P4-${generateId().slice(0, 8)}`,
-          passNumber: 4,
-          passName: "Substantive Audit",
+          id: `L4-${generateId().slice(0, 8)}`,
+          layerNumber: 4 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[4],
           severity: "HIGH",
           finding: "Support request detected but no income information referenced. Income evidence is mandatory for support calculations.",
           recommendation: "Attach an Income and Expense Declaration (FL-150) with current income documentation.",
@@ -630,9 +823,9 @@ export class AuditEngine {
     // Check for conflicting requests
     if (/terminate.*support/i.test(content) && /reserve.*jurisdiction/i.test(content)) {
       findings.push({
-        id: `P4-${generateId().slice(0, 8)}`,
-        passNumber: 4,
-        passName: "Substantive Audit",
+        id: `L4-${generateId().slice(0, 8)}`,
+        layerNumber: 4 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[4],
         severity: "CRITICAL",
         finding: "Document appears to simultaneously request termination of support AND reserve jurisdiction — these are contradictory.",
         recommendation: "Choose one: terminate (permanent, irreversible) OR reserve jurisdiction (preserves future right). Termination cannot be undone.",
@@ -646,9 +839,9 @@ export class AuditEngine {
       const hasResidency = /resid(?:ent|ency)|lived in california|6 months|3 months/i.test(content);
       if (!hasResidency) {
         findings.push({
-          id: `P4-${generateId().slice(0, 8)}`,
-          passNumber: 4,
-          passName: "Substantive Audit",
+          id: `L4-${generateId().slice(0, 8)}`,
+          layerNumber: 4 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[4],
           severity: "HIGH",
           finding: "No residency allegation found. Dissolution petition requires at least one party to have lived in California 6 months and in the filing county 3 months.",
           recommendation: "Include residency declaration as required by FAM §2320.",
@@ -663,9 +856,9 @@ export class AuditEngine {
       const hasSpecificIncident = /on\s+(?:\w+\s+)?\d{1,2}|on\s+(?:january|february|march|april|may|june|july|august|september|october|november|december)/i.test(content);
       if (!hasSpecificIncident) {
         findings.push({
-          id: `P4-${generateId().slice(0, 8)}`,
-          passNumber: 4,
-          passName: "Substantive Audit",
+          id: `L4-${generateId().slice(0, 8)}`,
+          layerNumber: 4 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[4],
           severity: "HIGH",
           finding: "DVRO request lacks specific incident dates. Courts require specific factual allegations with dates to grant a restraining order.",
           recommendation: "Describe at least one specific incident with the date, time, and location.",
@@ -679,9 +872,9 @@ export class AuditEngine {
     if (classification.documentType === "motion" || classification.documentType === "ex_parte") {
       if (/custody|visitation/i.test(content) && !/fl-311/i.test(content)) {
         findings.push({
-          id: `P4-${generateId().slice(0, 8)}`,
-          passNumber: 4,
-          passName: "Substantive Audit",
+          id: `L4-${generateId().slice(0, 8)}`,
+          layerNumber: 4 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[4],
           severity: "MEDIUM",
           finding: "Custody/visitation request detected but no reference to FL-311 (Custody Application Attachment).",
           recommendation: "Attach FL-311 with detailed custody and visitation plan.",
@@ -694,7 +887,7 @@ export class AuditEngine {
     return findings;
   }
 
-  // ─── PASS 5: Bias & Fraud Detection ─────────────────────────────────────────
+  // ─── LAYER 6: Internal Controls — Citizens Doing Live Pattern Checks ────────
   private detectBiasAndFraud(
     content: string,
     _classification: DocumentClassification,
@@ -714,9 +907,9 @@ export class AuditEngine {
     }
     if (hyperboleCount > 5) {
       findings.push({
-        id: `P5-${generateId().slice(0, 8)}`,
-        passNumber: 5,
-        passName: "Bias & Fraud Detection",
+        id: `L6-${generateId().slice(0, 8)}`,
+        layerNumber: 6 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[6],
         severity: "MEDIUM",
         finding: `Document uses ${hyperboleCount} absolute/hyperbolic terms (always, never, every time, constantly). This pattern can indicate asymmetric framing rather than factual reporting.`,
         recommendation: "Replace absolute language with specific factual statements. 'He always threatens me' should become 'On [date], he threatened me by [specific action].'",
@@ -732,9 +925,9 @@ export class AuditEngine {
 
       if (negativeAboutOther > 5 && positiveAboutSelf > 3) {
         findings.push({
-          id: `P5-${generateId().slice(0, 8)}`,
-          passNumber: 5,
-          passName: "Bias & Fraud Detection",
+          id: `L6-${generateId().slice(0, 8)}`,
+          layerNumber: 6 as TrustLayerNumber,
+          layerName: TRUST_LAYERS[6],
           severity: "MEDIUM",
           finding: "Document shows pattern of systematic negative characterization of the other party combined with self-promotion. Courts look for balanced, fact-based presentations.",
           recommendation: "Focus on specific incidents and the child's needs rather than character attacks. Courts apply the best interest standard, not parental competition.",
@@ -751,9 +944,9 @@ export class AuditEngine {
       // Basic check: filing date should be on or after creation date
       // (In a full implementation, parse and compare dates)
       findings.push({
-        id: `P5-${generateId().slice(0, 8)}`,
-        passNumber: 5,
-        passName: "Bias & Fraud Detection",
+        id: `L6-${generateId().slice(0, 8)}`,
+        layerNumber: 6 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[6],
         severity: "INFO",
         finding: `Document dated ${creationDateMatch[1]}, filing date ${filingDateMatch[1]}. Verify dates are consistent.`,
         recommendation: "Ensure the document was not backdated or modified after initial creation.",
@@ -765,9 +958,9 @@ export class AuditEngine {
     // Pattern: Coordination indicators
     if (/identical language|same attorney|copied from|substantially similar/i.test(content)) {
       findings.push({
-        id: `P5-${generateId().slice(0, 8)}`,
-        passNumber: 5,
-        passName: "Bias & Fraud Detection",
+        id: `L6-${generateId().slice(0, 8)}`,
+        layerNumber: 6 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[6],
         severity: "LOW",
         finding: "Language patterns suggest possible coordination or template usage.",
         recommendation: "Review for improper coordination between nominally independent filings.",
@@ -780,9 +973,9 @@ export class AuditEngine {
     const criticalFindings = priorFindings.filter(f => f.severity === "CRITICAL");
     if (criticalFindings.length >= 3) {
       findings.push({
-        id: `P5-${generateId().slice(0, 8)}`,
-        passNumber: 5,
-        passName: "Bias & Fraud Detection",
+        id: `L6-${generateId().slice(0, 8)}`,
+        layerNumber: 6 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[6],
         severity: "HIGH",
         finding: `Document has ${criticalFindings.length} critical defects across audit passes. The concentration of defects may indicate careless preparation, or the document may not be what it purports to be.`,
         recommendation: "Conduct manual review of the document's authenticity and preparation circumstances.",
@@ -794,8 +987,8 @@ export class AuditEngine {
     return findings;
   }
 
-  // ─── PASS 6: Risk Scoring ───────────────────────────────────────────────────
-  private calculateRiskScore(allFindings: AuditFinding[]): { score: number; rating: string } {
+  // ─── LAYER 7: External SOC Audits — Risk Score + Verifiability Seal ─────────
+  private calculateRiskScore(allFindings: AuditFinding[]): { score: number; rating: string; socFindings: AuditFinding[] } {
     let score = 100;
 
     for (const finding of allFindings) {
@@ -827,7 +1020,26 @@ export class AuditEngine {
     else if (score >= 30) rating = "MATERIALLY_DEFECTIVE";
     else rating = "POTENTIALLY_FRAUDULENT";
 
-    return { score, rating };
+    // Layer 7 findings — External SOC verdict
+    const socFindings: AuditFinding[] = [];
+    if (rating !== "COMPLIANT") {
+      socFindings.push({
+        id: `L7-${crypto.randomUUID().slice(0, 8)}`,
+        layerNumber: 7 as TrustLayerNumber,
+        layerName: TRUST_LAYERS[7],
+        severity: rating === "POTENTIALLY_FRAUDULENT" ? "CRITICAL"
+                : rating === "MATERIALLY_DEFECTIVE"   ? "HIGH"
+                : "MEDIUM",
+        finding: `External SOC verdict: ${rating} (${score}/100). This document has not passed the full 7-layer trust stack without defects. Independent verification is required before reliance.`,
+        recommendation: rating === "POTENTIALLY_FRAUDULENT"
+          ? "Do not file or rely on this document. Refer for forensic review and potential fraud investigation."
+          : "Remediate all CRITICAL and HIGH findings before filing. Re-run audit to confirm compliance.",
+        statutoryBasis: "Vernen 7-Layer Trust Stack — External SOC Audit",
+        type: "SOC_Verdict",
+      });
+    }
+
+    return { score, rating, socFindings };
   }
 
   // ═══════════════════════════════════════════════════════════════════════════════
@@ -839,10 +1051,18 @@ export class AuditEngine {
     content: string,
     env: Env
   ): Promise<AuditResult> {
+    // ── CUSTOS HARD GATE ──────────────────────────────────────────────────
+    // No audit runs without CUSTOS authorization. This is not bypassable.
+    const custosToken = CUSTOS.authorize(
+      `audit-document:${documentType}`,
+      { documentType }
+    );
+    // ─────────────────────────────────────────────────────────────────────
+
     const auditId = generateId();
     const createdAt = new Date().toISOString();
     const allFindings: AuditFinding[] = [];
-    let passesCompleted = 0;
+    let layersCompleted = 0;
 
     // Create audit record
     try {
@@ -854,43 +1074,65 @@ export class AuditEngine {
       // Table may not exist yet — continue without persistence
     }
 
-    // ── PASS 1: Document Classification ──
+    // ── LAYER 1: Regulatory Frameworks ──
+    // Identify the laws that govern this document and retrieve their requirements
     const { classification, findings: classFindings } = this.classifyDocument(content);
     allFindings.push(...classFindings);
-    passesCompleted = 1;
-
-    // ── PASS 2: Statutory Retrieval ──
     const { findings: statFindings } = await this.retrieveStatutes(classification, env);
     allFindings.push(...statFindings);
-    passesCompleted = 2;
+    layersCompleted = 1;
 
-    // ── PASS 3: Procedural Compliance ──
-    const procFindings = this.checkProceduralCompliance(content, classification);
-    allFindings.push(...procFindings);
-    passesCompleted = 3;
+    // ── LAYER 2: Governing Guidelines ──
+    // Mission and ethics alignment — constitutional, public policy, spirit of law
+    const govFindings = this.checkGoverningGuidelines(content, classification);
+    allFindings.push(...govFindings);
+    layersCompleted = 2;
 
-    // ── PASS 4: Substantive Audit ──
+    // ── LAYER 3: GRC Frameworks ──
+    // Risk management, governance failures, mandatory escalation obligations
+    const grcFindings = this.checkGRCFrameworks(content, classification, allFindings);
+    allFindings.push(...grcFindings);
+    layersCompleted = 3;
+
+    // ── LAYER 4: Standards of Creation ──
+    // Technical blueprint compliance — required content, internal consistency
     const subFindings = this.auditSubstance(content, classification);
     allFindings.push(...subFindings);
-    passesCompleted = 4;
+    layersCompleted = 4;
 
-    // ── PASS 5: Bias & Fraud Detection ──
-    const biasFindings = this.detectBiasAndFraud(content, classification, allFindings);
-    allFindings.push(...biasFindings);
-    passesCompleted = 5;
+    // ── LAYER 5: Procedures ──
+    // Format, signatures, service of process, deadlines, filing rules
+    const procFindings = this.checkProceduralCompliance(content, classification);
+    allFindings.push(...procFindings);
+    layersCompleted = 5;
 
-    // ── PASS 6: Risk Scoring ──
-    const { score, rating } = this.calculateRiskScore(allFindings);
-    passesCompleted = 6;
+    // ── LAYER 6: Internal Controls ──
+    // Citizens doing live pattern checks — bias, manipulation, asymmetric framing
+    const internalControlFindings = this.detectBiasAndFraud(content, classification, allFindings);
+    allFindings.push(...internalControlFindings);
+    layersCompleted = 6;
+
+    // ── LAYER 7: External SOC Audits ──
+    // Independent proof the entire stack is functioning — risk score + SOC verdict
+    const { score, rating, socFindings } = this.calculateRiskScore(allFindings);
+    allFindings.push(...socFindings);
+    layersCompleted = 7;
 
     const completedAt = new Date().toISOString();
+
+    // Build per-layer finding index
+    const findingsByLayer: Record<TrustLayerNumber, AuditFinding[]> = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] };
+    for (const f of allFindings) findingsByLayer[f.layerNumber].push(f);
 
     // Build summary
     const criticalCount = allFindings.filter(f => f.severity === "CRITICAL").length;
     const highCount = allFindings.filter(f => f.severity === "HIGH").length;
+    const layerSummary = (Object.entries(findingsByLayer) as [string, AuditFinding[]][])
+      .map(([n, ff]) => `L${n}(${ff.length})`)
+      .join(" ");
     const summary = `${classification.documentTypeLabel} — ${rating} (${score}/100). ` +
       `${allFindings.length} findings: ${criticalCount} critical, ${highCount} high. ` +
-      `Jurisdiction: ${classification.jurisdiction}.`;
+      `By layer: ${layerSummary}. Jurisdiction: ${classification.jurisdiction}.`;
 
     // Persist findings
     try {
@@ -903,7 +1145,7 @@ export class AuditEngine {
           completed_at = ?
          WHERE id = ?`
       ).bind(
-        passesCompleted,
+        layersCompleted,
         JSON.stringify(allFindings),
         score,
         completedAt,
@@ -918,8 +1160,8 @@ export class AuditEngine {
         ).bind(
           finding.id,
           auditId,
-          finding.passNumber,
-          finding.passName,
+          finding.layerNumber,
+          finding.layerName,
           finding.severity,
           finding.finding,
           finding.recommendation,
@@ -931,12 +1173,17 @@ export class AuditEngine {
       // Persistence failure is non-fatal — return results anyway
     }
 
+    // CUSTOS enforcement point — re-verify before returning any output
+    CUSTOS.enforce(custosToken, `audit-document-output:${documentType}`);
+
     return {
       id: auditId,
       documentType: classification.documentTypeLabel,
       status: "COMPLETED",
-      passesCompleted,
-      totalPasses: 6,
+      layersCompleted,
+      totalLayers: 7,
+      trustFramework: TRUST_LAYERS,
+      findingsByLayer,
       findings: allFindings,
       riskScore: score,
       riskRating: rating,

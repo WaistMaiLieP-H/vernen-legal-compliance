@@ -219,20 +219,256 @@ function evaluateRule(
         if (!confirmed) return null;
         break;
       }
-      default:
-        // Unknown condition — skip (don't block rule from firing)
+      case "same_parties": {
+        // At least one person name must appear in a prior document
+        let shared = false;
+        for (const person of content.persons) {
+          for (const prior of priorDocuments) {
+            if (prior.persons.some(p => p.name.toLowerCase() === person.name.toLowerCase())) {
+              shared = true;
+            }
+          }
+        }
+        if (!shared) return null;
         break;
+      }
+      case "incident_type_domestic": {
+        const isDV = content.metadata.domestic === "YES" ||
+          content.metadata.incidentType?.toLowerCase().includes("domestic") ||
+          content.documentType.toLowerCase().includes("domestic") ||
+          content.documentType.toLowerCase().includes("dv");
+        if (!isDV) return null;
+        break;
+      }
+      case "no_dv_supplement": {
+        // If metadata says DV supplement was filed, condition fails
+        if (content.metadata.dvSupplementFiled === "YES") return null;
+        // For police reports, check if DV supplement is referenced in text
+        const hasSupplement = content.pages.some(p =>
+          p.rawText.toLowerCase().includes("dv supplement") ||
+          p.rawText.toLowerCase().includes("domestic violence supplemental")
+        );
+        if (hasSupplement) return null;
+        break;
+      }
+      case "child_present": {
+        const childPresent = content.persons.some(p =>
+          p.role?.toLowerCase().includes("minor") ||
+          p.role?.toLowerCase().includes("child") ||
+          p.attributes.age && parseInt(p.attributes.age) < 18
+        ) || content.pages.some(p =>
+          p.rawText.toLowerCase().includes("children were present") ||
+          p.rawText.toLowerCase().includes("child present") ||
+          p.rawText.toLowerCase().includes("minor present") ||
+          p.rawText.toLowerCase().includes("children in the")
+        );
+        if (!childPresent) return null;
+        break;
+      }
+      case "no_canra_referral": {
+        const hasCanra = content.pages.some(p =>
+          p.rawText.toLowerCase().includes("canra") ||
+          p.rawText.toLowerCase().includes("child abuse report") ||
+          p.rawText.toLowerCase().includes("cps referral") ||
+          p.rawText.toLowerCase().includes("ss 8583")
+        ) || content.metadata.canraFiled === "YES";
+        if (hasCanra) return null;
+        break;
+      }
+      case "court_form": {
+        const isCourtForm = content.documentType.toLowerCase().includes("court") ||
+          content.metadata.formNumber != null ||
+          /(DV-\d|FL-\d|GC-\d|JC Form)/i.test(content.pages.map(p => p.rawText).join(""));
+        if (!isCourtForm) return null;
+        break;
+      }
+      case "no_judicial_signature": {
+        const hasSig = content.pages.some(p =>
+          p.rawText.toLowerCase().includes("judge signature") ||
+          p.rawText.toLowerCase().includes("judicial officer") ||
+          p.rawText.toLowerCase().includes("hon.") ||
+          p.rawText.toLowerCase().includes("signed by judge")
+        ) || content.metadata.judicialSignature === "YES";
+        if (hasSig) return null;
+        break;
+      }
+      case "event_referenced_no_record": {
+        const unreferenced = content.events.filter(e => e.hasCorrespondingRecord === false);
+        if (unreferenced.length === 0) return null;
+        break;
+      }
+      case "timestamp_conflict": {
+        // Need at least 2 timestamps to have a conflict
+        if (content.timestamps.length < 2) {
+          // Also check against prior documents
+          if (priorDocuments.length === 0) return null;
+        }
+        break;
+      }
+      case "same_speaker": {
+        // Same speaker appears in current and prior documents
+        if (priorDocuments.length === 0) return null;
+        let sameSpeaker = false;
+        for (const stmt of content.statements) {
+          for (const prior of priorDocuments) {
+            if (prior.statements.some(s => s.speaker.toLowerCase() === stmt.speaker.toLowerCase())) {
+              sameSpeaker = true;
+            }
+          }
+        }
+        if (!sameSpeaker) return null;
+        break;
+      }
+      case "same_event": {
+        // At least one event appears to be the same across documents
+        if (priorDocuments.length === 0) return null;
+        break;
+      }
+      case "different_description": {
+        // Statements about the same event differ
+        if (priorDocuments.length === 0) return null;
+        break;
+      }
+      case "epo_issued": {
+        const hasEPO = content.pages.some(p =>
+          p.rawText.toLowerCase().includes("emergency protective order") ||
+          p.rawText.toLowerCase().includes("epo")
+        ) || content.metadata.epoIssued === "YES";
+        if (!hasEPO) return null;
+        break;
+      }
+      case "no_proof_of_service": {
+        const hasService = content.pages.some(p =>
+          p.rawText.toLowerCase().includes("proof of service") ||
+          p.rawText.toLowerCase().includes("served on") ||
+          p.rawText.toLowerCase().includes("personally served")
+        );
+        if (hasService) return null;
+        break;
+      }
+      case "dual_arrest": {
+        const hasDual = content.persons.filter(p =>
+          p.role?.toLowerCase() === "arrested" ||
+          p.role?.toLowerCase() === "suspect"
+        ).length >= 2 ||
+        content.pages.some(p =>
+          p.rawText.toLowerCase().includes("both parties arrested") ||
+          p.rawText.toLowerCase().includes("dual arrest")
+        );
+        if (!hasDual) return null;
+        break;
+      }
+      case "body_camera_referenced": {
+        const hasBodyCam = content.pages.some(p =>
+          p.rawText.toLowerCase().includes("body camera") ||
+          p.rawText.toLowerCase().includes("body-worn camera") ||
+          p.rawText.toLowerCase().includes("bwc") ||
+          p.rawText.toLowerCase().includes("axon")
+        );
+        if (!hasBodyCam) return null;
+        break;
+      }
+      case "footage_gap": {
+        // Would need actual timestamp analysis — for now, if body camera referenced but no footage logged
+        const hasGap = content.pages.some(p =>
+          p.rawText.toLowerCase().includes("camera not activated") ||
+          p.rawText.toLowerCase().includes("footage unavailable") ||
+          p.rawText.toLowerCase().includes("no footage")
+        );
+        if (!hasGap) return null;
+        break;
+      }
+      case "victim_statement": {
+        const hasVictimStmt = content.statements.some(s =>
+          s.speakerRole.toLowerCase().includes("victim")
+        );
+        if (!hasVictimStmt) return null;
+        break;
+      }
+      case "not_direct_quote": {
+        const allDirectQuotes = content.statements
+          .filter(s => s.speakerRole.toLowerCase().includes("victim"))
+          .every(s => s.directQuote);
+        if (allDirectQuotes) return null;
+        break;
+      }
+      default:
+        // Unknown condition — require it NOT to pass (safe default)
+        return null;
     }
   }
 
-  // All conditions passed — rule fires
+  // All conditions passed — rule fires. Interpolate template with actual values.
+  let text = rule.findingTemplate;
+  const vars: Record<string, string> = {};
+
+  // Populate template variables from document context
+  if (content.metadata.address) vars.address = content.metadata.address;
+  if (priorDocuments.length > 0) vars.count = String(priorDocuments.length + 1);
+
+  // Role reversal: find the specific person and roles
+  for (const person of content.persons) {
+    for (const prior of priorDocuments) {
+      const priorMatch = prior.persons.find(p =>
+        p.name.toLowerCase() === person.name.toLowerCase()
+      );
+      if (priorMatch && priorMatch.role.toLowerCase() !== person.role.toLowerCase()) {
+        vars.person = person.name;
+        vars.role_a = priorMatch.role;
+        vars.role_b = person.role;
+        vars.doc_a = prior.sourceFile;
+        vars.doc_b = content.sourceFile;
+      }
+    }
+  }
+
+  // Shadow incidents
+  const shadows = content.events.filter(e => e.hasCorrespondingRecord === false);
+  if (shadows.length > 0) {
+    vars.event = shadows.map(s => s.description).join("; ");
+  }
+
+  // Timestamps
+  if (content.timestamps.length > 0) {
+    vars.time_a = content.timestamps[0]?.timestamp ?? "";
+    vars.time_b = priorDocuments.length > 0 && priorDocuments[0]!.timestamps.length > 0
+      ? priorDocuments[0]!.timestamps[0]?.timestamp ?? ""
+      : "";
+  }
+
+  // Statements — find speaker and claims
+  if (content.statements.length > 0) {
+    vars.speaker = content.statements[0]?.speaker ?? "";
+    vars.claim_b = content.statements[0]?.content ?? "";
+    if (priorDocuments.length > 0 && priorDocuments[0]!.statements.length > 0) {
+      vars.claim_a = priorDocuments[0]!.statements[0]?.content ?? "";
+      vars.doc_a = vars.doc_a || priorDocuments[0]!.sourceFile;
+    }
+    vars.doc_b = vars.doc_b || content.sourceFile;
+  }
+
+  // Form number
+  if (content.metadata.formNumber) vars.form_number = content.metadata.formNumber;
+
+  // Officer
+  const officers = content.persons.filter(p => p.role?.toLowerCase().includes("officer"));
+  if (officers.length > 0) {
+    vars.officer = officers[0]!.name;
+    vars.phase = "incident response";
+  }
+
+  // Interpolate
+  for (const [key, val] of Object.entries(vars)) {
+    text = text.replace(new RegExp(`\\{${key}\\}`, "g"), val);
+  }
+
   return {
     id: generateId("finding"),
     teamMemberId: "detection-rule",
     characterName: "SYSTEM",
     characterRole: "Detection Rule Library",
     personaName: "Detection Rule: " + rule.ruleName,
-    findingText: rule.findingTemplate,
+    findingText: text,
     severity: rule.severity as PerspectiveFinding["severity"],
     standardCited: rule.governingStandard,
     perspective: `Detection Rule ${rule.ruleName}: ${rule.ruleDescription}`,
@@ -279,7 +515,7 @@ function evaluateQuestion(
   if (q.includes("statement") && q.includes("accurate")) {
     // Find statements by this member's character
     const charStatements = content.statements.filter(s =>
-      s.speaker.toLowerCase().includes(member.characterName.toLowerCase().split(",")[0])
+      s.speaker.toLowerCase().includes(member.characterName.toLowerCase().split(",")[0]!)
     );
     for (const stmt of charStatements) {
       if (stmt.paraphrasedBy && !stmt.directQuote) {
@@ -729,7 +965,7 @@ export function renderAuditReport(audit: DecomposedAudit): string {
 
   for (const [memberKey, findings] of byMember) {
     lines.push(`### ${memberKey}`);
-    lines.push(`*Persona: ${findings[0].personaName}*`);
+    lines.push(`*Persona: ${findings[0]!.personaName}*`);
     lines.push(``);
     for (const f of findings) {
       lines.push(`**[${f.severity}]** ${f.findingText}`);

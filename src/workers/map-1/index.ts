@@ -300,8 +300,8 @@ export class Map1Worker {
       env.DB.prepare(sql).bind(state2, entityType),
     ]);
 
-    const rules1 = (result1.success && result1.results ? result1.results : []) as RuleRow[];
-    const rules2 = (result2.success && result2.results ? result2.results : []) as RuleRow[];
+    const rules1 = (result1?.success && result1.results ? result1.results : []) as RuleRow[];
+    const rules2 = (result2?.success && result2.results ? result2.results : []) as RuleRow[];
 
     // Extract categories
     const categories1 = new Set(rules1.map((r) => r.category));

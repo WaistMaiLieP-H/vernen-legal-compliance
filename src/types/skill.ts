@@ -115,24 +115,62 @@ export const CITIZEN_SKILL_ASSIGNMENTS: Record<string, string[]> = {
   ],
 
   // VIGILUS — Threat Assessment & Operational Risk
-  // Skills to be developed: threat intel, risk scoring, incident response
-  VIGILUS: [],
+  VIGILUS: [
+    "osha-workplace-safety-audit",
+    "osha-fatality-investigation-audit",
+    "osha-willful-violation-audit",
+    "epa-environmental-enforcement-audit",
+    "epa-clean-water-act-audit",
+    "epa-clean-air-act-audit",
+    "epa-rcra-hazardous-waste-audit",
+    "epa-cercla-superfund-audit",
+  ],
 
   // PRIVAXIS — Data Protection & Privacy Compliance
-  // Skills to be developed: CCPA audit, HIPAA audit, data mapping
-  PRIVAXIS: [],
+  PRIVAXIS: [
+    "cfpb-consumer-complaint-audit",
+    "cfpb-enforcement-action-audit",
+    "cfpb-consent-order-audit",
+    "hipaa-breach-notification-audit",
+    "data-breach-incident-audit",
+    "consumer-privacy-rights-audit",
+  ],
 
   // VESTARA — Investor Relations & Capital Strategy
-  VESTARA: [],
+  VESTARA: [
+    "sec-proxy-statement-audit",
+    "sec-registration-statement-audit",
+    "sec-8k-material-event-audit",
+    "investor-disclosure-compliance-audit",
+  ],
 
   // METRIQA — Performance Analytics & Growth Validation
-  METRIQA: [],
+  METRIQA: [
+    "gao-audit-report-analysis",
+    "gao-bid-protest-audit",
+    "gao-testimony-analysis",
+    "federal-performance-metrics-audit",
+    "government-accountability-audit",
+  ],
 
   // CLARIDEX — Financial Disclosure & Reporting Standards
-  CLARIDEX: [],
+  CLARIDEX: [
+    "sec-10k-annual-filing-audit",
+    "sec-10q-quarterly-filing-audit",
+    "sec-material-weakness-audit",
+    "sec-restatement-audit",
+    "gaap-financial-statement-audit",
+    "sarbanes-oxley-compliance-audit",
+  ],
 
   // NEXARIS — Strategic Partnerships & Reputation
-  NEXARIS: [],
+  NEXARIS: [
+    "sam-exclusion-debarment-audit",
+    "sam-entity-registration-audit",
+    "federal-contractor-compliance-audit",
+    "ftc-enforcement-action-audit",
+    "government-contracting-integrity-audit",
+  ],
 
   // ARCHIVIST-0 — Document Identification & Classification
   "ARCHIVIST-0": [

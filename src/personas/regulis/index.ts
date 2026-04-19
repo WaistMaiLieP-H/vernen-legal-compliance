@@ -342,6 +342,35 @@ export class Regulis extends PersonaCitizenBase {
         )
         .run();
 
+      // Layer 1: append to verification chain — non-fatal
+      try {
+        const { VerificationEngine } = await import("../../services/verification-engine.js");
+        const engine = new VerificationEngine(env);
+        await engine.ensureTables();
+        await engine.appendRecord({
+          recordId: report.id,
+          recordType: "compliance_report",
+          sourceTable: REPORTS_TABLE,
+          sourceId: report.id,
+          content: {
+            clientId: client.id,
+            entityType,
+            state,
+            totalRules: checkResults.length,
+            compliantCount,
+            nonCompliantCount,
+            needsReviewCount,
+            generatedBy: this.name,
+          },
+          metadata: { citizen: this.name, state },
+        });
+      } catch (verifyErr) {
+        console.warn(
+          "[REGULIS] Verification chain append failed:",
+          verifyErr instanceof Error ? verifyErr.message : verifyErr
+        );
+      }
+
       // Persist individual results to compliance_results table — batched
       const resultStmts = checkResults.map((result) =>
         env.DB.prepare(

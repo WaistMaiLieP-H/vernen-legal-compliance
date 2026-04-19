@@ -21,7 +21,6 @@ import {
   TransactionCategory,
 } from "../workers/ledger-1/types.js";
 import { Regulis } from "../personas/regulis/index.js";
-import { ReportGenerator } from "../services/report-generator.js";
 
 type RouteParams = Record<string, string>;
 

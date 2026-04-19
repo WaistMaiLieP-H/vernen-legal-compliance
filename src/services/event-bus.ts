@@ -67,6 +67,11 @@ const SUBSCRIPTIONS: Record<string, string[]> = {
   "bias_detected":               ["ETHICARA", "INTEGRA"],
   "policy_conflict":             ["ETHICARA", "INTEGRA"],
 
+  // Verification chain events — HERALD witnesses every anchored record
+  "audit_chained":               ["HERALD", "INTEGRA", "VIGILUS"],
+  "audit_annotated":             ["HERALD", "INTEGRA"],
+  "merkle_root_published":       ["HERALD", "INTEGRA"],
+
   // Build system
   "BUILD_TASK_REPORT":           ["SENTINEL-0"],
 

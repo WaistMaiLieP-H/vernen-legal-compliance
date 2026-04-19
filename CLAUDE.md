@@ -20,7 +20,11 @@ npm test          # Run Vitest
 - **Workers** (`src/workers/`) — Specialized task executors (SCAN-1, FORGE-0, SENTINEL-0, etc.)
 - **Services** (`src/services/`) — Business logic (ComplianceEngine, AuditEngine, LegalIntelligence, FormNavigator, ReportGenerator)
 
-**16 deployed Citizens:** FORGE-0, SENTINEL-0, REGULIS, ADVOCIS, LEXARC, SYNTARA, FISCARA, INTEGRA, VIGILUS, ETHICARA, PRIVAXIS, VESTARA, METRIQA, CLARIDEX, NEXARIS, FACIALEX
+**16 hand-built Citizens:** FORGE-0, SENTINEL-0, REGULIS, ADVOCIS, LEXARC, SYNTARA, FISCARA, INTEGRA, VIGILUS, ETHICARA, PRIVAXIS, VESTARA, METRIQA, CLARIDEX, NEXARIS, FACIALEX
+
+**18 data-assembled Citizens** (from Failure Taxonomy Engine): PUBLICIS, PECUNIS, CIVILIS, SCHOLARIS, STRUCTIS, FABRICIS, DIGITALIS, PRAXARIS, GESTARIS, GENERALIS, CITIZEN_FOOD_SAFETY, CITIZEN_MEDICAL_DEVICES, CITIZEN_PHARMA, + others
+
+**40 Intelligence Pipelines** with direct agency APIs + regulations.gov fallback. All pipelines chain through orchestrator → taxonomy → skill discovery → citizen assembly.
 
 ## Project Structure
 
@@ -31,8 +35,16 @@ src/
   personas/       # Citizen classes (base.ts + 15 implementations)
   workers/        # Worker implementations (26 workers)
   services/       # ComplianceEngine, AuditEngine, LegalIntelligence, ReportGenerator
+                  # Intelligence pipelines (23 total):
+                  #   Wave 1: fac-, hhs-, edgar-, sba-, usaspending-, fedreg-intelligence.ts
+                  #   Wave 1-6: 40 intelligence pipelines (fac- through ncua-intelligence.ts)
+                  #   All use direct agency APIs as primary with regulations.gov fallback
+                  # Taxonomy engine: failure-taxonomy.ts, skill-discovery.ts, citizen-assembly.ts
+                  # Document pipelines: document-feed.ts, document-vision.ts
+                  # Orchestration: pipeline-orchestrator.ts, pipeline-analytics.ts, alert-engine.ts
+                  # Intake: intake-pipeline.ts, batch-intake.ts, case-management.ts
   engine/         # Citizen Deployment Engine (catalog, deployer, dynamic routing)
-  db/             # schema.sql, 14 migrations, seed data
+  db/             # schema.sql, 24 migrations, seed data
   landing/        # Landing page (serve.ts) and Founder Dashboard (dashboard.ts)
   legal/          # Terms, Privacy, Disclaimers
   types/          # TypeScript enums and interfaces
@@ -49,14 +61,17 @@ tests/            # Vitest tests
 
 **Secrets:**
 - `API_KEY` — Required for protected endpoints
+- `FAC_API_KEY` — Federal Audit Clearinghouse API key
 - `STRIPE_SECRET_KEY` — Optional (gracefully missing)
 - `STRIPE_WEBHOOK_SECRET` — Optional
 
 ## Database
 
-D1 (SQLite). Schema in `src/db/schema.sql`. 14 migrations in `src/db/migration-*.sql`.
+D1 (SQLite). Schema in `src/db/schema.sql`. 29 migrations in `src/db/migration-*.sql`. **85+ tables** in production.
 
-Key tables: `compliance_rules`, `compliance_reports`, `persona_citizens`, `workers`, `build_log`, `audit_issues`
+Key tables: `compliance_rules`, `compliance_reports`, `persona_citizens`, `workers`, `build_log`, `audit_issues`, `citizen_catalog`, `citizen_deployments`, `citizen_skills`, `citizen_routing_index`, `failure_taxonomy`, `failure_clusters`, `discovered_skills`, `citizen_assemblies`
+
+**IMPORTANT:** Never use `db.exec()` with multiline SQL in services — the Workers bundler strips newlines. Use `db.batch([db.prepare("..."), ...])` instead. Workers have a ~1,000 D1 subrequest limit per invocation — use aggregate queries + in-memory processing.
 
 ## API Handler Pattern
 

@@ -18,6 +18,14 @@ database_id = "e120c52d-fac5-432a-93d1-d737046f19ea"
 binding = "KNOWLEDGE_STORE"
 id = "b5185e79eb634dff9fab6ae2027d3801"
 
+# Workers AI — for document vision (OCR/image-to-text)
+[ai]
+binding = "AI"
+
+# Cron triggers — daily verification anchor at 1 AM UTC
+[triggers]
+crons = ["0 1 * * *"]
+
 # ── Stripe Secrets ─────────────────────────────────────────────────
 # Run these commands to set Stripe secrets:
 # npx wrangler secret put STRIPE_SECRET_KEY

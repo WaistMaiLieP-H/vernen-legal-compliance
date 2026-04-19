@@ -417,9 +417,9 @@ export async function handleFormRegistry(
   let forms = [...(FORM_REGISTRY.forms || []), ...(FORM_REGISTRY.tier_b_forms || [])];
 
   if (tier === "A") {
-    forms = FORM_REGISTRY.forms || [];
+    forms = [...(FORM_REGISTRY.forms || [])];
   } else if (tier === "B") {
-    forms = FORM_REGISTRY.tier_b_forms || [];
+    forms = [...(FORM_REGISTRY.tier_b_forms || [])];
   }
 
   if (category) {
