@@ -272,6 +272,134 @@ export const PHYSICAL_DEFAULTS = {
 
   } as const,
 
+  electronicFiling: {
+
+    CA_TRIAL_EFILING: {
+      label: "California Trial Court Electronic Filing",
+      authority: "Cal. Rules of Court, Rules 2.256, 2.257, 2.259",
+      source: "https://courts.ca.gov/cms/rules/index.cfm?title=two",
+
+      format: {
+        // SOURCE: CRC Rule 2.256(b)(3): "The document must be text searchable when
+        // technologically feasible without impairment of the document's image."
+        // SOURCE: CRC Rule 2.256(b)(2): "The printing of documents must not result
+        // in the loss of document text, format, or appearance."
+        required: "PDF",
+        textSearchable: "required when technologically feasible",
+        source: "CRC Rule 2.256(b)(2), 2.256(b)(3)",
+      },
+
+      fileSize: {
+        // SOURCE: Court-level enforcement — no single statewide CRC limit.
+        // Common limits by court as of 2025:
+        //   LA County: 25MB per document, 60MB per transaction
+        //   San Bernardino: 25MB per document, 50MB per submission
+        //   Riverside: 120MB per document
+        // Filings exceeding court limit are rejected by EFM (Electronic Filing Manager).
+        noStatewideCRCLimit: true,
+        commonLimitMbPerDoc: 25,
+        note: "Limit set by each court's EFM. Rejection is automatic. Verify with target court before filing.",
+        source: "Court-level EFM policy; no statewide CRC mandate",
+      },
+
+      signatures: {
+        // SOURCE: CRC Rule 2.257(b): Documents signed under penalty of perjury.
+        // Filer may use electronic signature that is: unique, verifiable, sole-controlled,
+        // linked to data such that alteration invalidates it — OR file a previously
+        // physically signed document; original producible within 5 days on demand.
+        // SOURCE: CRC Rule 2.257(c): Documents NOT under penalty of perjury are
+        // deemed signed by the electronic filer upon filing.
+        // SOURCE: CRC Rule 2.257(d): "A party or other person is not required to
+        // use a digital signature on an electronically filed document."
+        penaltyOfPerjury: {
+          electronicSignatureRequirements: [
+            "unique to the declarant",
+            "capable of verification",
+            "under the sole control of the declarant",
+            "linked to data such that alteration invalidates it",
+          ],
+          alternativeAllowed: "file previously physically signed document; produce original within 5 days on demand",
+          source: "CRC Rule 2.257(b)",
+        },
+        notPenaltyOfPerjury: {
+          deemedSigned: "by electronic filer upon filing",
+          digitalSignatureNotRequired: true,
+          source: "CRC Rule 2.257(c), 2.257(d)",
+        },
+      },
+
+      filingDateTime: {
+        // SOURCE: CRC Rule 2.259: Court sends confirmation with date/time of receipt.
+        // Document deemed received at date/time confirmation is created.
+        // Filing confirmation = proof of filing date and time.
+        receiptConfirmationRequired: true,
+        filedAtTimeOfConfirmation: true,
+        source: "CRC Rule 2.259",
+      },
+    },
+
+    CA_APPELLATE_EFILING: {
+      label: "California Court of Appeal / Supreme Court Electronic Filing",
+      authority: "Cal. Rules of Court, Rule 8.74",
+      source: "https://courts.ca.gov/cms/rules/index/eight/rule8_74",
+
+      format: {
+        // SOURCE: CRC Rule 8.74: "Electronic documents must be in text-searchable
+        // portable document format (PDF) while maintaining the original document formatting."
+        required: "PDF",
+        textSearchable: "required; non-searchable permitted only when conversion is impractical",
+        source: "CRC Rule 8.74",
+      },
+
+      fileSize: {
+        // SOURCE: CRC Rule 8.74: Electronic filings cannot exceed "25 megabytes."
+        // Documents exceeding this must be split into multiple files, each with
+        // cover pages indicating file numbers and page ranges.
+        maxMbPerFile: 25,
+        oversizeProtocol: "split into multiple files, each with cover page showing file number and page range",
+        source: "CRC Rule 8.74",
+      },
+
+      font: {
+        // SOURCE: CRC Rule 8.74: "proportionally spaced serif face" at 13-points minimum,
+        // with 1.5 spaced line spacing. Century Schoolbook is preferred.
+        minPt: 13,
+        style: "proportionally spaced serif",
+        preferred: "Century Schoolbook",
+        lineSpacing: 1.5,
+        source: "CRC Rule 8.74",
+      },
+
+      pagination: {
+        // SOURCE: CRC Rule 8.74: Page numbering begins at 1, Arabic numerals,
+        // consecutive. Electronic page counter must match document pagination.
+        startAt: 1,
+        format: "Arabic numerals",
+        electronicCounterMustMatch: true,
+        source: "CRC Rule 8.74",
+      },
+
+      bookmarks: {
+        // SOURCE: CRC Rule 8.74: Documents must include "an electronic bookmark to
+        // each heading, subheading, and the first page of any component."
+        required: true,
+        mustInclude: ["each heading", "each subheading", "first page of each component"],
+        descriptionRequired: true,
+        source: "CRC Rule 8.74",
+      },
+
+      hyperlinks: {
+        // SOURCE: CRC Rule 8.74: Hyperlinks "encouraged but not required."
+        // If included, must be active at filing and follow standard citation format.
+        required: false,
+        encouraged: true,
+        ifIncluded: "must be active at filing; follow standard citation format",
+        source: "CRC Rule 8.74",
+      },
+    },
+
+  } as const,
+
   digitalSignature: {
     // SOURCE: Cal. Gov. Code § 16.5:
     //   A digital signature must be: (1) unique to the person using it,
@@ -424,6 +552,14 @@ export interface CUSTOSExamInput {
   signatureCount?: number;
   // Layer 7 — additional physical checks
   linesPerPage?: number;
+  // Electronic filing flags
+  isElectronicFiling?: boolean;
+  fileSizeMb?: number;
+  isTextSearchable?: boolean;
+  hasBookmarks?: boolean;
+  isPdf?: boolean;
+  // Penalty of perjury flag — determines which signature standard applies
+  signedUnderPenaltyOfPerjury?: boolean;
   // Layer 6 — Content Integrity (caller-supplied flags)
   hasInternalContradictions?: boolean;
   contentHashSha256?: string;
@@ -637,8 +773,9 @@ export class CUSTOS {
     redFlags.push(...l4.findings.filter(f => f.startsWith("RED FLAG")));
 
     // Layer 3 — Procedural
-    const l3 = CUSTOS._examLayer3(input);
+    const l3 = CUSTOS._examLayer3(input, jurisdictionResolved);
     layers.push(l3);
+    redFlags.push(...l3.findings.filter(f => f.startsWith("RED FLAG")));
 
     // Layer 2 — Jurisdictional
     const l2 = CUSTOS._examLayer2(input, jurisdictionResolved);
@@ -785,21 +922,99 @@ export class CUSTOS {
 
   private static _examLayer4(input: CUSTOSExamInput): CUSTOSLayerResult {
     const findings: string[] = [];
+
+    // Physical signature check
     if (input.hasSignature === false) {
       findings.push("RED FLAG: No signature detected. Document may lack authentication.");
     }
     if (input.signatureCount !== undefined && input.signatureCount === 0) {
       findings.push("RED FLAG: Zero signatures on a document that requires authentication.");
     }
+
+    // Electronic signature standard — CRC Rule 2.257
+    if (input.isElectronicFiling && input.hasSignature) {
+      const efiling = PHYSICAL_DEFAULTS.electronicFiling.CA_TRIAL_EFILING.signatures;
+      if (input.signedUnderPenaltyOfPerjury) {
+        // CRC Rule 2.257(b): must meet 4-element test OR be a pre-signed physical original
+        findings.push(
+          `NOTICE: Document signed under penalty of perjury — electronic signature must satisfy ` +
+          `all four requirements of CRC Rule 2.257(b): ` +
+          efiling.penaltyOfPerjury.electronicSignatureRequirements.join("; ") + `. ` +
+          `Alternative: file a previously physically signed document (original producible within 5 days on demand).`
+        );
+      } else {
+        // CRC Rule 2.257(c)/(d): deemed signed by electronic filer; digital sig not required
+        findings.push(
+          `Document not signed under penalty of perjury: deemed signed by electronic filer upon filing. ` +
+          `Digital signature not required per CRC Rule 2.257(d).`
+        );
+      }
+    }
+
+    // Cal. Gov. Code § 16.5 digital signature — if digital sig is used
+    if (input.hasSignature && input.isElectronicFiling) {
+      findings.push(
+        `If a digital signature is used: must comply with Cal. Gov. Code § 16.5 ` +
+        `(unique, verifiable, sole-controlled, alteration-invalidated, SoS-compliant).`
+      );
+    }
+
     return { layer: 4, name: "Authentication Layer", pass: !findings.some(f => f.startsWith("RED FLAG")), findings };
   }
 
-  private static _examLayer3(input: CUSTOSExamInput): CUSTOSLayerResult {
+  private static _examLayer3(input: CUSTOSExamInput, jx?: CUSTOSJurisdiction): CUSTOSLayerResult {
     const findings: string[] = [];
+
     if (!input.documentType) {
       findings.push("NOTICE: Document type not declared. Procedural requirements cannot be mapped.");
     }
-    return { layer: 3, name: "Procedural Layer", pass: true, findings };
+
+    if (input.isElectronicFiling) {
+      // Electronic filing format checks — CRC Rule 2.256 / 2.257 / Rule 8.74
+      if (input.isPdf === false) {
+        findings.push(
+          `RED FLAG: Electronic filing must be in PDF format per CRC Rule 2.256(b)(1). ` +
+          `Non-PDF format will be rejected by the EFM.`
+        );
+      }
+      if (input.isTextSearchable === false) {
+        findings.push(
+          `RED FLAG: Electronically filed PDF must be text-searchable when technologically feasible ` +
+          `per CRC Rule 2.256(b)(3). Non-searchable PDFs require justification.`
+        );
+      }
+
+      // File size — appellate has hard CRC limit; trial is court-specific
+      if (jx === "FED_APPELLATE" || jx === "CA_TRIAL") {
+        const limit = jx === "FED_APPELLATE"
+          ? PHYSICAL_DEFAULTS.electronicFiling.CA_APPELLATE_EFILING.fileSize.maxMbPerFile
+          : PHYSICAL_DEFAULTS.electronicFiling.CA_TRIAL_EFILING.fileSize.commonLimitMbPerDoc;
+        if (input.fileSizeMb !== undefined && input.fileSizeMb > limit) {
+          findings.push(
+            `RED FLAG: File size ${input.fileSizeMb}MB exceeds the ${limit}MB ` +
+            `${jx === "FED_APPELLATE" ? "CRC Rule 8.74 hard limit" : "common court EFM limit"}. ` +
+            `Document must be split into multiple files with cover pages.`
+          );
+        }
+      }
+
+      // Appellate-specific: bookmarks required per CRC Rule 8.74
+      if (jx === "FED_APPELLATE" && input.hasBookmarks === false) {
+        findings.push(
+          `RED FLAG: Appellate electronic filing requires electronic bookmarks for each heading, ` +
+          `subheading, and first page of each component per CRC Rule 8.74.`
+        );
+      }
+
+      findings.push(
+        `Electronic filing procedural requirements: ` +
+        `(1) Filer responsible for virus-free submission (CRC Rule 2.256(a)(3)). ` +
+        `(2) Electronic service address must be furnished and kept current (CRC Rule 2.256(a)(4)-(5)). ` +
+        `(3) Filing deemed received at time of court confirmation per CRC Rule 2.259.`
+      );
+    }
+
+    return { layer: 3, name: "Procedural Layer", pass: !findings.some(f => f.startsWith("RED FLAG")), findings };
   }
 
   private static _examLayer2(input: CUSTOSExamInput, jx: CUSTOSJurisdiction): CUSTOSLayerResult {
