@@ -160,6 +160,118 @@ export const PHYSICAL_DEFAULTS = {
     source: "Cal. Rules of Court, Rule 2.102",
   },
 
+  // ── Jurisdiction-specific rulesets ──────────────────────────────────────────
+  // Each jurisdiction block contains only what that jurisdiction's law actually
+  // states. No invented values. Absence of a rule = absence of that requirement.
+
+  jurisdictions: {
+
+    CA_TRIAL: {
+      label: "California Trial Courts",
+      authority: "Cal. Rules of Court, Rules 2.100–2.117",
+      source: "https://courts.ca.gov/cms/rules/index.cfm?title=two",
+      paperSize: { widthIn: 8.5, heightIn: 11.0, source: "CRC Rule 2.103" },
+      paperQuality: { minWeightLbs: 20, color: ["white", "unbleached"], opaque: true, source: "CRC Rule 2.103" },
+      oneSided: { required: true, source: "CRC Rule 2.102" },
+      font: { minPt: 12, typefaceMandate: false, source: "CRC Rule 2.104" },
+      margins: {
+        leftMinIn: 1.0, rightMinIn: 0.5,
+        topMinIn: null, bottomMinIn: null,
+        note: "CRC 2.107 specifies left and right only. Top/bottom not mandated.",
+        source: "CRC Rule 2.107",
+      },
+      lineSpacing: { accepted: [1.5, 2.0], source: "CRC Rule 2.108(1)" },
+      lineNumbering: {
+        required: true, minPerVerticalInch: 3,
+        separatorMinIn: 0.2, source: "CRC Rule 2.108(4)",
+      },
+      electronicFiling: { governs: "CRC Rule 2.256", note: "PDF/A format required for e-filing" },
+    },
+
+    NDCA: {
+      label: "U.S. District Court — Northern District of California",
+      authority: "N.D. Cal. Civil Local Rules, Civil L.R. 3-4 (eff. Aug. 19, 2025)",
+      source: "https://cand.uscourts.gov/rules-forms-fees/local-rules/civil-local-rules",
+      paperSize: {
+        // SOURCE: Civil L.R. 3-4(c): "8½ inch by 11 inch white paper with numbered lines,
+        // and must be flat, unfolded...without back or cover, and firmly bound."
+        widthIn: 8.5, heightIn: 11.0, color: "white",
+        numberedLines: true, oneSided: true,
+        source: "N.D. Cal. Civil L.R. 3-4(c)",
+      },
+      font: {
+        // SOURCE: Civil L.R. 3-4(c)(2): "Standard proportionally spaced font
+        // (e.g., Times New Roman or Century Schoolbook), 12 point type or larger,
+        // and no more than 10 characters per horizontal inch."
+        minPt: 12,
+        style: "proportionally spaced",
+        examples: ["Times New Roman", "Century Schoolbook"],
+        maxCharsPerInch: 10,
+        source: "N.D. Cal. Civil L.R. 3-4(c)(2)",
+      },
+      lineSpacing: {
+        // SOURCE: Civil L.R. 3-4(c)(2): "double-spaced text" with max 28 lines/page.
+        // Exceptions: counsel ID, case title, footnotes, quotations.
+        required: 2.0,
+        maxLinesPerPage: 28,
+        exceptionsAllowSingleSpaced: ["counsel identification", "case title", "footnotes", "quotations"],
+        source: "N.D. Cal. Civil L.R. 3-4(c)(2)",
+      },
+      margins: {
+        // FINDING: Civil L.R. 3-4 does NOT specify margins in inches.
+        // The 28-lines-per-page cap is the implicit physical constraint.
+        // No margin measurement may be cited — absence of rule = no requirement coded.
+        explicit: false,
+        implicitControl: "28-line-per-page maximum serves as margin enforcement",
+        source: "N.D. Cal. Civil L.R. 3-4(c)(2) — no explicit margin measurement stated",
+      },
+      footer: {
+        // SOURCE: Civil L.R. 3-4(c)(3): Each page must have a footer stating the
+        // paper title (e.g., "Complaint") or an abbreviation thereof.
+        // Once a case number is assigned, it must appear in the footer.
+        required: true,
+        mustContain: ["paper title or abbreviation", "case number (once assigned)"],
+        source: "N.D. Cal. Civil L.R. 3-4(c)(3)",
+      },
+      firstPage: {
+        // SOURCE: Civil L.R. 3-4(a): Upper left must contain attorney name, address,
+        // phone, email, state bar number (or party info if pro se). Line 8 begins
+        // court title, action title, case number with judge initials, document title.
+        upperLeftBlock: ["attorney name", "address", "phone", "email", "state bar number"],
+        line8Begins: ["court title", "action title", "case number + judge initials", "document title"],
+        source: "N.D. Cal. Civil L.R. 3-4(a)",
+      },
+      electronicFiling: {
+        // SOURCE: Civil L.R. 5-1(d)(4): "All electronic filings...must be completed
+        // prior to midnight in order to be considered timely filed that day."
+        // Civil L.R. 5-1(f): Proposed orders must be filed in PDF format.
+        deadline: "midnight Pacific time for same-day filing",
+        proposedOrderFormat: "PDF",
+        source: "N.D. Cal. Civil L.R. 5-1(d)(4), 5-1(f)",
+      },
+    },
+
+    FED_APPELLATE: {
+      label: "U.S. Courts of Appeals",
+      authority: "Fed. R. App. P. 32 (as amended)",
+      source: "https://www.law.cornell.edu/rules/frap/rule_32",
+      paperSize: { widthIn: 8.5, heightIn: 11.0, source: "FRAP 32(a)(4)" },
+      margins: { allSidesMinIn: 1.0, source: "FRAP 32(a)(4)" },
+      lineSpacing: {
+        required: 2.0,
+        exceptionsAllowSingleSpaced: ["quotations over two lines", "headings", "footnotes"],
+        source: "FRAP 32(a)(4)",
+      },
+      font: {
+        proportional: { minPt: 14, mustHaveSerifs: true, sansSerifHeadingsOk: true, source: "FRAP 32(a)(5)(A)" },
+        monospaced: { maxCharsPerInch: 10.5, source: "FRAP 32(a)(5)(B)" },
+        style: "plain roman; italics/boldface for emphasis only",
+        source: "FRAP 32(a)(5), 32(a)(6)",
+      },
+    },
+
+  } as const,
+
   digitalSignature: {
     // SOURCE: Cal. Gov. Code § 16.5:
     //   A digital signature must be: (1) unique to the person using it,
@@ -283,9 +395,13 @@ export class CUSTOSViolation extends Error {
 // Callers supply what they know; CUSTOS flags what's missing or anomalous.
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type CUSTOSJurisdiction = "CA_TRIAL" | "NDCA" | "FED_APPELLATE" | "UNKNOWN";
+
 export interface CUSTOSExamInput {
   documentType?: string;
   jurisdiction?: string;
+  /** Explicit jurisdiction override. If not provided, CUSTOS infers from jurisdiction string. */
+  jurisdictionKey?: CUSTOSJurisdiction;
   // Layer 7 — Output (physical presentation)
   pageWidthIn?: number;
   pageHeightIn?: number;
@@ -306,6 +422,8 @@ export interface CUSTOSExamInput {
   hasOfficialSeal?: boolean;
   hasNotarization?: boolean;
   signatureCount?: number;
+  // Layer 7 — additional physical checks
+  linesPerPage?: number;
   // Layer 6 — Content Integrity (caller-supplied flags)
   hasInternalContradictions?: boolean;
   contentHashSha256?: string;
@@ -323,7 +441,9 @@ export interface CUSTOSStructuralExam {
   layers: CUSTOSLayerResult[];
   routedAgent: string;
   naicsCode: string;
-  naiicsSector: string;
+  naicsSector: string;
+  jurisdictionResolved: CUSTOSJurisdiction;
+  jurisdictionLabel: string;
   redFlags: string[];
   examinedAt: string;
 }
@@ -450,6 +570,35 @@ export class CUSTOS {
   }
 
   /**
+   * Resolve the applicable jurisdiction ruleset from document metadata.
+   * Called automatically by examine() — can also be called independently.
+   *
+   * Resolution order:
+   *   1. Explicit jurisdictionKey on input
+   *   2. Inferred from jurisdiction string (e.g. "NDCA", "Northern District", "California")
+   *   3. UNKNOWN — examination proceeds with no physical standard checks
+   */
+  static resolveJurisdiction(input: CUSTOSExamInput): CUSTOSJurisdiction {
+    if (input.jurisdictionKey) return input.jurisdictionKey;
+
+    const j = (input.jurisdiction ?? "").toLowerCase();
+
+    if (j.includes("northern district") || j.includes("ndca") || j.includes("n.d. cal")) {
+      return "NDCA";
+    }
+    if (j.includes("9th circuit") || j.includes("ninth circuit") || j.includes("court of appeals")) {
+      return "FED_APPELLATE";
+    }
+    if (j.includes("california") || j.includes("alameda") || j.includes("contra costa") ||
+        j.includes("solano") || j.includes("marin") || j.includes("san francisco") ||
+        j.includes("superior court")) {
+      return "CA_TRIAL";
+    }
+
+    return "UNKNOWN";
+  }
+
+  /**
    * Perform the 7-layer structural examination on document metadata.
    * CUSTOS owns Layers 2-7. Layer 1 (S.o.C.) is delegated to the routed agent.
    *
@@ -461,8 +610,14 @@ export class CUSTOS {
     const layers: CUSTOSLayerResult[] = [];
     const redFlags: string[] = [];
 
+    // Resolve jurisdiction before any layer runs — every check uses the correct ruleset
+    const jurisdictionResolved = CUSTOS.resolveJurisdiction(input);
+    const jurisdictionLabel = jurisdictionResolved !== "UNKNOWN"
+      ? PHYSICAL_DEFAULTS.jurisdictions[jurisdictionResolved].label
+      : "Unknown — no jurisdiction-specific rules applied";
+
     // Layer 7 — Output (physical presentation)
-    const l7 = CUSTOS._examLayer7(input);
+    const l7 = CUSTOS._examLayer7(input, jurisdictionResolved);
     layers.push(l7);
     redFlags.push(...l7.findings.filter(f => f.startsWith("RED FLAG")));
 
@@ -486,7 +641,7 @@ export class CUSTOS {
     layers.push(l3);
 
     // Layer 2 — Jurisdictional
-    const l2 = CUSTOS._examLayer2(input);
+    const l2 = CUSTOS._examLayer2(input, jurisdictionResolved);
     layers.push(l2);
 
     const routing = CUSTOS.route(input.documentType);
@@ -497,7 +652,9 @@ export class CUSTOS {
       layers,
       routedAgent: routing.agent,
       naicsCode: routing.naics,
-      naiicsSector: routing.sector,
+      naicsSector: routing.sector,
+      jurisdictionResolved,
+      jurisdictionLabel,
       redFlags,
       examinedAt: new Date().toISOString(),
     };
@@ -517,52 +674,85 @@ export class CUSTOS {
 
   // ── Layer examination — private ────────────────────────────────────────────
 
-  private static _examLayer7(input: CUSTOSExamInput): CUSTOSLayerResult {
+  private static _examLayer7(input: CUSTOSExamInput, jx: CUSTOSJurisdiction): CUSTOSLayerResult {
     const findings: string[] = [];
-    const { paperSize, font, margins, lineSpacing } = PHYSICAL_DEFAULTS;
+    const jxRules = jx !== "UNKNOWN" ? PHYSICAL_DEFAULTS.jurisdictions[jx] : null;
 
-    // Paper size — CRC Rule 2.103 / FRAP 32(a)(4): 8.5" x 11" required
+    if (!jxRules) {
+      findings.push("NOTICE: Jurisdiction unknown — physical standard checks skipped. Declare jurisdiction to enable Layer 7 audit.");
+      return { layer: 7, name: "Output Layer", pass: true, findings };
+    }
+
+    // Paper size — universal across all known jurisdictions: 8.5" x 11"
     if (input.pageWidthIn !== undefined && input.pageHeightIn !== undefined) {
-      const isLetter = CUSTOS._within(input.pageWidthIn, paperSize.standard.widthIn, paperSize.tolerancePct) &&
-                       CUSTOS._within(input.pageHeightIn, paperSize.standard.heightIn, paperSize.tolerancePct);
-      if (!isLetter) {
+      const ps = jxRules.paperSize;
+      const ok = CUSTOS._within(input.pageWidthIn, ps.widthIn, PHYSICAL_DEFAULTS.paperSize.tolerancePct) &&
+                 CUSTOS._within(input.pageHeightIn, ps.heightIn, PHYSICAL_DEFAULTS.paperSize.tolerancePct);
+      if (!ok) {
         findings.push(
           `RED FLAG: Non-standard page size ${input.pageWidthIn}" x ${input.pageHeightIn}". ` +
-          `Required: 8.5" x 11" per Cal. Rules of Court, Rule 2.103 and Fed. R. App. P. 32(a)(4).`
+          `Required: 8.5" x 11" per ${ps.source}.`
         );
       }
     }
 
-    // Font size — CRC Rule 2.104: minimum 12pt for CA trial courts
-    // No typeface mandate at CA trial court level (FRAP 32 applies to federal appellate only)
-    if (input.fontSizePt !== undefined && input.fontSizePt < font.bodyPtMinCA) {
-      findings.push(
-        `RED FLAG: Font size ${input.fontSizePt}pt is below the 12pt minimum. ` +
-        `Required: minimum 12pt per Cal. Rules of Court, Rule 2.104.`
-      );
+    // Font size — jurisdiction-specific minimum
+    if (input.fontSizePt !== undefined && "font" in jxRules) {
+      const minPt = (jxRules.font as { minPt: number }).minPt;
+      if (input.fontSizePt < minPt) {
+        findings.push(
+          `RED FLAG: Font size ${input.fontSizePt}pt is below the ${minPt}pt minimum per ${(jxRules.font as { source: string }).source}.`
+        );
+      }
     }
 
-    // Margins — CRC Rule 2.107: left ≥1.0", right ≥0.5"
-    if (input.marginLeftIn !== undefined && input.marginLeftIn < margins.caTrialCourt.leftMinIn) {
-      findings.push(
-        `RED FLAG: Left margin ${input.marginLeftIn}" is below minimum 1.0". ` +
-        `Required: left margin ≥1 inch per Cal. Rules of Court, Rule 2.107.`
-      );
-    }
-    if (input.marginRightIn !== undefined && input.marginRightIn < margins.caTrialCourt.rightMinIn) {
-      findings.push(
-        `RED FLAG: Right margin ${input.marginRightIn}" is below minimum 0.5". ` +
-        `Required: right margin ≥0.5 inch per Cal. Rules of Court, Rule 2.107.`
-      );
+    // Margins — only check if jurisdiction explicitly mandates them
+    if ("margins" in jxRules && (jxRules.margins as Record<string, unknown>).explicit !== false) {
+      const m = jxRules.margins as Record<string, unknown>;
+      if (input.marginLeftIn !== undefined && typeof m.leftMinIn === "number" &&
+          input.marginLeftIn < m.leftMinIn) {
+        findings.push(
+          `RED FLAG: Left margin ${input.marginLeftIn}" below minimum ${m.leftMinIn}" per ${m.source}.`
+        );
+      }
+      if (input.marginRightIn !== undefined && typeof m.rightMinIn === "number" &&
+          input.marginRightIn < m.rightMinIn) {
+        findings.push(
+          `RED FLAG: Right margin ${input.marginRightIn}" below minimum ${m.rightMinIn}" per ${m.source}.`
+        );
+      }
+      if (input.marginLeftIn !== undefined && typeof m.allSidesMinIn === "number" &&
+          input.marginLeftIn < m.allSidesMinIn) {
+        findings.push(
+          `RED FLAG: Left margin ${input.marginLeftIn}" below minimum ${m.allSidesMinIn}" per ${m.source}.`
+        );
+      }
     }
 
-    // Line spacing — CRC Rule 2.108(1): 1.5 or double-spaced required
-    if (input.lineSpacing !== undefined &&
-        !(lineSpacing.caTrialCourt.accepted as readonly number[]).includes(input.lineSpacing)) {
-      findings.push(
-        `Non-standard line spacing ${input.lineSpacing}. ` +
-        `Required: 1.5 or double-spaced per Cal. Rules of Court, Rule 2.108(1).`
-      );
+    // Line spacing — jurisdiction-specific
+    if (input.lineSpacing !== undefined && "lineSpacing" in jxRules) {
+      const ls = jxRules.lineSpacing as Record<string, unknown>;
+      const accepted = ls.accepted as readonly number[] | undefined;
+      const required = ls.required as number | undefined;
+      if (accepted && !(accepted as readonly number[]).includes(input.lineSpacing)) {
+        findings.push(
+          `Non-standard line spacing ${input.lineSpacing}. Required: ${accepted.join(" or ")} per ${ls.source}.`
+        );
+      } else if (required !== undefined && input.lineSpacing < required) {
+        findings.push(
+          `Non-standard line spacing ${input.lineSpacing}. Required: ${required} per ${ls.source}.`
+        );
+      }
+    }
+
+    // NDCA-specific: lines per page cap
+    if (jx === "NDCA" && input.linesPerPage !== undefined) {
+      const ndca = PHYSICAL_DEFAULTS.jurisdictions.NDCA;
+      if (input.linesPerPage > ndca.lineSpacing.maxLinesPerPage) {
+        findings.push(
+          `RED FLAG: ${input.linesPerPage} lines per page exceeds maximum ${ndca.lineSpacing.maxLinesPerPage} per ${ndca.lineSpacing.source}.`
+        );
+      }
     }
 
     return { layer: 7, name: "Output Layer", pass: !findings.some(f => f.startsWith("RED FLAG")), findings };
@@ -612,10 +802,16 @@ export class CUSTOS {
     return { layer: 3, name: "Procedural Layer", pass: true, findings };
   }
 
-  private static _examLayer2(input: CUSTOSExamInput): CUSTOSLayerResult {
+  private static _examLayer2(input: CUSTOSExamInput, jx: CUSTOSJurisdiction): CUSTOSLayerResult {
     const findings: string[] = [];
     if (!input.jurisdiction) {
       findings.push("NOTICE: Jurisdiction not declared. Venue requirements cannot be verified.");
+    } else if (jx === "UNKNOWN") {
+      findings.push(`NOTICE: Jurisdiction "${input.jurisdiction}" could not be mapped to a known ruleset. ` +
+        `Physical standard checks were skipped. Add jurisdiction mapping to CUSTOS.resolveJurisdiction() to enable.`);
+    } else {
+      const jxRules = PHYSICAL_DEFAULTS.jurisdictions[jx];
+      findings.push(`Jurisdiction resolved: ${jxRules.label} — rules applied per ${jxRules.authority}.`);
     }
     return { layer: 2, name: "Jurisdictional Layer", pass: true, findings };
   }
