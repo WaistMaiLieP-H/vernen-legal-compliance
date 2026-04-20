@@ -708,6 +708,121 @@ const REGISTRY: Record<string, SoCEntry> = {
     owningAgents: ["us-federal-erisa-litigator"],
   },
 
+  // ── Qui Tam / False Claims Act (DELATOR — Council Seat 5) ───────────────────
+
+  "qui-tam-complaint": {
+    label: "Qui Tam Complaint — False Claims Act (Sealed)",
+    authorities: [
+      {
+        citation: "31 USC § 3730(b)",
+        mandate: "A person may bring a civil action for violation of § 3729 on behalf of the United States. Filed in camera, sealed for at least 60 days, served on DOJ per Rule 4(d)(4). Defendant not served until court orders.",
+        jurisdiction: "FEDERAL",
+      },
+    ],
+    absenceSignificance: "Absence of a filed complaint means the relator has not yet invoked DOJ review. First-to-file bar (§ 3730(b)(5)) applies — no recovery if substantially identical complaint is pending.",
+    owningAgents: ["delator"],
+  },
+
+  "fca-sealed-complaint": {
+    label: "False Claims Act Sealed Complaint",
+    authorities: [
+      {
+        citation: "31 USC § 3730(b)(2)",
+        mandate: "Complaint shall be filed in camera, shall remain under seal for at least 60 days, and shall not be served on the defendant until the court so orders.",
+        jurisdiction: "FEDERAL",
+      },
+    ],
+    owningAgents: ["delator"],
+  },
+
+  "relator-disclosure-statement": {
+    label: "Relator Written Disclosure of Material Evidence",
+    authorities: [
+      {
+        citation: "31 USC § 3730(b)(2)",
+        mandate: "A copy of the complaint AND written disclosure of substantially all material evidence and information the person possesses shall be served on the Government pursuant to Rule 4(d)(4). The disclosure is mandatory — without it, the complaint is defective.",
+        jurisdiction: "FEDERAL",
+      },
+    ],
+    absenceSignificance: "Failure to serve a written disclosure with the complaint is a procedural defect. Government cannot assess the case without it. Some circuits have held that failure to serve the disclosure warrants dismissal.",
+    owningAgents: ["delator"],
+  },
+
+  "false-claims-complaint": {
+    label: "False Claims Act Complaint (General)",
+    authorities: [
+      {
+        citation: "31 USC §§ 3729-3730",
+        mandate: "Actionable when: (1) defendant presented or caused to be presented a false or fraudulent claim for payment, (2) to the United States or to a contractor/grantee receiving federal funds, (3) with knowledge (actual, deliberate ignorance, or reckless disregard). No proof of specific intent required.",
+        jurisdiction: "FEDERAL",
+      },
+    ],
+    owningAgents: ["delator", "ca-healthcare-fraud-litigator"],
+  },
+
+  "irs-form-211": {
+    label: "IRS Form 211 — Application for Award for Original Information",
+    authorities: [
+      {
+        citation: "26 USC § 7623(b); IRS Revenue Procedure 2012-14",
+        mandate: "Any person may submit original information about tax underpayment to the IRS Whistleblower Office. Award mandatory if: (1) IRS proceeds and collects, (2) taxes, penalties, and interest exceed $2M, (3) taxpayer annual gross income exceeds $200K in at least one tax year. Award: 15–30% of collected proceeds.",
+        jurisdiction: "FEDERAL_ADMIN",
+      },
+    ],
+    absenceSignificance: "Without Form 211, informant has no formal claim to award and is not protected as an IRS whistleblower. Filing begins the statutory process.",
+    owningAgents: ["delator"],
+  },
+
+  "sec-whistleblower-tip": {
+    label: "SEC Whistleblower Tip (Form TCR / Online Submission)",
+    authorities: [
+      {
+        citation: "15 USC § 78u-6 (Dodd-Frank § 922); 17 CFR Part 240 Rule 21F",
+        mandate: "Any individual may voluntarily provide original information about securities law violations to the SEC. Award mandatory if SEC brings enforcement action and collects sanctions exceeding $1M. Award: 10–30% of monetary sanctions collected.",
+        jurisdiction: "FEDERAL_ADMIN",
+      },
+    ],
+    owningAgents: ["delator"],
+  },
+
+  "dol-form-5500": {
+    label: "DOL Form 5500 — Annual Return/Report of Employee Benefit Plan",
+    authorities: [
+      {
+        citation: "29 USC § 1023 (ERISA § 103); 29 USC § 1024 (§ 104); 26 USC § 6058",
+        mandate: "Every employee benefit plan (including Taft-Hartley multi-employer pension plans like UA Local 342) must file Form 5500 annually with DOL/IRS. Reports: plan financial condition, investments, operations, actuarial status. False entries constitute false statements to federal agencies under 18 USC § 1001 and false records material to a federal program under 31 USC § 3729(a)(1)(B).",
+        jurisdiction: "FEDERAL_ADMIN",
+      },
+    ],
+    absenceSignificance: "Failure to file Form 5500 is an ERISA violation. False entries on Form 5500 are federal false statements — FCA predicate when they support false benefit claims.",
+    owningAgents: ["delator", "us-federal-erisa-litigator"],
+  },
+
+  "whistleblower-complaint": {
+    label: "Whistleblower Complaint (General Federal)",
+    authorities: [
+      {
+        citation: "31 USC § 3730(h); 18 USC § 1514A (Sarbanes-Oxley); 15 USC § 78u-6(h) (Dodd-Frank)",
+        mandate: "Federal law prohibits retaliation against employees, contractors, or agents for lawful acts in furtherance of a False Claims Act action or other efforts to stop federal fraud violations. Remedies: reinstatement, double back pay, special damages, attorneys' fees.",
+        jurisdiction: "FEDERAL",
+      },
+    ],
+    owningAgents: ["delator"],
+  },
+
+  "anti-retaliation-filing": {
+    label: "FCA Anti-Retaliation Complaint — 31 USC § 3730(h)",
+    authorities: [
+      {
+        citation: "31 USC § 3730(h)(1)",
+        mandate: "Any employee, contractor, or agent is entitled to all relief necessary to make them whole if discharged, demoted, suspended, threatened, harassed, or discriminated against because of lawful acts in furtherance of a qui tam action or other efforts to stop FCA violations. No successful underlying qui tam required.",
+        jurisdiction: "FEDERAL",
+      },
+    ],
+    absenceSignificance: "§ 3730(h) is a standalone claim. Retaliatory conduct after protected activity triggers liability regardless of whether the underlying fraud allegation succeeds.",
+    owningAgents: ["delator"],
+  },
+
   // ── Victim Advocate / Court-Issued Crime Report ───────────────────────────
 
   "victim-advocate-letter": {

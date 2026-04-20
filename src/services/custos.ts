@@ -944,6 +944,21 @@ export const NAICS_ROUTING: Record<string, { naics: string; sector: string; agen
   "notice-of-exemption":             { naics: "924110", sector: "Environmental", agent: "ca-ceqa-consultant" },
   "cpuc-filing":                     { naics: "924110", sector: "Energy Policy", agent: "ca-energy-policy-specialist" },
 
+  // ── NAICS 922120 — Qui Tam / False Claims Act (Council Seat 5 — DELATOR) ──
+  "qui-tam-complaint":               { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "fca-sealed-complaint":            { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "fca-disclosure":                  { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "relator-disclosure-statement":    { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "false-claims-complaint":          { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "whistleblower-complaint":         { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "irs-form-211":                    { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "sec-whistleblower-tip":           { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "dol-form-5500":                   { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "retaliation-complaint":           { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "anti-retaliation-filing":         { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "upcoding-complaint":              { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+  "healthcare-fraud-referral":       { naics: "922120", sector: "Qui Tam / False Claims", agent: "delator" },
+
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1404,6 +1419,17 @@ const CHARTER_MAP: Record<string, string[]> = {
   "claridex":  ["regulatory-guidance", "compliance-advisory", "policy-document"],
   "nexaris":   ["network-document", "it-policy", "cybersecurity-report"],
   "facialex":  ["identity-document", "biometric-record", "authentication-record"],
+
+  // ── Qui Tam / Whistleblower (Council Seat 5) ──────────────────────────────
+  "delator": [
+    "qui-tam-complaint", "fca-disclosure", "fca-sealed-complaint",
+    "relator-disclosure-statement", "medicare-billing-record", "medi-cal-claim",
+    "cms-1500", "ub-04", "healthcare-fraud-referral", "medical-billing-record",
+    "false-claims-complaint", "whistleblower-complaint", "irs-form-211",
+    "sec-whistleblower-tip", "erisa-complaint", "pension-document",
+    "dol-form-5500", "ssdi-application", "ssa-denial", "form-w-2",
+    "upcoding-complaint", "retaliation-complaint", "anti-retaliation-filing",
+  ],
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
