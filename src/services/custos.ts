@@ -1722,8 +1722,9 @@ export class CUSTOS {
   }
 
   /**
-   * Perform the 7-layer structural examination on document metadata.
-   * CUSTOS owns Layers 2-7. Layer 1 (S.o.C.) is delegated to the routed agent.
+   * Structural examination against the 7-Level Compliance Stack.
+   * CUSTOS owns Levels 2-7. Level 1 (S.o.C.) is delegated to the routed agent.
+   * See ~/citizens/_COMPLIANCE_STACK.md for canonical stack definition.
    *
    * This is the structural gate — lightweight, fast, runs before any Citizen
    * receives the document. A failed exam does not throw; it returns a result
