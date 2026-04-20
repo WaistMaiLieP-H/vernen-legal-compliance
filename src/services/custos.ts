@@ -645,30 +645,463 @@ export const NAICS_ROUTING: Record<string, { naics: string; sector: string; agen
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Filing deadlines — primary-source statutes only.
+// Every entry cites the exact statute that establishes the deadline.
+// No invented values. No best-guess periods.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const FILING_DEADLINES = {
+
+  NLRB_ULP: {
+    // SOURCE: 29 USC § 160(b):
+    //   "no complaint shall issue based upon any unfair labor practice occurring
+    //   more than six months prior to the filing of the charge with the Board and
+    //   the service of a copy thereof upon the person against whom such charge is made."
+    days: 180,
+    months: 6,
+    trigger: "date of unfair labor practice (ULP)",
+    source: "29 USC § 160(b)",
+    note: "Six-month period is jurisdictional. Filing after 180 days bars the charge absolutely.",
+  },
+
+  EEOC_NO_STATE_AGENCY: {
+    // SOURCE: 42 USC § 2000e-5(e)(1):
+    //   "A charge under this section shall be filed within one hundred and eighty days
+    //   after the alleged unlawful employment practice occurred..."
+    days: 180,
+    trigger: "date of alleged unlawful employment practice",
+    stateAgencyDeferral: false,
+    source: "42 USC § 2000e-5(e)(1)",
+    note: "Applies when no state or local agency has authority to grant relief for such practice.",
+  },
+
+  EEOC_WITH_STATE_AGENCY: {
+    // SOURCE: 42 USC § 2000e-5(e)(1):
+    //   "...except that in a case of an unlawful employment practice with respect to
+    //   which the person aggrieved has initially instituted proceedings with a State
+    //   or local agency with authority to grant or seek relief from such practice...
+    //   such charge shall be filed...within three hundred days after the alleged
+    //   unlawful employment practice occurred."
+    days: 300,
+    trigger: "date of alleged unlawful employment practice",
+    stateAgencyDeferral: true,
+    source: "42 USC § 2000e-5(e)(1)",
+    note: "Extended to 300 days only when a state/local deferral agency has authority over the practice. California = DFEH/CRD qualifies.",
+  },
+
+  CA_PERSONAL_INJURY: {
+    // SOURCE: Cal. Code of Civil Procedure § 335.1:
+    //   "Within two years: An action for assault, battery, or injury to, or for
+    //   the death of, an individual caused by the wrongful act or neglect of another."
+    years: 2,
+    trigger: "date of injury or wrongful act",
+    discoveryRule: false,
+    source: "Cal. Code of Civil Procedure § 335.1",
+    note: "Two-year period runs from date of injury. Discovery rule may toll in limited circumstances under CCP § 340.1 (childhood sexual abuse) or specific statutory exceptions.",
+  },
+
+  CA_FRAUD: {
+    // SOURCE: Cal. Code of Civil Procedure § 338(d):
+    //   "An action for relief on the ground of fraud or mistake. The cause of action
+    //   in that case is not to be deemed to have accrued until the discovery, by the
+    //   aggrieved party, of the facts constituting the fraud or mistake."
+    years: 3,
+    trigger: "date of discovery of facts constituting fraud or mistake",
+    discoveryRule: true,
+    source: "Cal. Code of Civil Procedure § 338(d)",
+    note: "Discovery rule: period does not begin until the aggrieved party discovered or reasonably should have discovered the fraud.",
+  },
+
+  CA_WCAB: {
+    // SOURCE: Cal. Labor Code § 5405:
+    //   "The period within which proceedings for the collection of the benefits
+    //   provided by Article 2 (commencing with Section 4600) of Chapter 2 of
+    //   Part 2 may be commenced is one year from: (a) The date of injury;
+    //   (b) The expiration of any period covered by payment of temporary disability
+    //   indemnity; or (c) The last date on which any benefits provided for in Article
+    //   3 (commencing with Section 4650) of Chapter 2 of Part 2 were furnished."
+    years: 1,
+    trigger: "latest of: date of injury, expiration of temporary disability payment period, or last date benefits furnished",
+    source: "Cal. Labor Code § 5405",
+    note: "Three possible accrual triggers — use the LATEST date. Failure to file within one year bars the claim before WCAB.",
+  },
+
+  CA_GOVERNMENT_TORT: {
+    // SOURCE: Cal. Government Code § 911.2(a):
+    //   "A claim relating to a cause of action for death or for injury to person or
+    //   to personal property or growing crops shall be presented as provided in
+    //   Article 2 (commencing with Section 915) not later than six months after
+    //   the accrual of the cause of action."
+    months: 6,
+    trigger: "date of injury or cause of action accrual",
+    prerequisite: "Government Tort Claim required BEFORE filing suit against public entity",
+    source: "Cal. Government Code § 911.2(a)",
+    note: "Mandatory prerequisite for suits against CA state agencies, counties, cities. Failure to file = bars suit. Late claim application under § 911.4 if within one year of accrual.",
+  },
+
+  CA_SECTION_1983_FEDERAL: {
+    // SOURCE: Wilson v. Garcia, 471 US 261 (1985); Owens v. Okure, 488 US 235 (1989):
+    //   Federal courts borrow the forum state's general personal injury statute of limitations.
+    //   For California: Cal. CCP § 335.1 (2 years).
+    // SOURCE: 42 USC § 1983 — no independent limitations period stated in the statute.
+    years: 2,
+    trigger: "date constitutional violation occurred (or discovered under equitable tolling)",
+    source: "Cal. CCP § 335.1 (borrowed under Wilson v. Garcia, 471 US 261 (1985))",
+    note: "§ 1983 has no internal SOL; federal courts apply state personal injury period. CA = 2 years. Accrual under federal law: when plaintiff knows or has reason to know of the injury.",
+  },
+
+} as const;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Charter map: agent → document types it is authorized to process.
-// "*" = HERALD wildcard (witnesses all, audits none).
+// "*" = universal witness (HERALD, ADAM, EVE, CUSTOS, CA_Forensic_Document_Specialist,
+//        CA_Records_Authentication_Specialist) — witness all, audit none beyond scope.
 // ─────────────────────────────────────────────────────────────────────────────
 const CHARTER_MAP: Record<string, string[]> = {
-  "family-law-litigator": [
+
+  // ── Core system agents ────────────────────────────────────────────────────
+  "herald":                               ["*"],
+  "adam":                                 ["*"],
+  "eve":                                  ["*"],
+  "custos":                               ["*"],
+  "ca-forensic-document-specialist":      ["*"],
+  "ca-records-authentication-specialist": ["*"],
+
+  // ── Family Law ───────────────────────────────────────────────────────────
+  "ca-family-law-litigator": [
     "court-filing", "court-order", "court-notice", "court-memo",
     "dvro", "fl-form", "ex-parte", "fl-305", "fl-150", "fl-310",
     "temporary-orders", "dissolution-filing", "stipulation",
+    "minute-order", "judgment", "child-support-order", "visitation-order",
+    "custody-order", "paternity-filing", "fl-300", "fl-311", "fl-341",
   ],
+
+  // ── Criminal Law ─────────────────────────────────────────────────────────
+  "ca-criminal-law-specialist": [
+    "criminal-complaint", "arrest-warrant", "search-warrant", "indictment",
+    "information", "plea-agreement", "sentencing-brief", "probation-report",
+    "criminal-court-filing", "pitchess-motion", "brady-demand",
+    "motion-to-suppress", "section-1001-petition", "criminal-appeal",
+    "misdemeanor-complaint", "felony-complaint",
+  ],
+
+  // ── Law Enforcement Procedures ────────────────────────────────────────────
+  "ca-law-enforcement-procedures-specialist": [
+    "police-report", "incident-report", "cad-report",
+    "arrest-waiver", "citizens-arrest-waiver", "dispatch-log",
+    "internal-affairs-report", "use-of-force-report", "booking-record",
+    "jail-intake-record", "brady-list", "personnel-complaint",
+  ],
+
+  // ── Police Report Forensics ───────────────────────────────────────────────
   "forensic-police-report-auditor": [
     "police-report", "incident-report", "cad-report",
     "arrest-waiver", "citizens-arrest-waiver", "dispatch-log",
   ],
+
+  // ── Labor & Employment ────────────────────────────────────────────────────
+  "ca-labor-employment-litigator": [
+    "employment-contract", "offer-letter", "termination-notice",
+    "wage-claim", "dlse-form", "labor-board-filing", "eeoc-charge",
+    "dfeh-complaint", "crd-complaint", "retaliation-claim",
+    "wrongful-termination-complaint", "wage-theft-claim",
+    "leave-of-absence-request", "fmla-cfra-form", "union-grievance",
+  ],
+
+  // ── Workers' Compensation ─────────────────────────────────────────────────
+  "ca-workers-compensation-litigator": [
+    "dwc-1-form", "wcab-petition", "wcab-form", "qme-report",
+    "panel-qme-request", "mri-report", "work-status-report",
+    "wage-loss-claim", "td-benefit-claim", "pd-rating", "wcab-answer",
+    "lien-claim", "compromise-and-release", "stipulation-with-request",
+  ],
+
+  // ── General Civil Litigation ──────────────────────────────────────────────
+  "ca-civil-litigator": [
+    "civil-complaint", "answer", "cross-complaint", "demurrer",
+    "motion-to-strike", "motion-for-summary-judgment", "court-filing",
+    "court-order", "court-notice", "minute-order", "judgment",
+    "writ-of-execution", "notice-of-appeal", "appellate-brief",
+    "request-for-admission", "interrogatories", "deposition-notice",
+  ],
+
+  // ── Discovery ─────────────────────────────────────────────────────────────
+  "ca-discovery-specialist": [
+    "subpoena", "subpoena-duces-tecum", "interrogatories",
+    "request-for-admission", "request-for-production", "deposition-notice",
+    "deposition-transcript", "meet-and-confer-letter", "privilege-log",
+    "protective-order", "discovery-motion",
+  ],
+
+  // ── Consumer Protection ───────────────────────────────────────────────────
+  "ca-consumer-protection-litigator": [
+    "consumer-complaint", "dca-complaint", "ftc-complaint",
+    "ucl-complaint", "clra-demand", "false-advertising-claim",
+    "refund-demand", "warranty-claim", "lemon-law-filing",
+    "auto-dealer-complaint", "credit-dispute",
+  ],
+
+  // ── Medical Malpractice ───────────────────────────────────────────────────
+  "ca-medical-malpractice-litigator": [
+    "medical-record", "medical-malpractice-complaint", "expert-declaration",
+    "surgical-report", "hospital-discharge-summary", "informed-consent",
+    "medical-authorization", "hipaa-release", "incident-report",
+    "operative-report", "pathology-report", "radiology-report",
+  ],
+
+  // ── Medical Privacy ───────────────────────────────────────────────────────
+  "ca-medical-privacy-officer": [
+    "medical-record", "hipaa-release", "medical-authorization",
+    "phi-disclosure-log", "breach-notification", "medical-privacy-complaint",
+    "cmia-complaint",
+  ],
+
+  // ── Real Estate ───────────────────────────────────────────────────────────
+  "ca-real-estate-attorney": [
+    "deed", "grant-deed", "trust-deed", "purchase-agreement",
+    "escrow-instruction", "title-report", "hoa-document",
+    "residential-lease", "commercial-lease", "notice-to-quit",
+    "unlawful-detainer-complaint", "real-estate-disclosure",
+    "dre-filing", "1031-exchange",
+  ],
+
+  // ── Telecom & Privacy ─────────────────────────────────────────────────────
+  "ca-telecom-privacy-litigator": [
+    "phone-record", "call-log", "sim-swap-complaint",
+    "carrier-disclosure", "cpuc-complaint", "fcc-complaint",
+    "wiretap-complaint", "surveillance-record", "geolocation-record",
+    "ecpa-request", "cipa-complaint",
+  ],
+
+  // ── Victim Compensation ───────────────────────────────────────────────────
+  "ca-victim-compensation-litigator": [
+    "calvcb-application", "victim-comp-form", "crime-report",
+    "victim-declaration", "restitution-order", "calvcb-appeal",
+    "victim-advocate-letter", "vcgcb-form",
+  ],
+
+  // ── Child Welfare ─────────────────────────────────────────────────────────
   "cps-auditor": [
     "cps-report", "child-welfare", "social-worker-report", "welfare-determination",
+    "child-protective-services-filing", "dshs-form", "cws-report",
   ],
+
+  // ── Family Court Services ─────────────────────────────────────────────────
   "marin-fcs-auditor": [
     "fcs-letter", "mediator-report", "minor-interview", "family-court-services",
   ],
+
+  // ── Court Document Audit ──────────────────────────────────────────────────
   "court-document-auditor": [
     "court-filing", "court-order", "court-notice", "court-memo",
     "minute-order", "judgment",
   ],
-  "herald": ["*"],
+
+  // ── US Federal Civil Rights (§ 1983 / Title VII) ─────────────────────────
+  "us-federal-civil-rights-litigator": [
+    "section-1983-complaint", "title-vi-complaint", "title-vii-complaint",
+    "civil-rights-complaint", "ndca-filing", "federal-court-filing",
+    "pro-se-complaint", "ifp-application", "habeas-petition",
+    "federal-court-order", "ninth-circuit-brief",
+  ],
+
+  // ── US Federal Social Security ────────────────────────────────────────────
+  "us-federal-social-security-litigator": [
+    "ssa-form", "ssdi-application", "ssi-application", "ssa-denial",
+    "ssa-appeal", "ssa-hearing-request", "alj-decision",
+    "ssa-827", "ssa-3373", "ssa-3369", "ssa-16-bk",
+    "representative-payee-form", "disability-evaluation",
+  ],
+
+  // ── US Federal ERISA / Pension ────────────────────────────────────────────
+  "us-federal-erisa-litigator": [
+    "pension-document", "erisa-complaint", "plan-document",
+    "401k-statement", "pension-statement", "benefit-denial-letter",
+    "dol-filing", "form-5500", "esop-document", "pension-audit",
+  ],
+
+  // ── US Federal Financial Fraud ────────────────────────────────────────────
+  "us-federal-financial-fraud-litigator": [
+    "financial-fraud-complaint", "wire-fraud-filing", "bank-record",
+    "financial-statement", "sec-complaint", "fbi-tip", "doj-referral",
+    "forensic-accounting-report", "suspicious-activity-report",
+    "mortgage-fraud-filing", "identity-theft-complaint",
+  ],
+
+  // ── US Federal Housing ────────────────────────────────────────────────────
+  "us-federal-housing-litigator": [
+    "fha-complaint", "hud-complaint", "fair-housing-complaint",
+    "housing-discrimination-charge", "section-8-document",
+    "eviction-notice", "federal-housing-filing",
+  ],
+
+  // ── Federal & State Tax ───────────────────────────────────────────────────
+  "us-federal-tax-litigator": [
+    "irs-notice", "tax-court-petition", "irs-audit-response",
+    "irs-lien", "irs-levy", "form-1040", "form-w-2", "form-1099",
+    "irs-appeal", "offer-in-compromise", "tax-protest",
+  ],
+  "ca-tax-specialist": [
+    "ftb-notice", "cdtfa-filing", "state-tax-return", "ftb-audit-response",
+    "ftb-appeal", "boe-filing", "payroll-tax-filing",
+  ],
+
+  // ── Insurance ─────────────────────────────────────────────────────────────
+  "ca-insurance-compliance-litigator": [
+    "insurance-policy", "insurance-claim", "claim-denial-letter",
+    "cdi-complaint", "bad-faith-complaint", "coverage-dispute",
+    "subrogation-notice", "proof-of-loss",
+  ],
+
+  // ── Mental Health ─────────────────────────────────────────────────────────
+  "ca-mental-health-litigator": [
+    "5150-hold", "5250-hold", "mental-health-record",
+    "psychiatric-evaluation", "lps-conservatorship", "mental-health-court-filing",
+    "dmh-form", "voluntary-admission",
+  ],
+
+  // ── Elder Law ─────────────────────────────────────────────────────────────
+  "ca-elder-law-litigator": [
+    "elder-abuse-report", "adult-protective-services-report",
+    "elder-abuse-complaint", "conservatorship-petition",
+    "trust-document", "power-of-attorney", "advance-health-directive",
+    "nursing-home-complaint",
+  ],
+
+  // ── Probate & Conservatorship ─────────────────────────────────────────────
+  "ca-probate-conservatorship-litigator": [
+    "conservatorship-petition", "probate-petition", "letters-conservatorship",
+    "letters-testamentary", "will", "trust-document", "inventory-appraisal",
+    "accounting", "capacity-declaration", "court-investigator-report",
+    "probate-court-filing",
+  ],
+
+  // ── Conservatorship Investigation ────────────────────────────────────────
+  "ca-conservator-investigator": [
+    "conservatorship-investigation-report", "capacity-declaration",
+    "court-investigator-report", "letters-conservatorship",
+    "conservatorship-petition", "financial-account-record",
+  ],
+
+  // ── Disability Rights ─────────────────────────────────────────────────────
+  "ca-disability-rights-litigator": [
+    "ada-complaint", "section-504-complaint", "dds-form",
+    "rehabilitation-act-complaint", "accommodation-request",
+    "disability-discrimination-charge", "dfeh-disability-complaint",
+  ],
+
+  // ── Immigration ───────────────────────────────────────────────────────────
+  "ca-immigration-litigator": [
+    "i-485", "i-130", "i-765", "i-589", "i-751",
+    "uscis-notice", "immigration-court-filing", "motion-to-reopen",
+    "voluntary-departure", "removal-order", "asylum-application",
+    "naturalization-application",
+  ],
+
+  // ── Vehicle Code ──────────────────────────────────────────────────────────
+  "ca-vehicle-code-specialist": [
+    "traffic-citation", "dmv-record", "dmv-suspension-notice",
+    "sr-22", "vehicle-registration", "title-document",
+    "accident-report", "dmv-hearing-request", "vc-violation",
+  ],
+
+  // ── Administrative Law ────────────────────────────────────────────────────
+  "ca-administrative-law-specialist": [
+    "oah-filing", "administrative-complaint", "oah-notice-of-hearing",
+    "oah-proposed-decision", "administrative-subpoena",
+    "agency-response", "administrative-appeal",
+  ],
+
+  // ── Healthcare Fraud ──────────────────────────────────────────────────────
+  "ca-healthcare-fraud-litigator": [
+    "medical-billing-record", "insurance-fraud-complaint",
+    "medicare-billing-record", "medi-cal-claim", "upcoding-complaint",
+    "cms-1500", "ub-04", "healthcare-fraud-referral",
+  ],
+
+  // ── Civil Rights (State) ──────────────────────────────────────────────────
+  "ca-civil-rights-litigator": [
+    "bane-act-complaint", "unruh-act-complaint", "cra-complaint",
+    "section-52-complaint", "civil-rights-court-filing",
+    "dfeh-complaint", "crd-complaint",
+  ],
+  "ca-civil-rights-compliance-specialist": [
+    "ada-compliance-report", "title-ii-audit", "title-iii-audit",
+    "section-504-compliance", "eeo-report", "civil-rights-compliance-filing",
+  ],
+
+  // ── Constitutional Law ────────────────────────────────────────────────────
+  "ca-constitutional-law-specialist": [
+    "constitutional-challenge", "petition-for-writ", "writ-of-mandate",
+    "writ-of-prohibition", "demurrer-constitutional", "appellate-brief",
+    "supreme-court-petition", "amicus-brief",
+  ],
+  "ca-first-amendment-litigator": [
+    "first-amendment-complaint", "free-speech-filing", "press-credential-dispute",
+    "prior-restraint-challenge", "defamation-complaint",
+    "public-records-request", "pra-complaint",
+  ],
+
+  // ── Product Liability ─────────────────────────────────────────────────────
+  "ca-product-liability-litigator": [
+    "product-liability-complaint", "recall-notice", "cpsc-complaint",
+    "defective-product-claim", "strict-liability-complaint",
+    "products-liability-expert-report",
+  ],
+
+  // ── Building, Land Use, Environmental ────────────────────────────────────
+  "ca-building-official": [
+    "building-permit", "code-enforcement-notice", "stop-work-order",
+    "certificate-of-occupancy", "inspection-report", "plan-check",
+    "code-violation-notice",
+  ],
+  "ca-structural-engineer": [
+    "structural-report", "engineering-declaration", "soils-report",
+    "seismic-report", "structural-inspection", "calcs",
+  ],
+  "ca-licensed-contractor": [
+    "cslb-license", "contractor-agreement", "lien-release",
+    "mechanics-lien", "notice-of-completion", "change-order",
+    "subcontractor-agreement",
+  ],
+  "ca-ceqa-consultant": [
+    "ceqa-document", "eir", "mitigated-negative-declaration",
+    "notice-of-determination", "notice-of-exemption", "ceqa-comment",
+  ],
+  "ca-energy-policy-specialist": [
+    "cpuc-filing", "puc-application", "utility-tariff",
+    "energy-contract", "net-metering-application", "solar-permit",
+  ],
+
+  // ── Food & Weights/Measures ───────────────────────────────────────────────
+  "ca-food-safety-specialist": [
+    "food-safety-inspection", "food-facility-permit", "cdfa-report",
+    "fda-complaint", "recall-notice", "food-violation-notice",
+  ],
+  "ca-retail-food-inspector": [
+    "restaurant-inspection-report", "retail-food-permit",
+    "health-code-violation", "cdph-report",
+  ],
+  "ca-weights-measures-inspector": [
+    "weights-measures-inspection", "scale-certification",
+    "measurement-violation-notice", "cdfa-wm-report",
+  ],
+
+  // ── Platform Compliance Personas ──────────────────────────────────────────
+  "regulis":   ["court-filing", "court-order", "compliance-rule", "regulation-document"],
+  "advocis":   ["legal-brief", "court-filing", "advocacy-document", "court-notice"],
+  "lexarc":    ["court-filing", "legal-research", "case-law-document"],
+  "syntara":   ["contract", "agreement", "stipulation", "nda"],
+  "fiscara":   ["financial-statement", "tax-document", "accounting-record", "form-w-2", "form-1099"],
+  "integra":   ["audit-report", "compliance-report", "internal-controls-report"],
+  "vigilus":   ["incident-report", "security-report", "risk-assessment"],
+  "ethicara":  ["ethics-complaint", "code-of-conduct", "ethics-policy"],
+  "privaxis":  ["privacy-policy", "gdpr-document", "hipaa-document", "data-breach-notice"],
+  "vestara":   ["real-estate-document", "deed", "title-report", "lease"],
+  "metriqa":   ["audit-report", "performance-report", "compliance-metrics"],
+  "claridex":  ["regulatory-guidance", "compliance-advisory", "policy-document"],
+  "nexaris":   ["network-document", "it-policy", "cybersecurity-report"],
+  "facialex":  ["identity-document", "biometric-record", "authentication-record"],
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -814,7 +1247,7 @@ export interface CUSTOSToken {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export class CUSTOS {
-  static readonly VERSION = "1.0.0";
+  static readonly VERSION = "2.0.0";
 
   /**
    * Authorize an operation context. MUST be called before any audit,
@@ -1345,15 +1778,87 @@ export class CUSTOS {
 
   private static _examLayer5(input: CUSTOSExamInput): CUSTOSLayerResult {
     const findings: string[] = [];
+
+    // ── Metadata temporal integrity ─────────────────────────────────────────
     if (!input.documentDate) {
       findings.push("NOTICE: No document date provided. Temporal sequence cannot be verified.");
     }
     if (input.modifiedAt && input.createdAt && input.modifiedAt < input.createdAt) {
-      findings.push("RED FLAG: Modified date precedes created date — metadata anomaly.");
+      findings.push("RED FLAG: Modified date precedes created date — metadata anomaly indicative of tampering.");
     }
     if (input.filedDate && input.documentDate && input.filedDate < input.documentDate) {
-      findings.push("RED FLAG: Filed date precedes document date — impossible sequence.");
+      findings.push("RED FLAG: Filed date precedes document date — impossible sequence. Ante-dating indicator per Cal. Penal Code § 134.");
     }
+
+    // ── Jurisdiction-specific filing deadline awareness ─────────────────────
+    // CUSTOS does not calculate deadlines — it flags the applicable statute and
+    // delivers the sourced rule so the caller and agent can evaluate timeliness.
+    // Calculation requires knowing the precise accrual date, which CUSTOS does
+    // not receive. Source citation is the output; timeliness determination is Layer 1.
+
+    const jx = CUSTOS.resolveJurisdiction(input);
+
+    if (jx === "NLRB") {
+      findings.push(
+        `TEMPORAL RULE (NLRB): ULP charges must be filed within 180 days (6 months) of the unfair ` +
+        `labor practice. Period is jurisdictional — late filing bars the charge absolutely. ` +
+        `Source: ${FILING_DEADLINES.NLRB_ULP.source}.`
+      );
+    }
+
+    if (jx === "EEOC") {
+      findings.push(
+        `TEMPORAL RULE (EEOC): Charge must be filed within 180 days of the unlawful employment ` +
+        `practice (no state deferral agency) or 300 days (with qualifying state/local deferral agency — ` +
+        `California DFEH/CRD qualifies). Source: ${FILING_DEADLINES.EEOC_WITH_STATE_AGENCY.source}.`
+      );
+    }
+
+    if (jx === "WCAB") {
+      findings.push(
+        `TEMPORAL RULE (WCAB): Claims must be filed within 1 year of the latest of: ` +
+        `(a) date of injury, (b) expiration of temporary disability period, or ` +
+        `(c) last date benefits were furnished. Source: ${FILING_DEADLINES.CA_WCAB.source}.`
+      );
+    }
+
+    if (jx === "CA_TRIAL" || jx === "UNKNOWN") {
+      const dt = input.documentType ?? "";
+      if (dt.includes("personal-injury") || dt.includes("assault") || dt.includes("battery")) {
+        findings.push(
+          `TEMPORAL RULE (CA Personal Injury): 2-year statute of limitations from date of injury. ` +
+          `Source: ${FILING_DEADLINES.CA_PERSONAL_INJURY.source}.`
+        );
+      }
+      if (dt.includes("fraud")) {
+        findings.push(
+          `TEMPORAL RULE (CA Fraud): 3-year statute of limitations from DISCOVERY of facts ` +
+          `constituting fraud. Discovery rule applies — accrual begins when aggrieved party ` +
+          `discovered or should have discovered the fraud. ` +
+          `Source: ${FILING_DEADLINES.CA_FRAUD.source}.`
+        );
+      }
+      if (dt.includes("government") || dt.includes("public-entity") || dt.includes("police") || dt.includes("county") || dt.includes("city")) {
+        findings.push(
+          `TEMPORAL RULE (CA Government Tort): Claim against public entity must be presented ` +
+          `within 6 months of accrual BEFORE filing suit. Failure bars suit. ` +
+          `Source: ${FILING_DEADLINES.CA_GOVERNMENT_TORT.source}.`
+        );
+      }
+    }
+
+    if (jx === "NDCA" || jx === "FED_APPELLATE") {
+      const dt = input.documentType ?? "";
+      if (dt.includes("1983") || dt.includes("civil-rights")) {
+        findings.push(
+          `TEMPORAL RULE (§ 1983 Federal): 2-year limitations period borrowed from Cal. CCP § 335.1 ` +
+          `per Wilson v. Garcia, 471 US 261 (1985). Accrual under federal law: when plaintiff knows ` +
+          `or has reason to know of the constitutional violation. ` +
+          `Source: ${FILING_DEADLINES.CA_SECTION_1983_FEDERAL.source}.`
+        );
+      }
+    }
+
     return { layer: 5, name: "Temporal Layer", pass: !findings.some(f => f.startsWith("RED FLAG")), findings };
   }
 
