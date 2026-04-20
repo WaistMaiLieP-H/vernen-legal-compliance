@@ -746,9 +746,25 @@ export interface CUSTOSExamInput {
   isPdf?: boolean;
   // Penalty of perjury flag — determines which signature standard applies
   signedUnderPenaltyOfPerjury?: boolean;
-  // Layer 6 — Content Integrity (caller-supplied flags)
-  hasInternalContradictions?: boolean;
-  contentHashSha256?: string;
+  // Layer 6 — Content Integrity
+  // Caller extracts these fields from document content and passes them to CUSTOS.
+  // CUSTOS validates internal consistency — it does not read document content directly.
+  hasInternalContradictions?: boolean;  // Caller-flagged from content analysis
+  contentHashSha256?: string;           // SHA-256 of document content at time of intake
+  // Structured content fields for consistency checking
+  caseNumber?: string;
+  partyNamesPlaintiff?: string[];
+  partyNamesDefendant?: string[];
+  reportingOfficerName?: string;
+  reportingOfficerId?: string;
+  claimantName?: string;
+  documentTitle?: string;
+  statedJurisdiction?: string;   // Jurisdiction stated IN the document (vs. jurisdictionKey passed by caller)
+  statedDocumentDate?: string;   // Date stated on face of document
+  statedFiledDate?: string;      // Filed date stated on face of document
+  statedCaseNumber?: string;     // Case number stated on face of document
+  // Cross-document set fields (used by examineSet())
+  setId?: string;                // Group identifier for documents in the same submission set
 }
 
 export interface CUSTOSLayerResult {
@@ -756,6 +772,15 @@ export interface CUSTOSLayerResult {
   name: string;
   pass: boolean;
   findings: string[];
+}
+
+export interface CUSTOSSetExamResult {
+  setId: string;
+  documentCount: number;
+  passed: boolean;
+  contradictions: string[];
+  warnings: string[];
+  examinedAt: string;
 }
 
 export interface CUSTOSStructuralExam {
@@ -1139,15 +1164,183 @@ export class CUSTOS {
     return { layer: 7, name: "Output Layer", pass: !findings.some(f => f.startsWith("RED FLAG")), findings };
   }
 
+  /**
+   * Examine a set of documents for cross-document consistency.
+   * All documents in a set must share the same setId.
+   *
+   * Legal basis: Cal. Evid. Code § 1400 — authentication requires sufficient evidence
+   * that a writing is what its proponent claims. Fed. R. Evid. 901(b)(4) — distinctive
+   * characteristics and internal patterns may authenticate or impeach a document.
+   * Inconsistencies across a document set are grounds for authentication challenge.
+   */
+  static examineSet(inputs: CUSTOSExamInput[]): CUSTOSSetExamResult {
+    const setId = inputs[0]?.setId ?? `set-${Date.now()}`;
+    const contradictions: string[] = [];
+    const warnings: string[] = [];
+
+    if (inputs.length < 2) {
+      warnings.push("NOTICE: Set examination requires at least 2 documents. Single document returned without cross-document checks.");
+      return { setId, documentCount: inputs.length, passed: true, contradictions, warnings, examinedAt: new Date().toISOString() };
+    }
+
+    // Case number consistency across set
+    // BASIS: Cal. Evid. Code § 1400 — document must be what it claims to be.
+    // Differing case numbers within a set submitted as a single matter is an
+    // authentication challenge requiring explanation.
+    const caseNumbers = inputs.map(d => d.statedCaseNumber ?? d.caseNumber).filter(Boolean);
+    const uniqueCaseNums = new Set(caseNumbers);
+    if (uniqueCaseNums.size > 1) {
+      contradictions.push(
+        `RED FLAG: Multiple case numbers detected across document set (${[...uniqueCaseNums].join(", ")}). ` +
+        `Documents submitted as a single matter must share a case number or the variance must be explained. ` +
+        `Basis: Cal. Evid. Code § 1400 — authentication challenge.`
+      );
+    }
+
+    // Party name consistency across set
+    // BASIS: Fed. R. Evid. 901(b)(4) — internal patterns and distinctive characteristics
+    // taken together with all circumstances. Party name variance across a set is a
+    // distinctive characteristic inconsistency.
+    const allPlaintiffs = inputs.flatMap(d => d.partyNamesPlaintiff ?? []);
+    const allDefendants = inputs.flatMap(d => d.partyNamesDefendant ?? []);
+    const uniquePlaintiffs = new Set(allPlaintiffs.map(n => n.toLowerCase().trim()));
+    const uniqueDefendants = new Set(allDefendants.map(n => n.toLowerCase().trim()));
+    if (allPlaintiffs.length > 0 && uniquePlaintiffs.size > inputs.filter(d => d.partyNamesPlaintiff?.length).length) {
+      warnings.push(
+        `NOTICE: Plaintiff/claimant name variants detected across document set (${[...uniquePlaintiffs].join("; ")}). ` +
+        `Verify name consistency. Basis: Fed. R. Evid. 901(b)(4).`
+      );
+    }
+    if (allDefendants.length > 0 && uniqueDefendants.size > inputs.filter(d => d.partyNamesDefendant?.length).length) {
+      warnings.push(
+        `NOTICE: Defendant/respondent name variants detected across document set (${[...uniqueDefendants].join("; ")}). ` +
+        `Verify name consistency. Basis: Fed. R. Evid. 901(b)(4).`
+      );
+    }
+
+    // Temporal sequence across set — documents must be internally dated in a plausible order
+    // BASIS: Cal. Penal Code § 134 — ante-dated documents prepared with fraudulent intent
+    // constitute a felony. Temporal anomalies are the primary forensic signal of ante-dating.
+    const datedDocs = inputs
+      .filter(d => d.statedDocumentDate || d.documentDate)
+      .map(d => ({ date: d.statedDocumentDate ?? d.documentDate!, type: d.documentType ?? "unknown" }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    for (let i = 1; i < datedDocs.length; i++) {
+      const prev = datedDocs[i - 1]!;
+      const curr = datedDocs[i]!;
+      if (curr.date < prev.date) {
+        contradictions.push(
+          `RED FLAG: Temporal anomaly — "${curr.type}" (${curr.date}) precedes "${prev.type}" (${prev.date}) ` +
+          `in the submitted sequence. Ante-dating is a felony under Cal. Penal Code § 134 when prepared ` +
+          `with intent to produce as genuine in any proceeding authorized by law.`
+        );
+      }
+    }
+
+    // Jurisdiction consistency — all docs in set should share jurisdiction or explain variance
+    const jurisdictions = inputs.map(d => d.statedJurisdiction ?? d.jurisdiction).filter(Boolean);
+    const uniqueJx = new Set(jurisdictions);
+    if (uniqueJx.size > 1) {
+      warnings.push(
+        `NOTICE: Multiple jurisdictions across document set (${[...uniqueJx].join(", ")}). ` +
+        `Cross-jurisdictional document sets require explanation of venue basis.`
+      );
+    }
+
+    // Content hash presence check — each document in a set should be individually hashed
+    // BASIS: Cal. Evid. Code § 1530-1532 — certified copies of official records establish
+    // authenticity. SHA-256 is the equivalent digital certification.
+    const unhashed = inputs.filter(d => !d.contentHashSha256);
+    if (unhashed.length > 0) {
+      warnings.push(
+        `NOTICE: ${unhashed.length} of ${inputs.length} documents lack SHA-256 content hashes. ` +
+        `Unverified documents cannot establish chain of custody equivalent to certified copies ` +
+        `under Cal. Evid. Code § 1530–1532.`
+      );
+    }
+
+    return {
+      setId,
+      documentCount: inputs.length,
+      passed: contradictions.length === 0,
+      contradictions,
+      warnings,
+      examinedAt: new Date().toISOString(),
+    };
+  }
+
   private static _examLayer6(input: CUSTOSExamInput): CUSTOSLayerResult {
     const findings: string[] = [];
+
+    // Caller-flagged internal contradictions
+    // BASIS: Cal. Evid. Code § 1400 — a writing must be what its proponent claims.
+    // Internal contradictions undermine authentication.
     if (input.hasInternalContradictions === true) {
-      findings.push("RED FLAG: Caller-flagged internal contradictions detected in document content.");
+      findings.push(
+        `RED FLAG: Caller-flagged internal contradictions detected in document content. ` +
+        `Authentication challenged under Cal. Evid. Code § 1400 — document may not be ` +
+        `what its proponent claims it is.`
+      );
     }
+
+    // Content hash — chain of custody
+    // BASIS: Cal. Evid. Code §§ 1530–1532 — certified copies of official records establish
+    // authenticity. SHA-256 hash is the digital equivalent of certification.
     if (!input.contentHashSha256) {
-      findings.push("NOTICE: No content hash provided. Content integrity cannot be independently verified.");
+      findings.push(
+        `NOTICE: No SHA-256 content hash provided. Document integrity cannot be independently ` +
+        `verified. Without a hash, any alteration after intake is undetectable. ` +
+        `Equivalent to an uncertified copy under Cal. Evid. Code § 1530.`
+      );
     }
-    return { layer: 6, name: "Content Integrity Layer", pass: !findings.some(f => f.startsWith("RED FLAG")), findings };
+
+    // Stated fields vs. passed fields — catch mismatches between what the doc says and what the caller says
+    // BASIS: Fed. R. Evid. 901(b)(4) — internal patterns and distinctive characteristics.
+    // A document whose stated case number differs from the case number the caller assigned
+    // is a distinctive inconsistency requiring explanation.
+    if (input.statedCaseNumber && input.caseNumber &&
+        input.statedCaseNumber.trim() !== input.caseNumber.trim()) {
+      findings.push(
+        `RED FLAG: Case number mismatch — document states "${input.statedCaseNumber}" but ` +
+        `caller assigned "${input.caseNumber}". ` +
+        `Distinctive characteristics inconsistency per Fed. R. Evid. 901(b)(4).`
+      );
+    }
+
+    if (input.statedDocumentDate && input.documentDate &&
+        input.statedDocumentDate !== input.documentDate) {
+      findings.push(
+        `RED FLAG: Document date mismatch — face of document states "${input.statedDocumentDate}" ` +
+        `but metadata shows "${input.documentDate}". ` +
+        `Ante-dating is a felony under Cal. Penal Code § 134 when prepared with fraudulent intent.`
+      );
+    }
+
+    if (input.statedJurisdiction && input.jurisdiction &&
+        input.statedJurisdiction.toLowerCase() !== input.jurisdiction.toLowerCase()) {
+      findings.push(
+        `NOTICE: Jurisdiction mismatch — document states "${input.statedJurisdiction}" but ` +
+        `caller declared "${input.jurisdiction}". Verify venue authority.`
+      );
+    }
+
+    // Filed date before document date — impossible without ante-dating
+    // BASIS: Cal. Penal Code § 134 — ante-dated documents with fraudulent intent = felony.
+    if (input.statedFiledDate && input.statedDocumentDate &&
+        input.statedFiledDate < input.statedDocumentDate) {
+      findings.push(
+        `RED FLAG: Filed date (${input.statedFiledDate}) precedes document date (${input.statedDocumentDate}). ` +
+        `A document cannot be filed before it exists. Ante-dating indicator per Cal. Penal Code § 134.`
+      );
+    }
+
+    return {
+      layer: 6,
+      name: "Content Integrity Layer",
+      pass: !findings.some(f => f.startsWith("RED FLAG")),
+      findings,
+    };
   }
 
   private static _examLayer5(input: CUSTOSExamInput): CUSTOSLayerResult {
