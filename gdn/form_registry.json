@@ -1,0 +1,238 @@
+{
+  "version": "3.0.0",
+  "generated": "2026-02-26",
+  "platform": "VERNEN™",
+  "description": "Guided Document Navigator — Form Registry (28 forms × 13 languages)",
+  "supported_languages": ["en","es","zh","vi","ko","ar","ht","pt","ru","tl","so","ti","am"],
+  "tiers": {
+    "A": "Core family law forms (15)",
+    "B": "Extended family law + civil forms (8)",
+    "C": "Specialty and supplemental forms (5)"
+  },
+  "forms": [
+    {
+      "id": "FL-100",
+      "tier": "A",
+      "title": {"en":"Petition — Marriage/Domestic Partnership","es":"Petición — Matrimonio/Unión Doméstica","zh":"请愿书 — 婚姻/家庭伴侣关系","vi":"Đơn Thỉnh Cầu — Hôn Nhân/Quan Hệ Đối Tác Gia Đình","ko":"청원서 — 혼인/동거관계","ar":"عريضة — الزواج/الشراكة المنزلية","ht":"Petisyon — Maryaj/Patenarya Domestik","pt":"Petição — Casamento/Parceria Doméstica","ru":"Ходатайство — Брак/Домашнее партнёрство","tl":"Petisyon — Kasal/Domestic Partnership","so":"Codsiga — Guurka/Iskaashiga Guriga","ti":"ጥርዓን — ሓዳር/ናይ ገዛ ብጻይነት","am":"አቤቱታ — ጋብቻ/የቤት ውስጥ ጥምረት"},
+      "category": "dissolution",
+      "filing_fee": true,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-110",
+      "tier": "A",
+      "title": {"en":"Summons (Family Law)","es":"Citación (Derecho de Familia)","zh":"传票（家庭法）","vi":"Trát Đòi Hầu Tòa (Luật Gia Đình)","ko":"소환장 (가정법)","ar":"استدعاء (قانون الأسرة)","ht":"Sitasyon (Lwa Fanmi)","pt":"Citação (Direito de Família)","ru":"Повестка (Семейное право)","tl":"Summons (Batas Pampamilya)","so":"Soo-wacid (Sharciga Qoyska)","ti":"ጻውዒት (ሕጊ ስድራቤት)","am":"መጥሪያ (የቤተሰብ ሕግ)"},
+      "category": "dissolution",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-115",
+      "tier": "A",
+      "title": {"en":"Proof of Service of Summons","es":"Prueba de Notificación de Citación","zh":"送达传票证明","vi":"Bằng Chứng Tống Đạt Trát Đòi Hầu Tòa","ko":"소환장 송달 증명","ar":"إثبات تبليغ الاستدعاء","ht":"Prèv Sèvis Sitasyon","pt":"Prova de Citação","ru":"Подтверждение вручения повестки","tl":"Katibayan ng Paghahatid ng Summons","so":"Caddeynta Bixinta Soo-wacidda","ti":"መረጋገጺ ናይ ጻውዒት ኣገልግሎት","am":"የመጥሪያ ማቅረቢያ ማረጋገጫ"},
+      "category": "service",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-120",
+      "tier": "A",
+      "title": {"en":"Response — Marriage/Domestic Partnership","es":"Respuesta — Matrimonio/Unión Doméstica","zh":"答辩书 — 婚姻/家庭伴侣关系","vi":"Bản Trả Lời — Hôn Nhân/Quan Hệ Đối Tác","ko":"답변서 — 혼인/동거관계","ar":"رد — الزواج/الشراكة المنزلية","ht":"Repons — Maryaj/Patenarya Domestik","pt":"Resposta — Casamento/Parceria Doméstica","ru":"Ответ — Брак/Домашнее партнёрство","tl":"Sagot — Kasal/Domestic Partnership","so":"Jawaabta — Guurka/Iskaashiga Guriga","ti":"መልሲ — ሓዳር/ናይ ገዛ ብጻይነት","am":"ምላሽ — ጋብቻ/የቤት ውስጥ ጥምረት"},
+      "category": "dissolution",
+      "filing_fee": true,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-141",
+      "tier": "A",
+      "title": {"en":"Declaration of Disclosure","es":"Declaración de Divulgación","zh":"披露声明","vi":"Tuyên Bố Tiết Lộ","ko":"공개 선언서","ar":"إقرار الإفصاح","ht":"Deklarasyon Divilgasyon","pt":"Declaração de Divulgação","ru":"Декларация о раскрытии","tl":"Deklarasyon ng Pagsisiwalat","so":"Bayaanka Shaacinta","ti":"መግለጺ ምግላጽ","am":"የመግለጫ ማስታወቂያ"},
+      "category": "disclosure",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-142",
+      "tier": "A",
+      "title": {"en":"Schedule of Assets and Debts","es":"Lista de Bienes y Deudas","zh":"资产和债务清单","vi":"Bảng Kê Tài Sản và Nợ","ko":"자산 및 부채 목록","ar":"جدول الأصول والديون","ht":"Orè Byen ak Dèt","pt":"Relação de Bens e Dívidas","ru":"Перечень активов и долгов","tl":"Talaan ng mga Ari-arian at Utang","so":"Jadwalka Hantida iyo Deymaha","ti":"ሰሌዳ ንብረትን ዕዳን","am":"የንብረትና የዕዳ ዝርዝር"},
+      "category": "disclosure",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-150",
+      "tier": "A",
+      "title": {"en":"Income and Expense Declaration","es":"Declaración de Ingresos y Gastos","zh":"收入和支出申报","vi":"Khai Báo Thu Nhập và Chi Phí","ko":"소득 및 지출 신고서","ar":"إقرار الدخل والمصروفات","ht":"Deklarasyon Revni ak Depans","pt":"Declaração de Renda e Despesas","ru":"Декларация о доходах и расходах","tl":"Deklarasyon ng Kita at Gastos","so":"Bayaanka Dakhliga iyo Kharashka","ti":"መግለጺ ኣታዊን ወጻኢን","am":"የገቢና ወጪ መግለጫ"},
+      "category": "financial",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-155",
+      "tier": "A",
+      "title": {"en":"Financial Statement (Simplified)","es":"Estado Financiero (Simplificado)","zh":"财务报表（简化）","vi":"Báo Cáo Tài Chính (Đơn Giản Hóa)","ko":"재무제표 (간소화)","ar":"بيان مالي (مبسط)","ht":"Deklarasyon Finansye (Senplifye)","pt":"Demonstração Financeira (Simplificada)","ru":"Финансовый отчёт (упрощённый)","tl":"Pahayag Pinansyal (Pinasimple)","so":"Bayaanka Maaliyadda (La Fududeeyey)","ti":"ናይ ፋይናንስ ጸብጻብ (ዝቐለለ)","am":"የፋይናንስ መግለጫ (ቀለል ያለ)"},
+      "category": "financial",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-160",
+      "tier": "A",
+      "title": {"en":"Property Declaration","es":"Declaración de Propiedad","zh":"财产申报","vi":"Khai Báo Tài Sản","ko":"재산 신고서","ar":"إقرار الممتلكات","ht":"Deklarasyon Pwopriyete","pt":"Declaração de Propriedade","ru":"Декларация об имуществе","tl":"Deklarasyon ng Ari-arian","so":"Bayaanka Hantida","ti":"መግለጺ ንብረት","am":"የንብረት መግለጫ"},
+      "category": "property",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-170",
+      "tier": "A",
+      "title": {"en":"Declaration for Default or Uncontested Dissolution","es":"Declaración para Disolución por Incomparecencia o No Disputada","zh":"缺席或无争议解除声明","vi":"Tuyên Bố Vắng Mặt hoặc Giải Thể Không Tranh Chấp","ko":"궐석 또는 다툼 없는 해소 선언서","ar":"إقرار الحكم الغيابي أو الفسخ غير المتنازع عليه","ht":"Deklarasyon pou Defo oswa Disolution san Kontestasyon","pt":"Declaração de Revelia ou Dissolução sem Contestação","ru":"Заявление о заочном или бесспорном расторжении","tl":"Deklarasyon para sa Default o Hindi Kinokontest na Dissolution","so":"Bayaanka Gaabka ama Kala-tagga aan La Muransan","ti":"መግለጺ ንዲፎልት ወይ ዘይተቓወመ ምፍላይ","am":"ለነባሪ ወይም ያልተቃወመ ፍቺ መግለጫ"},
+      "category": "dissolution",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-180",
+      "tier": "A",
+      "title": {"en":"Judgment (Family Law)","es":"Sentencia (Derecho de Familia)","zh":"判决书（家庭法）","vi":"Bản Án (Luật Gia Đình)","ko":"판결문 (가정법)","ar":"حكم (قانون الأسرة)","ht":"Jijman (Lwa Fanmi)","pt":"Sentença (Direito de Família)","ru":"Решение суда (Семейное право)","tl":"Hatol (Batas Pampamilya)","so":"Xukuunka (Sharciga Qoyska)","ti":"ፍርዲ (ሕጊ ስድራቤት)","am":"ፍርድ (የቤተሰብ ሕግ)"},
+      "category": "judgment",
+      "filing_fee": true,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-300",
+      "tier": "A",
+      "title": {"en":"Request for Order","es":"Solicitud de Orden","zh":"请求命令","vi":"Yêu Cầu Lệnh Tòa","ko":"명령 요청서","ar":"طلب أمر","ht":"Demann pou Lòd","pt":"Pedido de Ordem","ru":"Запрос о вынесении приказа","tl":"Kahilingan para sa Utos","so":"Codsiga Amarka","ti":"ሕቶ ንትእዛዝ","am":"ትዕዛዝ ጥያቄ"},
+      "category": "custody",
+      "filing_fee": true,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-311",
+      "tier": "A",
+      "title": {"en":"Child Custody and Visitation Application Attachment","es":"Anexo de Solicitud de Custodia y Visitas","zh":"子女监护权和探视权申请附件","vi":"Phụ Lục Đơn Quyền Nuôi Con và Thăm Nom","ko":"자녀 양육권 및 방문권 신청 첨부서류","ar":"ملحق طلب حضانة وزيارة الطفل","ht":"Anèks Aplikasyon Gad ak Vizit Timoun","pt":"Anexo de Pedido de Guarda e Visitação","ru":"Приложение к заявлению об опеке и посещении","tl":"Kalakip ng Aplikasyon para sa Custody at Visitation","so":"Lifaaqa Codsiga Xanaanada iyo Booqashada Carruurta","ti":"ተወሳኺ ናይ ሕቶ ሓለዋን ምብጻሕን ቆልዑ","am":"የልጅ አሳዳጊነትና ጉብኝት ማመልከቻ አባሪ"},
+      "category": "custody",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-320",
+      "tier": "A",
+      "title": {"en":"Responsive Declaration to Request for Order","es":"Declaración en Respuesta a Solicitud de Orden","zh":"对命令请求的回应声明","vi":"Tuyên Bố Phản Hồi Yêu Cầu Lệnh Tòa","ko":"명령 요청에 대한 응답 선언서","ar":"رد على طلب الأمر","ht":"Deklarasyon Repons pou Demann Lòd","pt":"Declaração Responsiva ao Pedido de Ordem","ru":"Ответное заявление на запрос о приказе","tl":"Tumugon na Deklarasyon sa Kahilingan para sa Utos","so":"Bayaanka Jawaabta Codsiga Amarka","ti":"መግለጺ መልሲ ንሕቶ ትእዛዝ","am":"ለትዕዛዝ ጥያቄ ምላሽ መግለጫ"},
+      "category": "custody",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "MC-031",
+      "tier": "A",
+      "title": {"en":"Attached Declaration","es":"Declaración Adjunta","zh":"附加声明","vi":"Bản Tuyên Bố Đính Kèm","ko":"첨부 선언서","ar":"إقرار مرفق","ht":"Deklarasyon Atache","pt":"Declaração Anexa","ru":"Приложенное заявление","tl":"Nakalakip na Deklarasyon","so":"Bayaanka La Lifaaqay","ti":"ዝተላገበ መግለጺ","am":"የተያያዘ መግለጫ"},
+      "category": "general",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "DV-100",
+      "tier": "B",
+      "title": {"en":"Request for Domestic Violence Restraining Order","es":"Solicitud de Orden de Restricción por Violencia Doméstica","zh":"申请家庭暴力限制令","vi":"Yêu Cầu Lệnh Cấm Bạo Lực Gia Đình","ko":"가정폭력 접근금지 명령 신청","ar":"طلب أمر حماية من العنف الأسري","ht":"Demann Lòd Restriksyon Vyolans Domestik","pt":"Pedido de Ordem de Restrição por Violência Doméstica","ru":"Запрос на защитный ордер от домашнего насилия","tl":"Kahilingan para sa Restraining Order sa Domestic Violence","so":"Codsiga Amarka Xayiraadda Rabshadda Guriga","ti":"ሕቶ ናይ ምእጋድ ትእዛዝ ዓመጽ ስድራቤት","am":"የቤት ውስጥ ጥቃት እገዳ ትዕዛዝ ጥያቄ"},
+      "category": "restraining_order",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "DV-109",
+      "tier": "B",
+      "title": {"en":"Notice of Court Hearing (DV)","es":"Aviso de Audiencia (VD)","zh":"法庭听证通知（家暴）","vi":"Thông Báo Phiên Tòa (BLGĐ)","ko":"법원 심리 통지 (가정폭력)","ar":"إشعار جلسة المحكمة (عنف أسري)","ht":"Avi Odyans Tribinal (VD)","pt":"Notificação de Audiência (VD)","ru":"Уведомление о судебном слушании (ДН)","tl":"Abiso ng Court Hearing (DV)","so":"Ogeysiis Dacwadda Maxkamadda (RG)","ti":"ምልክታ ናይ ቤት ፍርዲ ስማዕ (ዓመጽ)","am":"የፍርድ ቤት ችሎት ማስታወቂያ (ቤ.ው.ጥ)"},
+      "category": "restraining_order",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "DV-110",
+      "tier": "B",
+      "title": {"en":"Temporary Restraining Order (DV)","es":"Orden de Restricción Temporal (VD)","zh":"临时限制令（家暴）","vi":"Lệnh Cấm Tạm Thời (BLGĐ)","ko":"임시 접근금지 명령 (가정폭력)","ar":"أمر حماية مؤقت (عنف أسري)","ht":"Lòd Restriksyon Tanporè (VD)","pt":"Ordem de Restrição Temporária (VD)","ru":"Временный защитный ордер (ДН)","tl":"Pansamantalang Restraining Order (DV)","so":"Amarka Xayiraadda Ku-meel-gaarka (RG)","ti":"ግዝያዊ ናይ ምእጋድ ትእዛዝ (ዓመጽ)","am":"ጊዜያዊ እገዳ ትዕዛዝ (ቤ.ው.ጥ)"},
+      "category": "restraining_order",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "DV-130",
+      "tier": "B",
+      "title": {"en":"Restraining Order After Hearing (DV)","es":"Orden de Restricción Después de Audiencia (VD)","zh":"听证后限制令（家暴）","vi":"Lệnh Cấm Sau Phiên Tòa (BLGĐ)","ko":"심리 후 접근금지 명령 (가정폭력)","ar":"أمر حماية بعد الجلسة (عنف أسري)","ht":"Lòd Restriksyon Apre Odyans (VD)","pt":"Ordem de Restrição Após Audiência (VD)","ru":"Защитный ордер после слушания (ДН)","tl":"Restraining Order Pagkatapos ng Hearing (DV)","so":"Amarka Xayiraadda Ka Dib Dacwadda (RG)","ti":"ናይ ምእጋድ ትእዛዝ ድሕሪ ስማዕ (ዓመጽ)","am":"ከችሎት በኋላ እገዳ ትዕዛዝ (ቤ.ው.ጥ)"},
+      "category": "restraining_order",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FW-001",
+      "tier": "B",
+      "title": {"en":"Request to Waive Court Fees","es":"Solicitud de Exención de Costos de la Corte","zh":"免除法院费用申请","vi":"Yêu Cầu Miễn Lệ Phí Tòa","ko":"법원 수수료 면제 요청","ar":"طلب إعفاء من رسوم المحكمة","ht":"Demann pou Pa Peye Frè Tribinal","pt":"Pedido de Isenção de Taxas","ru":"Запрос на освобождение от пошлин","tl":"Kahilingan na Waive ang Court Fees","so":"Codsiga Iska-dhaafka Kharashka Maxkamadda","ti":"ሕቶ ናይ ምሕረት ክፍሊት ቤት ፍርዲ","am":"የፍርድ ቤት ክፍያ ማስቀረት ጥያቄ"},
+      "category": "fee_waiver",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FW-003",
+      "tier": "B",
+      "title": {"en":"Order on Court Fee Waiver","es":"Orden sobre Exención de Costos","zh":"法院费用免除令","vi":"Lệnh về Miễn Lệ Phí","ko":"수수료 면제 명령","ar":"أمر إعفاء الرسوم","ht":"Lòd sou Egzanpsyon Frè","pt":"Ordem de Isenção de Taxas","ru":"Приказ об освобождении от пошлин","tl":"Utos sa Fee Waiver","so":"Amarka Iska-dhaafka Kharashka","ti":"ትእዛዝ ናይ ክፍሊት ምሕረት","am":"የክፍያ ማስቀረት ትዕዛዝ"},
+      "category": "fee_waiver",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-335",
+      "tier": "B",
+      "title": {"en":"Proof of Service by Mail","es":"Prueba de Servicio por Correo","zh":"邮寄送达证明","vi":"Bằng Chứng Gửi qua Bưu Điện","ko":"우편 송달 증명","ar":"إثبات التبليغ بالبريد","ht":"Prèv Sèvis pa Lapòs","pt":"Prova de Citação por Correio","ru":"Подтверждение вручения по почте","tl":"Katibayan ng Paghahatid sa Koreo","so":"Caddeynta Bixinta Boostada","ti":"መረጋገጺ ብፖስታ ኣገልግሎት","am":"በፖስታ ማቅረቢያ ማረጋገጫ"},
+      "category": "service",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "MC-020",
+      "tier": "B",
+      "title": {"en":"Additional Page","es":"Página Adicional","zh":"附加页","vi":"Trang Bổ Sung","ko":"추가 페이지","ar":"صفحة إضافية","ht":"Paj Siplemantè","pt":"Página Adicional","ru":"Дополнительная страница","tl":"Karagdagang Pahina","so":"Bog Dheeraad ah","ti":"ተወሳኺ ገጽ","am":"ተጨማሪ ገጽ"},
+      "category": "general",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-105",
+      "tier": "C",
+      "title": {"en":"Declaration Under UCCJEA","es":"Declaración bajo UCCJEA","zh":"根据UCCJEA的声明","vi":"Tuyên Bố theo UCCJEA","ko":"UCCJEA에 따른 선언서","ar":"إقرار بموجب UCCJEA","ht":"Deklarasyon anba UCCJEA","pt":"Declaração sob UCCJEA","ru":"Заявление в соответствии с UCCJEA","tl":"Deklarasyon sa ilalim ng UCCJEA","so":"Bayaanka UCCJEA","ti":"መግለጺ ብመሰረት UCCJEA","am":"በ UCCJEA ስር መግለጫ"},
+      "category": "jurisdiction",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-195",
+      "tier": "C",
+      "title": {"en":"Notice of Entry of Judgment","es":"Aviso de Registro de Sentencia","zh":"判决登记通知","vi":"Thông Báo Ghi Nhận Bản Án","ko":"판결 등록 통지","ar":"إشعار تسجيل الحكم","ht":"Avi Anregistreman Jijman","pt":"Notificação de Registro de Sentença","ru":"Уведомление о регистрации решения","tl":"Abiso ng Pagpasok ng Hatol","so":"Ogeysiiska Gelitaanka Xukuunka","ti":"ምልክታ ናይ ምዝገባ ፍርዲ","am":"የፍርድ ምዝገባ ማስታወቂያ"},
+      "category": "judgment",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-341",
+      "tier": "C",
+      "title": {"en":"Child Custody and Visitation Order Attachment","es":"Anexo de Orden de Custodia y Visitas","zh":"子女监护权和探视令附件","vi":"Phụ Lục Lệnh Quyền Nuôi Con","ko":"양육권 명령 첨부서류","ar":"ملحق أمر الحضانة والزيارة","ht":"Anèks Lòd Gad ak Vizit","pt":"Anexo de Ordem de Guarda","ru":"Приложение к приказу об опеке","tl":"Kalakip ng Custody Order","so":"Lifaaqa Amarka Xanaanada","ti":"ተወሳኺ ናይ ሓለዋ ትእዛዝ","am":"የአሳዳጊነት ትዕዛዝ አባሪ"},
+      "category": "custody",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-343",
+      "tier": "C",
+      "title": {"en":"Spousal or Partner Support Order Attachment","es":"Anexo de Orden de Manutención Conyugal","zh":"配偶抚养费令附件","vi":"Phụ Lục Lệnh Trợ Cấp Phối Ngẫu","ko":"배우자 부양 명령 첨부서류","ar":"ملحق أمر نفقة الزوج/الشريك","ht":"Anèks Lòd Sipò Konjwen","pt":"Anexo de Ordem de Pensão","ru":"Приложение к приказу о содержании","tl":"Kalakip ng Spousal Support Order","so":"Lifaaqa Amarka Taageerada Xaaska","ti":"ተወሳኺ ናይ ትእዛዝ ደገፍ መጻምድቲ","am":"የትዳር ጓደኛ ድጋፍ ትዕዛዝ አባሪ"},
+      "category": "support",
+      "filing_fee": false,
+      "annotations_available": true
+    },
+    {
+      "id": "FL-345",
+      "tier": "C",
+      "title": {"en":"Property Order Attachment to Judgment","es":"Anexo de Orden de Propiedad al Fallo","zh":"财产令判决附件","vi":"Phụ Lục Lệnh Tài Sản","ko":"재산 명령 판결 첨부서류","ar":"ملحق أمر الملكية بالحكم","ht":"Anèks Lòd Pwopriyete ak Jijman","pt":"Anexo de Ordem de Propriedade","ru":"Приложение об имуществе к решению","tl":"Kalakip ng Property Order sa Hatol","so":"Lifaaqa Amarka Hantida ee Xukuunka","ti":"ተወሳኺ ናይ ንብረት ትእዛዝ ንፍርዲ","am":"የንብረት ትዕዛዝ ከፍርድ ጋር አባሪ"},
+      "category": "property",
+      "filing_fee": false,
+      "annotations_available": true
+    }
+  ]
+}

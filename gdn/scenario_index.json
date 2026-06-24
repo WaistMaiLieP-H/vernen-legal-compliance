@@ -1,0 +1,243 @@
+{
+  "version": "3.0.0",
+  "generated": "2026-02-26",
+  "platform": "VERNEN™",
+  "description": "Guided Document Navigator — Scenario Index (26 scenarios × 13 languages)",
+  "supported_languages": ["en","es","zh","vi","ko","ar","ht","pt","ru","tl","so","ti","am"],
+  "scenarios": [
+    {
+      "id": "SCN-001",
+      "tier": "A",
+      "title": {"en":"Filing for Divorce (Petitioner)","es":"Solicitar el Divorcio (Peticionario)","zh":"申请离婚（申请人）","vi":"Nộp Đơn Ly Hôn (Người Thỉnh Cầu)"},
+      "required_forms": ["FL-100","FL-110","FL-105","FL-141","FL-142","FL-150"],
+      "optional_forms": ["FW-001","MC-031"],
+      "estimated_time_minutes": 90,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-002",
+      "tier": "A",
+      "title": {"en":"Responding to Divorce Petition","es":"Responder a la Petición de Divorcio","zh":"回应离婚申请","vi":"Trả Lời Đơn Ly Hôn"},
+      "required_forms": ["FL-120","FL-105","FL-141","FL-142","FL-150"],
+      "optional_forms": ["FW-001","MC-031"],
+      "estimated_time_minutes": 75,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-003",
+      "tier": "A",
+      "title": {"en":"Requesting Child Custody/Visitation Order","es":"Solicitar Orden de Custodia/Visitas","zh":"申请子女监护权/探视令","vi":"Yêu Cầu Lệnh Quyền Nuôi Con/Thăm Nom"},
+      "required_forms": ["FL-300","FL-311","FL-105","MC-031"],
+      "optional_forms": ["FL-150","FW-001"],
+      "estimated_time_minutes": 60,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-004",
+      "tier": "A",
+      "title": {"en":"Responding to Custody/Visitation Request","es":"Responder a Solicitud de Custodia/Visitas","zh":"回应监护权/探视权请求","vi":"Trả Lời Yêu Cầu Quyền Nuôi Con"},
+      "required_forms": ["FL-320","FL-311","MC-031"],
+      "optional_forms": ["FL-150","FL-105"],
+      "estimated_time_minutes": 60,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-005",
+      "tier": "A",
+      "title": {"en":"Default Divorce (Uncontested)","es":"Divorcio por Incomparecencia","zh":"缺席离婚（无争议）","vi":"Ly Hôn Vắng Mặt (Không Tranh Chấp)"},
+      "required_forms": ["FL-170","FL-180","FL-141","FL-142","FL-150"],
+      "optional_forms": ["FL-341","FL-343","FL-345"],
+      "estimated_time_minutes": 120,
+      "complexity": "high"
+    },
+    {
+      "id": "SCN-006",
+      "tier": "A",
+      "title": {"en":"Completing Financial Disclosures","es":"Completar Divulgaciones Financieras","zh":"完成财务披露","vi":"Hoàn Thành Tiết Lộ Tài Chính"},
+      "required_forms": ["FL-141","FL-142","FL-150"],
+      "optional_forms": ["FL-155","FL-160"],
+      "estimated_time_minutes": 90,
+      "complexity": "high"
+    },
+    {
+      "id": "SCN-007",
+      "tier": "A",
+      "title": {"en":"Serving Legal Documents","es":"Notificar Documentos Legales","zh":"送达法律文件","vi":"Tống Đạt Văn Bản Pháp Lý"},
+      "required_forms": ["FL-115"],
+      "optional_forms": ["FL-335"],
+      "estimated_time_minutes": 30,
+      "complexity": "low"
+    },
+    {
+      "id": "SCN-008",
+      "tier": "A",
+      "title": {"en":"Requesting Fee Waiver","es":"Solicitar Exención de Costos","zh":"申请费用减免","vi":"Yêu Cầu Miễn Lệ Phí"},
+      "required_forms": ["FW-001"],
+      "optional_forms": [],
+      "estimated_time_minutes": 20,
+      "complexity": "low"
+    },
+    {
+      "id": "SCN-009",
+      "tier": "A",
+      "title": {"en":"Requesting Spousal Support","es":"Solicitar Manutención Conyugal","zh":"申请配偶赡养费","vi":"Yêu Cầu Trợ Cấp Phối Ngẫu"},
+      "required_forms": ["FL-300","FL-150","MC-031"],
+      "optional_forms": ["FL-155","FW-001"],
+      "estimated_time_minutes": 60,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-010",
+      "tier": "A",
+      "title": {"en":"Modifying Existing Court Orders","es":"Modificar Órdenes Judiciales Existentes","zh":"修改现有法院命令","vi":"Sửa Đổi Lệnh Tòa Hiện Hành"},
+      "required_forms": ["FL-300","MC-031"],
+      "optional_forms": ["FL-311","FL-150","FL-335"],
+      "estimated_time_minutes": 60,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-011",
+      "tier": "A",
+      "title": {"en":"Dividing Community Property","es":"Dividir Bienes Comunitarios","zh":"分割共同财产","vi":"Chia Tài Sản Cộng Đồng"},
+      "required_forms": ["FL-160","FL-142","FL-345"],
+      "optional_forms": ["MC-031"],
+      "estimated_time_minutes": 90,
+      "complexity": "high"
+    },
+    {
+      "id": "SCN-012",
+      "tier": "A",
+      "title": {"en":"Entering Judgment (Final Dissolution)","es":"Registrar Sentencia (Disolución Final)","zh":"登记判决（最终解除）","vi":"Ghi Nhận Bản Án (Giải Thể Cuối Cùng)"},
+      "required_forms": ["FL-180","FL-170","FL-341","FL-343","FL-345"],
+      "optional_forms": ["FL-195"],
+      "estimated_time_minutes": 120,
+      "complexity": "high"
+    },
+    {
+      "id": "SCN-013",
+      "tier": "A",
+      "title": {"en":"Attaching Additional Declarations","es":"Adjuntar Declaraciones Adicionales","zh":"附加额外声明","vi":"Đính Kèm Tuyên Bố Bổ Sung"},
+      "required_forms": ["MC-031"],
+      "optional_forms": ["MC-020"],
+      "estimated_time_minutes": 20,
+      "complexity": "low"
+    },
+    {
+      "id": "SCN-014",
+      "tier": "A",
+      "title": {"en":"Filing Income and Expense Declaration","es":"Presentar Declaración de Ingresos y Gastos","zh":"提交收入和支出申报","vi":"Nộp Khai Báo Thu Nhập và Chi Phí"},
+      "required_forms": ["FL-150"],
+      "optional_forms": ["FL-155"],
+      "estimated_time_minutes": 45,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-015",
+      "tier": "A",
+      "title": {"en":"Establishing Jurisdiction (UCCJEA)","es":"Establecer Jurisdicción (UCCJEA)","zh":"确立管辖权（UCCJEA）","vi":"Xác Lập Thẩm Quyền (UCCJEA)"},
+      "required_forms": ["FL-105"],
+      "optional_forms": ["MC-031"],
+      "estimated_time_minutes": 30,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-016",
+      "tier": "B",
+      "title": {"en":"Requesting Domestic Violence Restraining Order","es":"Solicitar Orden de Restricción por Violencia Doméstica","zh":"申请家庭暴力限制令","vi":"Yêu Cầu Lệnh Cấm Bạo Lực Gia Đình"},
+      "required_forms": ["DV-100","DV-109","MC-031"],
+      "optional_forms": ["FW-001"],
+      "estimated_time_minutes": 45,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-017",
+      "tier": "B",
+      "title": {"en":"Responding to DV Restraining Order","es":"Responder a Orden de Restricción VD","zh":"回应家暴限制令","vi":"Trả Lời Lệnh Cấm BLGĐ"},
+      "required_forms": ["DV-120","MC-031"],
+      "optional_forms": ["FL-150"],
+      "estimated_time_minutes": 45,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-018",
+      "tier": "B",
+      "title": {"en":"Preparing for DV Hearing","es":"Prepararse para Audiencia de VD","zh":"准备家暴听证","vi":"Chuẩn Bị Phiên Tòa BLGĐ"},
+      "required_forms": ["DV-109","MC-031"],
+      "optional_forms": ["DV-100","FL-150"],
+      "estimated_time_minutes": 60,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-019",
+      "tier": "B",
+      "title": {"en":"Obtaining Permanent DV Restraining Order","es":"Obtener Orden de Restricción Permanente VD","zh":"获得永久家暴限制令","vi":"Nhận Lệnh Cấm Vĩnh Viễn BLGĐ"},
+      "required_forms": ["DV-130"],
+      "optional_forms": ["MC-031"],
+      "estimated_time_minutes": 30,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-020",
+      "tier": "B",
+      "title": {"en":"Filing Proof of Service","es":"Presentar Prueba de Notificación","zh":"提交送达证明","vi":"Nộp Bằng Chứng Tống Đạt"},
+      "required_forms": ["FL-335"],
+      "optional_forms": ["FL-115"],
+      "estimated_time_minutes": 15,
+      "complexity": "low"
+    },
+    {
+      "id": "SCN-021",
+      "tier": "B",
+      "title": {"en":"Emergency Custody Motion","es":"Moción de Custodia de Emergencia","zh":"紧急监护权动议","vi":"Kiến Nghị Khẩn Cấp Quyền Nuôi Con"},
+      "required_forms": ["FL-300","FL-311","MC-031","FL-305"],
+      "optional_forms": ["FW-001","FL-150"],
+      "estimated_time_minutes": 60,
+      "complexity": "high"
+    },
+    {
+      "id": "SCN-022",
+      "tier": "C",
+      "title": {"en":"Simplified Financial Disclosure","es":"Divulgación Financiera Simplificada","zh":"简化财务披露","vi":"Tiết Lộ Tài Chính Đơn Giản"},
+      "required_forms": ["FL-155"],
+      "optional_forms": ["FL-141"],
+      "estimated_time_minutes": 30,
+      "complexity": "low"
+    },
+    {
+      "id": "SCN-023",
+      "tier": "C",
+      "title": {"en":"Custody Order as Part of Judgment","es":"Orden de Custodia como Parte del Fallo","zh":"判决中的监护权令","vi":"Lệnh Quyền Nuôi Con trong Bản Án"},
+      "required_forms": ["FL-341","FL-180"],
+      "optional_forms": ["MC-031"],
+      "estimated_time_minutes": 45,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-024",
+      "tier": "C",
+      "title": {"en":"Spousal Support Order as Part of Judgment","es":"Orden de Manutención Conyugal en el Fallo","zh":"判决中的配偶赡养令","vi":"Lệnh Trợ Cấp trong Bản Án"},
+      "required_forms": ["FL-343","FL-180"],
+      "optional_forms": ["FL-150"],
+      "estimated_time_minutes": 45,
+      "complexity": "medium"
+    },
+    {
+      "id": "SCN-025",
+      "tier": "C",
+      "title": {"en":"Property Division Order in Judgment","es":"Orden de División de Propiedad en el Fallo","zh":"判决中的财产分割令","vi":"Lệnh Phân Chia Tài Sản trong Bản Án"},
+      "required_forms": ["FL-345","FL-180","FL-160"],
+      "optional_forms": ["MC-031"],
+      "estimated_time_minutes": 60,
+      "complexity": "high"
+    },
+    {
+      "id": "SCN-026",
+      "tier": "C",
+      "title": {"en":"Notice of Entry of Judgment","es":"Aviso de Registro de Sentencia","zh":"判决登记通知","vi":"Thông Báo Ghi Nhận Bản Án"},
+      "required_forms": ["FL-195"],
+      "optional_forms": [],
+      "estimated_time_minutes": 15,
+      "complexity": "low"
+    }
+  ]
+}

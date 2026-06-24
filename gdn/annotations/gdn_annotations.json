@@ -1,0 +1,1192 @@
+{
+  "version": "3.0.0",
+  "generated": "2026-02-26",
+  "platform": "VERNEN™",
+  "description": "GDN Field-Level Annotations — 28 California Judicial Council Forms",
+  "form_count": 28,
+  "total_fields": 169,
+  "annotations": {
+    "FL-100": {
+      "title": "Petition — Marriage/Domestic Partnership",
+      "category": "dissolution",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Attorney or Party Without Attorney",
+          "type": "text",
+          "tip": "Full legal name, address, phone, email. Check 'In Pro Per' if self-represented."
+        },
+        {
+          "id": "2",
+          "label": "Superior Court, County of",
+          "type": "text",
+          "tip": "Filing county. Must meet 6-month CA / 3-month county residency."
+        },
+        {
+          "id": "3",
+          "label": "Petitioner",
+          "type": "text",
+          "tip": "Your full legal name as initiating party."
+        },
+        {
+          "id": "4",
+          "label": "Respondent",
+          "type": "text",
+          "tip": "Spouse/partner's full legal name."
+        },
+        {
+          "id": "5",
+          "label": "Legal Relationship",
+          "type": "checkbox",
+          "tip": "Married, domestic partners, or both."
+        },
+        {
+          "id": "6",
+          "label": "Residency Requirements",
+          "type": "checkbox",
+          "tip": "One spouse 6 months CA, 3 months county."
+        },
+        {
+          "id": "7",
+          "label": "Statistical Facts",
+          "type": "mixed",
+          "tip": "Date of marriage, date of separation, time married."
+        },
+        {
+          "id": "8",
+          "label": "Minor Children",
+          "type": "mixed",
+          "tip": "Children under 18 — names and DOBs."
+        },
+        {
+          "id": "9",
+          "label": "Spousal Support",
+          "type": "checkbox",
+          "tip": "Request or terminate court's ability to award."
+        },
+        {
+          "id": "10",
+          "label": "Property",
+          "type": "checkbox",
+          "tip": "Community/quasi-community property. Attach FL-160 if needed."
+        },
+        {
+          "id": "11",
+          "label": "Attorney Fees",
+          "type": "checkbox",
+          "tip": "Request fees from other party."
+        },
+        {
+          "id": "12",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Sign and date under penalty of perjury."
+        }
+      ]
+    },
+    "FL-110": {
+      "title": "Summons (Family Law)",
+      "category": "dissolution",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Notice to Respondent",
+          "type": "info",
+          "tip": "Pre-printed. Respondent has 30 days to file response."
+        },
+        {
+          "id": "2",
+          "label": "Standard Restraining Orders",
+          "type": "info",
+          "tip": "Automatic orders preventing property transfers, insurance changes."
+        },
+        {
+          "id": "3",
+          "label": "Petitioner Name/Address",
+          "type": "text",
+          "tip": "Must match FL-100."
+        },
+        {
+          "id": "4",
+          "label": "Clerk's Certificate",
+          "type": "official",
+          "tip": "Completed by court clerk at filing."
+        }
+      ]
+    },
+    "FL-115": {
+      "title": "Proof of Service of Summons",
+      "category": "service",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Server Information",
+          "type": "text",
+          "tip": "Must be 18+ and not a party."
+        },
+        {
+          "id": "2",
+          "label": "Documents Served",
+          "type": "checklist",
+          "tip": "List all documents served."
+        },
+        {
+          "id": "3",
+          "label": "Method of Service",
+          "type": "checkbox",
+          "tip": "Personal or substituted service."
+        },
+        {
+          "id": "4",
+          "label": "Person Served",
+          "type": "text",
+          "tip": "Full name of recipient."
+        },
+        {
+          "id": "5",
+          "label": "Date/Time/Address",
+          "type": "text",
+          "tip": "Exact service details."
+        },
+        {
+          "id": "6",
+          "label": "Server Declaration",
+          "type": "signature",
+          "tip": "Server signs under penalty of perjury."
+        }
+      ]
+    },
+    "FL-120": {
+      "title": "Response — Marriage/Domestic Partnership",
+      "category": "dissolution",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Attorney or Party",
+          "type": "text",
+          "tip": "Same format as FL-100 header."
+        },
+        {
+          "id": "2",
+          "label": "Party Names",
+          "type": "text",
+          "tip": "Must match Petition exactly."
+        },
+        {
+          "id": "3",
+          "label": "Legal Relationship",
+          "type": "checkbox",
+          "tip": "Confirm or contest status."
+        },
+        {
+          "id": "4",
+          "label": "Residency",
+          "type": "checkbox",
+          "tip": "Confirm requirements met."
+        },
+        {
+          "id": "5",
+          "label": "Minor Children",
+          "type": "mixed",
+          "tip": "Confirm, correct, or add child info."
+        },
+        {
+          "id": "6",
+          "label": "Spousal Support",
+          "type": "checkbox",
+          "tip": "Your position on support."
+        },
+        {
+          "id": "7",
+          "label": "Property",
+          "type": "checkbox",
+          "tip": "Your position on division."
+        },
+        {
+          "id": "8",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "File within 30 days of service."
+        }
+      ]
+    },
+    "FL-141": {
+      "title": "Declaration of Disclosure",
+      "category": "disclosure",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number and party names."
+        },
+        {
+          "id": "2",
+          "label": "Preliminary/Final",
+          "type": "checkbox",
+          "tip": "Preliminary or Final declaration."
+        },
+        {
+          "id": "3",
+          "label": "Documents Served",
+          "type": "checklist",
+          "tip": "FL-142, FL-150, FL-160, tax returns."
+        },
+        {
+          "id": "4",
+          "label": "Service Confirmation",
+          "type": "checkbox",
+          "tip": "Confirm all required docs served."
+        },
+        {
+          "id": "5",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Under penalty of perjury."
+        }
+      ]
+    },
+    "FL-142": {
+      "title": "Schedule of Assets and Debts",
+      "category": "disclosure",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number and party names."
+        },
+        {
+          "id": "2a",
+          "label": "Community Assets",
+          "type": "table",
+          "tip": "Real estate, vehicles, accounts, retirement."
+        },
+        {
+          "id": "2b",
+          "label": "Separate Assets",
+          "type": "table",
+          "tip": "Separate property claimed by each party."
+        },
+        {
+          "id": "3a",
+          "label": "Community Debts",
+          "type": "table",
+          "tip": "Mortgages, credit cards, loans."
+        },
+        {
+          "id": "3b",
+          "label": "Separate Debts",
+          "type": "table",
+          "tip": "Debts claimed as separate."
+        },
+        {
+          "id": "4",
+          "label": "Totals",
+          "type": "calculated",
+          "tip": "Sum each category accurately."
+        },
+        {
+          "id": "5",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Under penalty of perjury."
+        }
+      ]
+    },
+    "FL-150": {
+      "title": "Income and Expense Declaration",
+      "category": "financial",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Employment",
+          "type": "text",
+          "tip": "Employer, title, hire date, pay frequency."
+        },
+        {
+          "id": "2",
+          "label": "Age/Education",
+          "type": "text",
+          "tip": "Age and highest education level."
+        },
+        {
+          "id": "3",
+          "label": "Income",
+          "type": "table",
+          "tip": "Gross monthly from all sources. Attach 2 months pay stubs."
+        },
+        {
+          "id": "4",
+          "label": "Investment Income",
+          "type": "table",
+          "tip": "Dividends, rental, business income."
+        },
+        {
+          "id": "5",
+          "label": "Deductions",
+          "type": "table",
+          "tip": "Taxes, FICA, insurance, union dues."
+        },
+        {
+          "id": "6",
+          "label": "Monthly Expenses",
+          "type": "table",
+          "tip": "Rent, food, utilities, transport, childcare."
+        },
+        {
+          "id": "7",
+          "label": "Attorney Fees",
+          "type": "text",
+          "tip": "Paid and owed amounts."
+        },
+        {
+          "id": "8",
+          "label": "Hardship",
+          "type": "table",
+          "tip": "Extraordinary health, catastrophic loss."
+        },
+        {
+          "id": "9",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Must be current within 90 days."
+        }
+      ]
+    },
+    "FL-155": {
+      "title": "Financial Statement (Simplified)",
+      "category": "financial",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Income",
+          "type": "table",
+          "tip": "Simplified. Use if annual gross under $100K."
+        },
+        {
+          "id": "2",
+          "label": "Expenses",
+          "type": "table",
+          "tip": "Simplified expense categories."
+        },
+        {
+          "id": "3",
+          "label": "Property",
+          "type": "table",
+          "tip": "Brief listing."
+        },
+        {
+          "id": "4",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Alternative to FL-150."
+        }
+      ]
+    },
+    "FL-160": {
+      "title": "Property Declaration",
+      "category": "property",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number and party names."
+        },
+        {
+          "id": "2",
+          "label": "Property Description",
+          "type": "table",
+          "tip": "Each item of community/quasi-community property."
+        },
+        {
+          "id": "3",
+          "label": "Proposed Division",
+          "type": "table",
+          "tip": "Who should receive each item."
+        },
+        {
+          "id": "4",
+          "label": "Fair Market Value",
+          "type": "currency",
+          "tip": "Current FMV for each item."
+        },
+        {
+          "id": "5",
+          "label": "Encumbrances",
+          "type": "currency",
+          "tip": "Amounts owed."
+        },
+        {
+          "id": "6",
+          "label": "Net Value",
+          "type": "calculated",
+          "tip": "FMV minus encumbrances."
+        },
+        {
+          "id": "7",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Under penalty of perjury."
+        }
+      ]
+    },
+    "FL-170": {
+      "title": "Declaration for Default or Uncontested Dissolution",
+      "category": "dissolution",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number and names."
+        },
+        {
+          "id": "2",
+          "label": "Default/Uncontested",
+          "type": "checkbox",
+          "tip": "Check applicable type."
+        },
+        {
+          "id": "3",
+          "label": "Jurisdiction",
+          "type": "checkbox",
+          "tip": "Confirm court has jurisdiction."
+        },
+        {
+          "id": "4",
+          "label": "Settlement Agreement",
+          "type": "checkbox",
+          "tip": "Whether parties have written agreement."
+        },
+        {
+          "id": "5",
+          "label": "Children",
+          "type": "mixed",
+          "tip": "Custody/visitation/support arrangements."
+        },
+        {
+          "id": "6",
+          "label": "Spousal Support",
+          "type": "mixed",
+          "tip": "Support terms or waiver."
+        },
+        {
+          "id": "7",
+          "label": "Property Division",
+          "type": "mixed",
+          "tip": "How property is divided."
+        },
+        {
+          "id": "8",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Under penalty of perjury."
+        }
+      ]
+    },
+    "FL-180": {
+      "title": "Judgment (Family Law)",
+      "category": "judgment",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number, names, judgment type."
+        },
+        {
+          "id": "2",
+          "label": "Judgment Type",
+          "type": "checkbox",
+          "tip": "Default, uncontested, contested, stipulated."
+        },
+        {
+          "id": "3",
+          "label": "Dissolution Status",
+          "type": "checkbox",
+          "tip": "Status of marital/partnership termination."
+        },
+        {
+          "id": "4",
+          "label": "Custody Orders",
+          "type": "reference",
+          "tip": "Refer to FL-341 attachment."
+        },
+        {
+          "id": "5",
+          "label": "Support Orders",
+          "type": "reference",
+          "tip": "Refer to FL-343 attachment."
+        },
+        {
+          "id": "6",
+          "label": "Property Orders",
+          "type": "reference",
+          "tip": "Refer to FL-345 attachment."
+        },
+        {
+          "id": "7",
+          "label": "Date of Termination",
+          "type": "date",
+          "tip": "Effective date — 6 months after service minimum."
+        },
+        {
+          "id": "8",
+          "label": "Judicial Signature",
+          "type": "official",
+          "tip": "Signed by judge."
+        }
+      ]
+    },
+    "FL-300": {
+      "title": "Request for Order",
+      "category": "custody",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number and party names."
+        },
+        {
+          "id": "2",
+          "label": "Orders Requested",
+          "type": "checklist",
+          "tip": "Child custody, visitation, support, other."
+        },
+        {
+          "id": "3",
+          "label": "Current Orders",
+          "type": "text",
+          "tip": "Describe existing orders being modified."
+        },
+        {
+          "id": "4",
+          "label": "Facts",
+          "type": "text",
+          "tip": "Facts supporting request. Attach MC-031."
+        },
+        {
+          "id": "5",
+          "label": "Hearing Date",
+          "type": "date",
+          "tip": "Obtained from court clerk."
+        },
+        {
+          "id": "6",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Under penalty of perjury."
+        }
+      ]
+    },
+    "FL-311": {
+      "title": "Child Custody and Visitation Application Attachment",
+      "category": "custody",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Legal Custody",
+          "type": "checkbox",
+          "tip": "Joint or sole legal custody request."
+        },
+        {
+          "id": "2",
+          "label": "Physical Custody",
+          "type": "checkbox",
+          "tip": "Joint or sole physical custody request."
+        },
+        {
+          "id": "3",
+          "label": "Visitation Schedule",
+          "type": "text",
+          "tip": "Detailed schedule: weekdays, weekends, holidays."
+        },
+        {
+          "id": "4",
+          "label": "Supervised Visitation",
+          "type": "checkbox",
+          "tip": "If supervision needed, specify terms."
+        },
+        {
+          "id": "5",
+          "label": "Best Interest Factors",
+          "type": "text",
+          "tip": "Factors per FC §3011."
+        },
+        {
+          "id": "6",
+          "label": "Domestic Violence",
+          "type": "checkbox",
+          "tip": "FC §3044 presumption if DV found."
+        }
+      ]
+    },
+    "FL-320": {
+      "title": "Responsive Declaration to Request for Order",
+      "category": "custody",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Must match FL-300 case info."
+        },
+        {
+          "id": "2",
+          "label": "Response to Requests",
+          "type": "checklist",
+          "tip": "Agree, disagree, or counter-propose."
+        },
+        {
+          "id": "3",
+          "label": "Facts",
+          "type": "text",
+          "tip": "Your version. Attach MC-031."
+        },
+        {
+          "id": "4",
+          "label": "Counter-Requests",
+          "type": "checklist",
+          "tip": "Your own orders requested."
+        },
+        {
+          "id": "5",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "File and serve before hearing."
+        }
+      ]
+    },
+    "MC-031": {
+      "title": "Attached Declaration",
+      "category": "general",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Reference parent form and case number."
+        },
+        {
+          "id": "2",
+          "label": "Declaration Text",
+          "type": "text",
+          "tip": "Numbered paragraphs. Facts within personal knowledge."
+        },
+        {
+          "id": "3",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Under penalty of perjury under CA law."
+        }
+      ]
+    },
+    "DV-100": {
+      "title": "Request for DV Restraining Order",
+      "category": "restraining_order",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Protected Person",
+          "type": "text",
+          "tip": "Your name and address (can be confidential)."
+        },
+        {
+          "id": "2",
+          "label": "Restrained Person",
+          "type": "text",
+          "tip": "Abuser's name, DOB, address."
+        },
+        {
+          "id": "3",
+          "label": "Relationship",
+          "type": "checkbox",
+          "tip": "Spouse, cohabitant, dating, parent of child."
+        },
+        {
+          "id": "4",
+          "label": "Other Protected Persons",
+          "type": "text",
+          "tip": "Children or household members."
+        },
+        {
+          "id": "5",
+          "label": "Orders Requested",
+          "type": "checklist",
+          "tip": "Stay-away, move-out, no contact, custody."
+        },
+        {
+          "id": "6",
+          "label": "Abuse Description",
+          "type": "text",
+          "tip": "Dates and details. Attach MC-031."
+        },
+        {
+          "id": "7",
+          "label": "Firearms",
+          "type": "checkbox",
+          "tip": "Whether restrained person has firearms."
+        },
+        {
+          "id": "8",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Under penalty of perjury."
+        }
+      ]
+    },
+    "DV-109": {
+      "title": "Notice of Court Hearing (DV)",
+      "category": "restraining_order",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Hearing Date/Time/Dept",
+          "type": "date",
+          "tip": "Set by court when TRO granted."
+        },
+        {
+          "id": "2",
+          "label": "Temporary Orders",
+          "type": "reference",
+          "tip": "References DV-110."
+        },
+        {
+          "id": "3",
+          "label": "Service Requirements",
+          "type": "info",
+          "tip": "Must personally serve before hearing."
+        },
+        {
+          "id": "4",
+          "label": "Clerk Certificate",
+          "type": "official",
+          "tip": "Completed by court."
+        }
+      ]
+    },
+    "DV-110": {
+      "title": "Temporary Restraining Order (DV)",
+      "category": "restraining_order",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Protected/Restrained Persons",
+          "type": "text",
+          "tip": "Names from DV-100."
+        },
+        {
+          "id": "2",
+          "label": "Temporary Orders Granted",
+          "type": "checklist",
+          "tip": "Which orders judge granted."
+        },
+        {
+          "id": "3",
+          "label": "Stay-Away Order",
+          "type": "text",
+          "tip": "Distance in yards from person, home, work, school."
+        },
+        {
+          "id": "4",
+          "label": "Custody/Visitation",
+          "type": "mixed",
+          "tip": "Temporary custody if children involved."
+        },
+        {
+          "id": "5",
+          "label": "Expiration",
+          "type": "date",
+          "tip": "Expires at hearing unless extended."
+        },
+        {
+          "id": "6",
+          "label": "Judicial Signature",
+          "type": "official",
+          "tip": "Signed by judge."
+        }
+      ]
+    },
+    "DV-130": {
+      "title": "Restraining Order After Hearing (DV)",
+      "category": "restraining_order",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Protected/Restrained Persons",
+          "type": "text",
+          "tip": "From DV-100/110."
+        },
+        {
+          "id": "2",
+          "label": "Orders After Hearing",
+          "type": "checklist",
+          "tip": "Permanent orders granted."
+        },
+        {
+          "id": "3",
+          "label": "Duration",
+          "type": "date",
+          "tip": "Up to 5 years. Can be renewed."
+        },
+        {
+          "id": "4",
+          "label": "Custody/Visitation",
+          "type": "mixed",
+          "tip": "Ongoing custody arrangements."
+        },
+        {
+          "id": "5",
+          "label": "Support",
+          "type": "currency",
+          "tip": "Spousal/child support if ordered."
+        },
+        {
+          "id": "6",
+          "label": "Firearms",
+          "type": "checkbox",
+          "tip": "Must surrender within 24 hours."
+        },
+        {
+          "id": "7",
+          "label": "Judicial Signature",
+          "type": "official",
+          "tip": "Signed by judge."
+        }
+      ]
+    },
+    "FW-001": {
+      "title": "Request to Waive Court Fees",
+      "category": "fee_waiver",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number and party names."
+        },
+        {
+          "id": "2",
+          "label": "Public Benefits",
+          "type": "checkbox",
+          "tip": "Medi-Cal, food stamps, SSI — auto-qualifies."
+        },
+        {
+          "id": "3",
+          "label": "Income Under Threshold",
+          "type": "checkbox",
+          "tip": "Below poverty guidelines."
+        },
+        {
+          "id": "4",
+          "label": "Hardship",
+          "type": "checkbox",
+          "tip": "Cannot pay basic expenses and fees."
+        },
+        {
+          "id": "5",
+          "label": "Household Information",
+          "type": "table",
+          "tip": "All members and income."
+        },
+        {
+          "id": "6",
+          "label": "Monthly Income/Expenses",
+          "type": "table",
+          "tip": "Detailed financials."
+        },
+        {
+          "id": "7",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Under penalty of perjury."
+        }
+      ]
+    },
+    "FW-003": {
+      "title": "Order on Court Fee Waiver",
+      "category": "fee_waiver",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number and names."
+        },
+        {
+          "id": "2",
+          "label": "Court Decision",
+          "type": "checkbox",
+          "tip": "Granted, denied, or partial."
+        },
+        {
+          "id": "3",
+          "label": "Reason if Denied",
+          "type": "text",
+          "tip": "Court must state reason."
+        },
+        {
+          "id": "4",
+          "label": "Judicial Signature",
+          "type": "official",
+          "tip": "Signed by judge."
+        }
+      ]
+    },
+    "FL-335": {
+      "title": "Proof of Service by Mail",
+      "category": "service",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Server Information",
+          "type": "text",
+          "tip": "Must be 18+ and not a party."
+        },
+        {
+          "id": "2",
+          "label": "Documents Mailed",
+          "type": "checklist",
+          "tip": "List all documents."
+        },
+        {
+          "id": "3",
+          "label": "Mailing Details",
+          "type": "text",
+          "tip": "Date mailed, city mailed from."
+        },
+        {
+          "id": "4",
+          "label": "Recipient Address",
+          "type": "text",
+          "tip": "Where documents were mailed."
+        },
+        {
+          "id": "5",
+          "label": "Server Declaration",
+          "type": "signature",
+          "tip": "Under penalty of perjury."
+        }
+      ]
+    },
+    "MC-020": {
+      "title": "Additional Page",
+      "category": "general",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Attachment Reference",
+          "type": "text",
+          "tip": "Which form and item this continues."
+        },
+        {
+          "id": "2",
+          "label": "Content",
+          "type": "text",
+          "tip": "Continuation of referenced section."
+        },
+        {
+          "id": "3",
+          "label": "Page Number",
+          "type": "text",
+          "tip": "Page X of Y."
+        }
+      ]
+    },
+    "FL-105": {
+      "title": "Declaration Under UCCJEA",
+      "category": "jurisdiction",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number and names."
+        },
+        {
+          "id": "2",
+          "label": "Child Information",
+          "type": "table",
+          "tip": "Each child's name, DOB, current address."
+        },
+        {
+          "id": "3",
+          "label": "Residency History",
+          "type": "table",
+          "tip": "Where each child lived last 5 years."
+        },
+        {
+          "id": "4",
+          "label": "Other Proceedings",
+          "type": "checkbox",
+          "tip": "Any other custody cases anywhere."
+        },
+        {
+          "id": "5",
+          "label": "Persons with Claims",
+          "type": "text",
+          "tip": "Anyone else claiming custody."
+        },
+        {
+          "id": "6",
+          "label": "Signature",
+          "type": "signature",
+          "tip": "Critical for jurisdiction."
+        }
+      ]
+    },
+    "FL-195": {
+      "title": "Notice of Entry of Judgment",
+      "category": "judgment",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Caption",
+          "type": "text",
+          "tip": "Case number, names."
+        },
+        {
+          "id": "2",
+          "label": "Judgment Date",
+          "type": "date",
+          "tip": "Date entered by court."
+        },
+        {
+          "id": "3",
+          "label": "Service of Notice",
+          "type": "text",
+          "tip": "How and when served."
+        },
+        {
+          "id": "4",
+          "label": "Clerk Certificate",
+          "type": "official",
+          "tip": "Certified by clerk."
+        }
+      ]
+    },
+    "FL-341": {
+      "title": "Child Custody and Visitation Order Attachment",
+      "category": "custody",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Legal Custody",
+          "type": "checkbox",
+          "tip": "Joint or sole — to which parent."
+        },
+        {
+          "id": "2",
+          "label": "Physical Custody",
+          "type": "checkbox",
+          "tip": "Joint or sole — primary residence."
+        },
+        {
+          "id": "3",
+          "label": "Visitation Schedule",
+          "type": "text",
+          "tip": "Regular, holiday, summer schedule."
+        },
+        {
+          "id": "4",
+          "label": "Supervised Visitation",
+          "type": "mixed",
+          "tip": "Professional or nonprofessional supervisor."
+        },
+        {
+          "id": "5",
+          "label": "Transportation",
+          "type": "text",
+          "tip": "Who transports for exchanges."
+        },
+        {
+          "id": "6",
+          "label": "Other Orders",
+          "type": "text",
+          "tip": "Travel restrictions, communication, etc."
+        }
+      ]
+    },
+    "FL-343": {
+      "title": "Spousal or Partner Support Order Attachment",
+      "category": "support",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Payor/Payee",
+          "type": "text",
+          "tip": "Who pays and receives."
+        },
+        {
+          "id": "2",
+          "label": "Amount",
+          "type": "currency",
+          "tip": "Monthly support amount."
+        },
+        {
+          "id": "3",
+          "label": "Duration",
+          "type": "date",
+          "tip": "Start/termination date or conditions."
+        },
+        {
+          "id": "4",
+          "label": "Marital Standard",
+          "type": "text",
+          "tip": "FC §4320 factors considered."
+        },
+        {
+          "id": "5",
+          "label": "Termination Events",
+          "type": "checklist",
+          "tip": "Death, remarriage, court order, date."
+        }
+      ]
+    },
+    "FL-345": {
+      "title": "Property Order Attachment to Judgment",
+      "category": "property",
+      "fields": [
+        {
+          "id": "1",
+          "label": "Community Property to Petitioner",
+          "type": "table",
+          "tip": "Items awarded with values."
+        },
+        {
+          "id": "2",
+          "label": "Community Property to Respondent",
+          "type": "table",
+          "tip": "Items awarded with values."
+        },
+        {
+          "id": "3",
+          "label": "Debts to Petitioner",
+          "type": "table",
+          "tip": "Debts assigned."
+        },
+        {
+          "id": "4",
+          "label": "Debts to Respondent",
+          "type": "table",
+          "tip": "Debts assigned."
+        },
+        {
+          "id": "5",
+          "label": "Equalizing Payment",
+          "type": "currency",
+          "tip": "Payment to equalize division."
+        },
+        {
+          "id": "6",
+          "label": "Transfer Orders",
+          "type": "text",
+          "tip": "Specific transfer instructions."
+        }
+      ]
+    }
+  }
+}
